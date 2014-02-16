@@ -1,0 +1,144 @@
+using UnityEngine;
+using UnityEditor;
+using System.Collections;
+
+
+public class PersonalityEditor:EditorWindow{
+	
+	
+	static float o, c, e, a, n;
+
+	
+	
+	float minVal = -1.0f;
+	float maxVal = 1.0f;
+	
+	[MenuItem ("ADAPT/LMA/OCEAN")]
+	 static void Init () {
+		PersonalityEditor window = (PersonalityEditor)EditorWindow.GetWindow(typeof (PersonalityEditor));		
+	
+	}
+
+	 
+	public void OnGUI () {
+		
+		GUILayout.Label ("Personality Settings", EditorStyles.largeLabel);		
+			
+	
+		o = EditorGUILayout.Slider ("Openness", o, minVal, maxVal);
+		c = EditorGUILayout.Slider ("Conscientiousness", c, minVal, maxVal);
+		e = EditorGUILayout.Slider ("Extroversion", e, minVal, maxVal);
+		a = EditorGUILayout.Slider ("Agreeableness", a, minVal, maxVal);
+		n = EditorGUILayout.Slider ("Neuroticism", n, minVal, maxVal);
+		
+	
+		
+				
+		MapPersonalityToLMA();
+			
+		
+		
+		if(GUILayout.Button("Reset", GUILayout.ExpandWidth(false))){
+			o = c = e = a = n = 0f;
+			
+		ResetTransforms();
+		}
+		
+			
+	}
+		
+	
+	void ResetTransforms()
+	{
+		GameObject agent = GameObject.Find("AgentPrefab");	
+		agent.GetComponent<ArmAnimator>().armC.ResetTransforms();
+		agent.GetComponent<TorsoAnimator>().torsoC.ResetTransforms();
+		
+	}
+				 
+	void MapPersonalityToLMA()
+	{
+		
+		float space, weight, time, flow;
+		float horTorso;
+		GameObject agent = GameObject.Find("AgentPrefab");
+		if(agent == null){		
+			Debug.Log("AgentPrefab not found");
+			return;
+		}
+		
+		space = (e - o - n ) / 3f;
+		
+		weight = (e - a)  / 2f;
+		
+		time  = (e + n) / 2f;
+		
+		flow = (c + e - o) / 3f;
+		
+		
+		if(space > 0){
+			agent.GetComponent<ArmAnimator>().dir = space;
+			agent.GetComponent<ArmAnimator>().ind = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().ind = -space;
+			agent.GetComponent<ArmAnimator>().dir = 0f;
+		}
+		//Weight
+		if(weight > 0){
+			agent.GetComponent<ArmAnimator>().str = weight;
+			agent.GetComponent<ArmAnimator>().lgt = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().lgt = -weight;
+			agent.GetComponent<ArmAnimator>().str = 0f;
+		}
+		//Time				
+		if(time > 0){
+			agent.GetComponent<ArmAnimator>().sud = time;
+			agent.GetComponent<ArmAnimator>().sus = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().sus = -time;
+			agent.GetComponent<ArmAnimator>().sud = 0f;
+		}
+		
+		//Flow
+		if(flow > 0){
+			agent.GetComponent<ArmAnimator>().bnd = flow;
+			agent.GetComponent<ArmAnimator>().fre = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().fre = -flow	;
+			agent.GetComponent<ArmAnimator>().bnd = 0;
+		}
+		
+		
+		
+		//Update effort parameters
+		agent.GetComponent<ArmAnimator>().Effort2LowLevel();
+		
+		//Torso
+		
+		if(n < 0)
+			horTorso = e;
+		else
+			horTorso = (e - n) / 2f;
+		
+		if(horTorso > 0){
+			agent.GetComponent<TorsoAnimator>().spr = horTorso;
+			agent.GetComponent<TorsoAnimator>().enc = 0f;
+		}
+		else{
+			agent.GetComponent<TorsoAnimator>().enc = -horTorso;
+			agent.GetComponent<TorsoAnimator>().spr = 0f;
+		}
+			
+			
+			
+		
+		
+	}
+	
+}
+	

@@ -1,0 +1,76 @@
+using UnityEngine;
+using System.Collections;
+
+
+[System.Serializable]
+public class ArmInfo {
+	public Transform shoulder;
+	public Transform elbow;
+	public Transform wrist;	
+	public Transform finger;	
+	
+//	[HideInInspector] public Transform[] armChain;
+//	[HideInInspector] 
+	 public Transform[] armChain;
+	
+	public Quaternion[] initRot;
+	public Vector3[] initPos;
+	
+}
+[System.Serializable]
+public class ArmController : MonoBehaviour {
+	
+	public ArmInfo[] arms;
+	
+	// Use this for initialization
+	void Awake () {
+		
+		
+		// Calculate data for ArmInfo objects
+		for (int arm=0; arm<arms.Length; arm++) {
+			// Calculate leg bone chains
+			if (arms[arm].finger==null) arms[arm].finger = arms[arm].wrist;
+			 arms[arm].armChain = GetTransformChain(arms[arm].shoulder, arms[arm].wrist);
+			
+			//For restoring initial rotations and positions
+			arms[arm].initRot = new Quaternion[arms[arm].armChain.Length];
+			arms[arm].initPos = new Vector3[arms[arm].armChain.Length];
+			
+			for(int i=0; i< arms[arm].armChain.Length;i++){
+				arms[arm].initRot[i] = arms[arm].armChain[i].rotation;
+				arms[arm].initPos[i] = arms[arm].armChain[i].position;
+			}
+		}
+	
+		
+	}
+	
+	//Reset to initial transforms
+	public void ResetTransforms()
+	{
+		
+		for(int arm = 0; arm < arms.Length; arm++){
+			for(int i= 0; i< arms[arm].armChain.Length;i++){
+				arms[arm].armChain[i].rotation = arms[arm].initRot[i];			
+				arms[arm].armChain[i].position = arms[arm].initPos[i];
+			}
+		}
+		
+	}
+	
+	public Transform[] GetTransformChain(Transform upper, Transform lower) {
+		Transform t = lower;
+		int chainLength = 1;
+		while (t != upper) {
+			t = t.parent;
+			chainLength++;
+		}
+		Transform[] chain = new Transform[chainLength];
+		t = lower;
+		for (int j=0; j<chainLength; j++) {
+			chain[chainLength-1-j] = t;
+			t = t.parent;
+		}
+		return chain;
+	}
+}

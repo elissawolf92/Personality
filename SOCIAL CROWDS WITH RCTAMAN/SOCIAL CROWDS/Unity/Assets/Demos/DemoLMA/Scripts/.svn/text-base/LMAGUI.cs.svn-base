@@ -1,0 +1,465 @@
+using UnityEngine;
+using System.Collections;
+using System.IO;
+
+public class LMAGUI : MonoBehaviour {
+
+    static float space = 0f, weight = 0f, time = 0f, flow = 0f;  //[-1 1]
+	static float verArm = 0f , horArm = 0f , sagArm = 0f; //[-1 1]
+	static float verTorso =  0f, horTorso = 0f, sagTorso = 0f ;
+	float effortMin = -1.0f;
+	float effortMax = 1.0f;	
+	float shapeMin = -1.0f;
+	float shapeMax = 1.0f;
+    static string[] persStr = { "Open-", "Open+", "Conscientious-", "Conscientious+", "Extrovert-", "Extrovert+", "Agreeable-", "Agreeable+", "Neurotic-", "Neurotic+" };
+    int persInd = 0;    
+    int animInd = 0;
+
+      static  Vector2 scrollPosition;
+    
+    
+    public string info = "waiting...";
+
+    void Start(){
+        ResetTransforms();
+        space = weight = time = flow = 0f;	
+	    horArm = verArm = sagArm = 0f;	
+        horTorso = verTorso = sagTorso = 0f;	
+        persInd = 0;   
+        
+      
+    }
+  
+    void Update(){
+        if (Input.GetKeyDown("left"))
+            persInd--;
+        else if (Input.GetKeyDown("right"))
+            persInd++;
+        else if (Input.GetKeyDown("up") || Input.GetKeyDown("down") ) {
+            animInd++;
+            animInd = animInd % 2;            
+            SwitchAnim();
+        }
+      
+
+        if (persInd < 0)
+            persInd = 0;
+        else if (persInd > 9)
+            persInd = 9;
+
+    }
+	
+
+	void OnGUI () {
+
+                
+        GUIStyle style = new GUIStyle();
+
+        
+        //style.fontSize = 20;
+        //style.normal.textColor = Color.black;              
+        //GUILayout.Label ("Info:  " + info);
+        
+        
+
+        //GUILayout.BeginArea (new Rect (0, 0, Screen.width*0.2f, Screen.height*0.9f));
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition,  GUILayout.Width(200), GUILayout.Height(Screen.height*0.98f));
+        
+        
+         /*
+        GUI.color = Color.white;  
+        if(GUILayout.Button("Main Menu")){
+            Application.LoadLevel("UserMenu");
+        }
+        */
+        
+        style.fontSize = 22;
+        style.normal.textColor = Color.black;      
+        GUILayout.Label ("User ID:  " + UserInfo.userId, style);
+        GUI.color = Color.white;
+        
+        /*if(GUILayout.Button("New User")){
+             AssignUserId();                   
+        }
+        */
+        style.fontSize = 18;
+        style.normal.textColor = Color.red;      
+        
+        GUILayout.Label (GetAnimName() + " animation", style);
+        GUILayout.Label (persStr[persInd], style);
+
+        GUI.color = Color.white;
+
+        GUILayout.Space (10);
+        style.fontSize = 15;
+        style.normal.textColor = Color.black;
+        GUILayout.Label ("Effort", style);
+        GUI.color = Color.grey;
+        //Space        
+        GUILayout.BeginHorizontal ();	    
+	    GUILayout.Label("");
+	    GUILayout.Label("Indirect");
+	    GUILayout.Label("Direct");
+	    GUILayout.EndHorizontal ();            	    
+        space = GUILayout.HorizontalSlider(space,effortMin, effortMax);      
+        
+
+        //Weight
+        GUILayout.BeginHorizontal ();	    
+	    GUILayout.Label("");
+	    GUILayout.Label("Light");
+	    GUILayout.Label("Strong");
+	    GUILayout.EndHorizontal ();            	    
+        weight = GUILayout.HorizontalSlider(weight,effortMin, effortMax);
+
+        //Time
+        GUILayout.BeginHorizontal ();	    
+	    GUILayout.Label("");
+	    GUILayout.Label("Sustained");
+	    GUILayout.Label("Sudden");
+	    GUILayout.EndHorizontal ();            	    
+        time = GUILayout.HorizontalSlider(time,effortMin, effortMax);
+
+        //Flow
+        GUILayout.BeginHorizontal ();	    
+	    GUILayout.Label("");
+	    GUILayout.Label("Free");
+	    GUILayout.Label("Bound");
+	    GUILayout.EndHorizontal ();            	    
+        flow = GUILayout.HorizontalSlider(flow,effortMin, effortMax);
+
+        GUILayout.Space (10);
+         GUI.color = Color.white;
+        if(GUILayout.Button ( "Reset Effort")) {
+            space = weight = time = flow = 0f;				
+		    ResetTransforms();			
+        }
+
+      GUILayout.Space (10);
+
+        style.fontSize = 15;
+        style.normal.textColor = Color.black;
+        GUILayout.Label ("Arm Shape", style);
+        GUI.color = Color.grey;
+        
+        GUILayout.Label("Horizontal");
+        horArm = GUILayout.HorizontalSlider (horArm, shapeMin, shapeMax);        
+        GUILayout.Label("Vertical");
+		verArm = GUILayout.HorizontalSlider ( verArm, shapeMin, shapeMax);
+        GUILayout.Label("Sagittal");
+		sagArm = GUILayout.HorizontalSlider (sagArm, shapeMin, shapeMax);
+        
+        GUILayout.Space (10);
+        GUI.color = Color.white; 
+        if(GUILayout.Button ( "Reset Arm Shape")) {
+            horArm = verArm = sagArm = 0f;				
+		    		
+        }
+
+         GUILayout.Space (10);
+        style.fontSize = 15;
+        style.normal.textColor = Color.black;
+        GUILayout.Label ("Torso Shape", style);
+		GUI.color = Color.grey;        
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label("");        
+		GUILayout.Label("Enclosing");
+		GUILayout.Label("Spreading");		
+		GUILayout.EndHorizontal ();
+		horTorso = GUILayout.HorizontalSlider (horTorso, shapeMin, shapeMax);
+		        
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Sinking");
+		GUILayout.Label("Rising");		
+		GUILayout.EndHorizontal ();
+		verTorso = GUILayout.HorizontalSlider (verTorso, shapeMin, shapeMax);
+		        
+		GUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Retreating");
+		GUILayout.Label("Advancing");		
+		GUILayout.EndHorizontal ();
+		sagTorso = GUILayout.HorizontalSlider (sagTorso, shapeMin, shapeMax);
+		
+        GUILayout.Space (10);
+        GUI.color = Color.white;
+		if(GUILayout.Button("Reset Torso Shape")){
+			horTorso = verTorso = sagTorso = 0f;	
+		}
+
+        UpdateAgentParams();
+
+         GUILayout.Space (20);
+        GUI.color = Color.white;  
+        if(GUILayout.Button("Submit Trait")){
+           // RecordValues();
+             this.StartCoroutine(PostValues());
+        }
+
+       
+         //   persInd++;
+           // if (persInd > 9)
+             //   persInd = 9;
+
+          GUILayout.EndScrollView();
+     
+          
+	}
+
+    void SwitchAnim() {
+        GameObject agent = GameObject.Find("AgentPrefab");	
+	    if(agent.GetComponent<ArmAnimator>().armC == null  ||agent.GetComponent<TorsoAnimator>().torsoC == null) {
+			Debug.Log ("Controller not assigned");
+			return;
+		}
+
+        if(animInd == 0){
+            
+            agent.animation.Stop();
+            agent.animation.Play("pointingNeutral");
+            agent.animation.clip = agent.animation["pointingNeutral"].clip;            
+            agent.GetComponent<AnimationInfo>().Reset();
+            agent.GetComponent<ArmAnimator>().Reset();
+            
+        }
+        else {
+            agent.animation.Stop();                        
+            agent.animation.Play("knockingNeutral");
+            agent.animation.clip = agent.animation["knockingNeutral"].clip;            
+            agent.GetComponent<AnimationInfo>().Reset();
+            agent.GetComponent<ArmAnimator>().Reset();
+             
+
+        }
+
+        persInd = 0;
+        
+
+    }
+    string GetAnimName() {
+       GameObject agent = GameObject.Find("AgentPrefab");	
+	    if(agent.GetComponent<ArmAnimator>().armC == null  ||agent.GetComponent<TorsoAnimator>().torsoC == null) {
+			Debug.Log ("Controller not assigned");
+			return "Pointing";
+		}
+        if (agent.GetComponent<AnimationInfo>().animName.Contains("point") || agent.GetComponent<AnimationInfo>().animName.Contains("Point"))
+            return "Pointing";
+        else if (agent.GetComponent<AnimationInfo>().animName.Contains("knock") || agent.GetComponent<AnimationInfo>().animName.Contains("Knock"))
+            return "Knocking";
+        else
+            return "";
+
+    }
+    void ResetTransforms() {
+		GameObject agent = GameObject.Find("AgentPrefab");	
+		
+		if(agent.GetComponent<ArmAnimator>().armC == null  ||agent.GetComponent<TorsoAnimator>().torsoC == null) {
+			Debug.Log ("Controller not assigned");
+			return;
+		}
+			
+			
+		agent.GetComponent<ArmAnimator>().armC.ResetTransforms();
+		agent.GetComponent<TorsoAnimator>().torsoC.ResetTransforms();
+	}
+	
+	void UpdateAgentParams() {
+		GameObject agent = GameObject.Find("AgentPrefab");
+		if(agent == null){		
+			Debug.Log("AgentPrefab not found");
+			return;
+		}
+
+
+		//Update arm Shape params
+        //Left arm
+		agent.GetComponent<ArmAnimator>().hor = horArm;
+		agent.GetComponent<ArmAnimator>().ver = verArm;
+		agent.GetComponent<ArmAnimator>().sag = sagArm;		
+		agent.GetComponent<ArmAnimator>().UpdateKeypoints(0); //Update keypoints
+		//RightArm 
+        //Only horizontal motion is the opposite for each arm
+		agent.GetComponent<ArmAnimator>().hor = -horArm;
+		agent.GetComponent<ArmAnimator>().UpdateKeypoints(1); //Update keypoints
+		
+		
+		
+		//Update arm Effort params
+		//Space
+		if(space > 0){
+			agent.GetComponent<ArmAnimator>().dir = space;
+			agent.GetComponent<ArmAnimator>().ind = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().ind = -space;
+			agent.GetComponent<ArmAnimator>().dir = 0f;
+		}
+		//Weight
+		if(weight > 0){
+			agent.GetComponent<ArmAnimator>().str = weight;
+			agent.GetComponent<ArmAnimator>().lgt = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().lgt = -weight;
+			agent.GetComponent<ArmAnimator>().str = 0f;
+		}
+		//Time				
+		if(time > 0){
+			agent.GetComponent<ArmAnimator>().sud = time;
+			agent.GetComponent<ArmAnimator>().sus = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().sus = -time;
+			agent.GetComponent<ArmAnimator>().sud = 0f;
+		}
+		
+		//Flow
+		if(flow > 0){
+			agent.GetComponent<ArmAnimator>().bnd = flow;
+			agent.GetComponent<ArmAnimator>().fre = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().fre = -flow	;
+			agent.GetComponent<ArmAnimator>().bnd = 0;
+		}
+		
+		
+		//Update effort parameters
+		agent.GetComponent<ArmAnimator>().Effort2LowLevel();
+		
+		
+		//Update torso shape parameters
+        bool changed = false;
+		if(horTorso > 0){
+            if (agent.GetComponent<TorsoAnimator>().spr != -horTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().spr = -horTorso;
+			agent.GetComponent<TorsoAnimator>().enc = 0f;
+		}
+		else{
+            if (agent.GetComponent<TorsoAnimator>().enc != horTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().enc = horTorso;
+			agent.GetComponent<TorsoAnimator>().spr = 0f;
+		}
+		
+		if(verTorso > 0){
+            if (agent.GetComponent<TorsoAnimator>().ris != -verTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().ris = -verTorso;
+			agent.GetComponent<TorsoAnimator>().sin = 0f;
+		}
+		else{
+             if (agent.GetComponent<TorsoAnimator>().sin != verTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().sin = verTorso;
+			agent.GetComponent<TorsoAnimator>().ris = 0f;
+		}
+		
+		if(sagTorso > 0){
+             if (agent.GetComponent<TorsoAnimator>().adv != -sagTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().adv = -sagTorso;
+			agent.GetComponent<TorsoAnimator>().ret = 0f;
+		}
+		else{
+            if (agent.GetComponent<TorsoAnimator>().ret != sagTorso)
+                changed = true;
+			agent.GetComponent<TorsoAnimator>().ret = sagTorso;
+			agent.GetComponent<TorsoAnimator>().adv = 0f;
+		}
+
+     
+        //if (changed) {            
+         //   agent.GetComponent<ArmAnimator>().UpdateKeyPoints();
+        //}
+				
+	}
+
+
+    // remember to use StartCoroutine when calling this function!
+    IEnumerator PostValues() {
+       string resultURL = "https://fling.seas.upenn.edu/~fundad/cgi-bin/putData.php";
+           
+    
+     // Create a form object for sending high score data to the server
+        var form = new WWWForm();        
+        form.AddField( "userId", UserInfo.userId);        
+        form.AddField( "animName", GetAnimName());        
+        form.AddField( "persName", persStr[persInd] );
+        form.AddField( "space", space.ToString());
+        form.AddField( "weight", weight.ToString());
+        form.AddField( "time", time.ToString());
+        form.AddField( "flow", flow.ToString());
+        form.AddField( "horArm", horArm.ToString());
+        form.AddField( "verArm", verArm.ToString());
+        form.AddField( "sagArm", sagArm.ToString());
+        form.AddField( "horTorso", horTorso.ToString());
+        form.AddField( "verTorso", verTorso.ToString());
+        form.AddField( "sagTorso", sagTorso.ToString());
+
+        // Create a download object
+        var download = new WWW( resultURL, form );
+
+        // Wait until the download is done
+        yield return download;
+
+        if(download.error!= null) {
+            info = download.error;
+            print( "Error: " + download.error );                         
+        } else {
+            info = "success " + download.text;                        
+        }
+    }
+
+
+
+
+    void RecordValues(){
+        string fileName = UserInfo.fileName;
+        //FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);   
+        if(!File.Exists(fileName)){
+            StreamWriter sw = new StreamWriter(fileName);
+            if(UserInfo.isMale)
+                sw.WriteLine("Male\t"+ UserInfo.age);
+            else
+                sw.WriteLine("Female\t"+ UserInfo.age);
+
+            sw.WriteLine("Pointing");
+            sw.WriteLine("Personality\tSpace\tWeight\tTime\tFlow\tHorArm\tVerArm\tSagArm\tHorTorso\tVerTorso\tSagTorso");
+            for (int i = 0; i < 10; i++)
+                sw.WriteLine(persStr[i] + "\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000");
+
+            sw.WriteLine("Knocking");
+            sw.WriteLine("Personality\tSpace\tWeight\tTime\tFlow\tHorArm\tVerArm\tSagArm\tHorTorso\tVerTorso\tSagTorso");
+            for (int i = 0; i < 10; i++)
+                sw.WriteLine(persStr[i] + "\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000\t0.0000");
+
+            sw.Close();
+        }
+        
+
+        
+        string[] content = File.ReadAllLines(fileName);
+        if(UserInfo.isMale)
+                content[0] = string.Format("Male\t{0}", UserInfo.age);
+            else
+                content[0] = string.Format("Female\t{0}", UserInfo.age);
+        if(GetAnimName().Equals("Pointing")) {
+            content[persInd + 3] = string.Format(persStr[persInd] + "\t{0:0.0000}\t{1:0.0000}\t{2:0.0000}\t{3:0.0000}\t{4:0.0000}\t{5:0.0000}\t{6:0.0000}\t{7:0.0000}\t{8:0.0000}\t{9:0.0000}",
+                                    space, weight, time, flow, horArm, verArm, sagArm, horTorso, verTorso, sagTorso);
+        }
+        else {
+               content[12+ persInd + 3] = string.Format(persStr[persInd] + "\t{0:0.0000}\t{1:0.0000}\t{2:0.0000}\t{3:0.0000}\t{4:0.0000}\t{5:0.0000}\t{6:0.0000}\t{7:0.0000}\t{8:0.0000}\t{9:0.0000}",
+                                    space, weight, time, flow, horArm, verArm, sagArm, horTorso, verTorso, sagTorso);
+        }
+
+        using(StreamWriter sw = new StreamWriter(fileName)) {
+            for (int i = 0; i < content.Length; i++)
+                sw.WriteLine(content[i]);
+        }
+      
+    }
+    }		
+

@@ -1,0 +1,516 @@
+using UnityEngine;
+using System.Collections;
+//using UnityEditor;
+
+
+[RequireComponent(typeof(ArmController))]
+public class ArmAnimator : MonoBehaviour {
+	
+	public ArmController armC;
+	//public GameObject trajectory;
+	private Vector3 targetL, targetR; //current target
+	
+	private ArmInfo[] arms;
+	private AnimationInfo animInfo;
+	
+	
+	
+	public const float abratio = 2.5f;//1.1f; //shoulde be >1
+	public const float maxdTheta = Mathf.PI/6.0f; //Mathf.PI/20.0f;  //values in Liwei Zhao's thesis
+	
+	//Shape parameters
+	public float hor = 0.02f; //[-1 1]
+	public float ver = 0.03f;
+	public float sag = 0.01f; 
+	
+	//Effort parameters
+	public float ind = 0f;	
+	public float sus = 0f;
+	public float sud = 0f;
+	public float lgt = 0f;
+	public float str = 0f;
+	public float fre = 0f;
+	public float bnd = 0f;
+	public float dir = 0f;
+	
+	//Low-level parameters
+	public float wbmag; //Wrist bend multiplier
+	public float wxmag; //Wrist extension magnitude
+	public float Tval;  //Tension	
+	public float dmag;  //Displacement magnitude
+	public float etmag; //Elbow twist magnitude
+	public float wtmag; //
+	public float efmag; //Elbow frequency magnitude
+	public float wfmag; //
+	public float ti; 	 //Inflection point where the movement changes from accelerating to decelerating
+	public float v0; 	 //Start velocity
+	public float v1; 	 //End velocity
+	public float texp;  //Default time exponent
+	
+	float vel; //Velocity function
+	IKSolver ikSolver;
+	
+	static float tprev;
+	
+	float tp {//Normalized time between keypoints	
+		get {
+            if (animInfo.curr < animInfo.prev)
+                return 0;
+            return (float)(animInfo.curr - animInfo.prev)/ (animInfo.next - animInfo.prev);
+		}
+
+	}
+	void Start () {
+		armC = GetComponent(typeof(ArmController)) as ArmController;
+		arms = armC.arms;
+		//animInfo = trajectory.GetComponent(typeof(AnimationInfo)) as AnimationInfo;
+		animInfo = GetComponent(typeof(AnimationInfo)) as AnimationInfo;
+    	animInfo.InitKeyPoints(arms);
+		Effort2LowLevel(); //initialize low level parameters
+		//keyInfo = GetComponent (typeof(KeyFrameExtraction)) as KeyFrameExtraction;		
+	}
+
+    public void Reset(){
+        armC = GetComponent(typeof(ArmController)) as ArmController;
+		arms = armC.arms;
+		//animInfo = trajectory.GetComponent(typeof(AnimationInfo)) as AnimationInfo;
+		animInfo = GetComponent(typeof(AnimationInfo)) as AnimationInfo;
+    	animInfo.InitKeyPoints(arms);
+		Effort2LowLevel(); //initialize low level parameters
+		//keyInfo = GetComponent (typeof(KeyFrameExtraction)) as KeyFrameExtraction;		
+
+    }
+	
+	
+    public void UpdateKeyPoints() {
+        animInfo.InitKeyPoints(arms);
+    }
+	void LateUpdate () {
+		
+		float s;
+		int arm ; //arm index
+		Vector3 target;
+
+
+		//animInfo.ToScreen(animInfo.curr+ " " + animInfo.prevKeyInd + " " + animInfo.nextKeyInd);
+				
+		
+		/*
+		if(animInfo.curr == 0) //restarting the animation loop
+		{
+			armC.ResetTransforms();
+			
+		}
+		*/
+		s = TimingControl();
+		
+		//s = tp; //silinecek yanlis
+		
+		//map s into the whole spline
+
+        
+		float t = (s + animInfo.prevKeyInd) / (animInfo.keys.Length - 1);
+		
+		if( animInfo.curr > 0 && animInfo.curr == animInfo.prev)
+			t = (tprev + t)/2.0f;
+					
+		tprev = t;
+		
+		
+		//update both arms
+		for(arm = 0; arm < 2; arm++) {
+            		
+            
+			target = animInfo.ComputeInterpolatedTarget(t, Tval,arm);					
+			if(arm ==0)
+				targetL = target;
+			else
+				targetR = target;
+			
+			SolveIK(arm, target);	
+			
+            //Update elbow swivel rotations
+			//UpdateSwivelAngle(t, Tval, arm); 
+		
+			
+			Flourish(arm, tp);
+	
+			
+		}
+		
+	}
+	
+	
+	
+	public void UpdateKeypoints(int arm) {
+		if(animInfo == null)
+			return;
+		
+		
+		for(int i = 0; i < animInfo.keys.Length; i++) {
+				//initialize to original positions
+				animInfo.keys[i].eePos[arm] = animInfo.keys[i].eePosOrig[arm];
+				//update according to arm shape			
+				animInfo.keys[i].eePos[arm] = ArmShape(arm, animInfo.keys[i].eePos[arm]);
+                
+		}
+
+        animInfo.InitInterpolators();
+		
+	}
+	
+	
+	/// <summary>
+	/// Update Arm Shape
+	/// target: Keypoint to modify
+	/// Returns modified keypoint
+	/// </summary>
+	Vector3  ArmShape(int arm, Vector3 target){
+		float theta, a, rotTheta = 0f;		
+		Vector3 targetLocal;
+		
+		
+		//Transform target from world space to local EMOTE coordinates
+	//	targetLocal = transform.InverseTransformPoint(target);	
+		//Translate to world
+		targetLocal = target - arms[arm].shoulder.position;		
+		
+		//Rotate to emote	
+		targetLocal = new Vector3(targetLocal.y, -targetLocal.z, targetLocal.x);
+		
+		//hor		
+		
+		theta  = Mathf.Atan(abratio* targetLocal.y / -targetLocal.z);	
+		
+		if(-targetLocal.z < 0)
+			theta += Mathf.PI;
+		if(theta < 0)
+			theta += 2* Mathf.PI;
+		
+		a = -targetLocal.z / Mathf.Cos(theta);
+		
+		
+		if(hor == 0f){
+			// WRONG! rotTheta = 0f;
+			rotTheta = theta;
+		}
+		else if(hor < 0f && 0 < theta && theta <= Mathf.PI){			
+			rotTheta = Mathf.Min(theta - hor * maxdTheta, Mathf.PI);
+		}
+		else if(hor < 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI){			
+			rotTheta = Mathf.Max(theta + hor * maxdTheta, Mathf.PI);
+		}
+		else if(hor > 0f && 0 < theta && theta <= Mathf.PI){		
+			rotTheta = Mathf.Max(theta - hor * maxdTheta, 0);
+		}
+		else if(hor > 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI){					
+			rotTheta = Mathf.Min(theta + hor * maxdTheta,2*Mathf.PI );
+		}
+		
+		
+		
+		float hdz, hdy;
+		
+		hdz = -(a * Mathf.Cos(rotTheta))-  targetLocal.z;
+		hdy = (a * Mathf.Sin(rotTheta)/abratio) -  targetLocal.y;
+
+		
+		//sag
+		theta  = Mathf.Atan(abratio* targetLocal.x / -targetLocal.y);
+		
+		
+		if(targetLocal.y < 0)
+			theta += Mathf.PI;
+		if(theta < 0)
+			theta += 2* Mathf.PI;
+		
+		
+		a = targetLocal.y / Mathf.Cos(theta);
+		
+		if(sag == 0f){
+			// WRONG! rotTheta = 0f;
+			rotTheta = theta;
+		}
+		else if(sag < 0f && 0 < theta && theta <= Mathf.PI){			
+			rotTheta = Mathf.Min(theta - sag * maxdTheta, Mathf.PI);
+		}
+		else if(sag < 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI){			
+			rotTheta = Mathf.Max(theta + sag * maxdTheta, Mathf.PI);
+		}
+		else if(sag > 0f && 0 < theta && theta <= Mathf.PI){		
+			rotTheta = Mathf.Max(theta - sag * maxdTheta, 0);
+		}
+		else if(sag > 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI){					
+			rotTheta = Mathf.Min(theta + sag * maxdTheta,2*Mathf.PI );
+		}
+		
+		float sdx, sdy;
+		
+
+		sdx = -(a * Mathf.Sin(rotTheta)/abratio)-  targetLocal.x;
+		sdy = (a * Mathf.Cos(rotTheta)) -  targetLocal.y;
+		
+		//ver
+		theta  = Mathf.Atan(-abratio* targetLocal.z/ -targetLocal.x);
+		if(-targetLocal.x < 0)
+			theta += Mathf.PI;
+		if(theta < 0)
+			theta += 2* Mathf.PI;
+		
+		a = -targetLocal.x / Mathf.Cos(theta);
+		
+		
+		if(ver == 0f){
+			// WRONG! rotTheta = 0f;
+			rotTheta = theta;
+		}
+		else if(ver < 0f && 0 < theta && theta <= Mathf.PI) {			
+			rotTheta = Mathf.Min(theta - ver * maxdTheta, Mathf.PI);
+		}
+		else if(ver < 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI) {			
+			rotTheta = Mathf.Max(theta + ver * maxdTheta, Mathf.PI);
+		}
+		else if(ver > 0f && 0 < theta && theta <= Mathf.PI) {		
+			rotTheta = Mathf.Max(theta - ver * maxdTheta, 0);
+		}
+		else if(ver > 0f &&   Mathf.PI< theta && theta <= 2* Mathf.PI) {					
+			rotTheta = Mathf.Min(theta + ver * maxdTheta,2*Mathf.PI );
+		}
+		
+		
+		float vdx, vdz;
+		
+		vdx = -(a * Mathf.Cos(rotTheta))-  targetLocal.x;
+		vdz = -(a * Mathf.Sin(rotTheta)/abratio)-  targetLocal.z;
+		
+		if(Mathf.Abs(sdx) < 0.0001f) sdx = 0f;
+		if(Mathf.Abs(sdy) < 0.0001f) sdy = 0f;
+		if(Mathf.Abs(vdx) < 0.0001f) vdx = 0f;
+		if(Mathf.Abs(vdz) < 0.0001f) vdz = 0f;
+		if(Mathf.Abs(hdy) < 0.0001f) hdy = 0f;
+		if(Mathf.Abs(hdz) < 0.0001f) hdz = 0f;
+		
+		
+		//Update keypoint position
+		
+		targetLocal.x += sdx + vdx;
+		targetLocal.y += sdy + hdy;
+		targetLocal.z += hdz + vdz;
+	
+		
+		
+		//Transform target from local EMOTE space to world coordinates
+		
+	//	target = transform.TransformPoint(targetLocal);
+		
+		//Convert back to unity coordinate system
+		targetLocal = new Vector3(targetLocal.z, targetLocal.x, -targetLocal.y);
+		//Translate back to world coordinate
+		target = targetLocal + arms[arm].shoulder.position;	
+		
+		
+		return target;
+		
+	}
+	
+    //void UpdateSwivelAngle(float t, float tVal, int arm) {
+		
+    //    float theta;
+		
+    //    Vector3 u; //Local x axis
+    //    Vector3 a = new Vector3(1,0,0);
+    //    Vector3 de = animInfo.ComputeInterpolatedElbowPos(t, tVal, arm); //desired elbow position		
+    //    Vector3 n = arms[arm].wrist.position - arms[arm].shoulder.position;
+    //    Vector3 c =  HandleUtility.ProjectPointLine (de, arms[arm].shoulder.position, arms[arm].wrist.position);
+    //    Vector3 pcap = de - c;
+    //    Vector3 ptilda = pcap - Vector3.Dot (pcap, n) * n; 
+
+    //    //Projection of a axis onto circle		
+    //    u = Vector3.Normalize (a - Vector3.Dot (a, n) * n);
+
+    //    //Swivel angle that minimizes the desired position of elbow
+    //    theta = Mathf.Atan2(Vector3.Cross(pcap, u).magnitude , Vector3.Dot (ptilda,u));
+		
+		
+    //    arms[arm].elbow.RotateAround(n,  Mathf.Rad2Deg * theta);
+			
+    //}
+	
+	public void Effort2LowLevel() {
+		
+						
+		Tval = (-1f * ind + Mathf.Min( ind , fre)) + dir;	
+						
+	//	wbmag = Mathf.Max(0.6f * ind, Mathf.Max(0.5f * lgt, 1.0f * fre) ); //In Chi's thesis
+		wbmag = Mathf.Max(0.6f * ind, Mathf.Max(0.5f * lgt, 0.4f * fre) ); //In emote paper
+					
+		//wxmag = -0.3f * lgt + (0.2f *  fre - 0.8f * Mathf.Min(str,  fre )); //In Chi's thesis
+		wxmag = -0.3f * lgt + (0.3f *  fre - 0.9f * Mathf.Min(str,  fre )); //In emote paper
+		
+		dmag = etmag = wtmag = 0.4f  *  ind;
+		
+		efmag = wfmag = 2f *ind;
+		
+		ti  = 0.5f + 0.4f * Mathf.Max(str, sud) - 0.4f * Mathf.Max(lgt, sus) + 0.8f * Mathf.Min(bnd, lgt); //both
+		
+		
+		v0 = 0.1f *  str - Mathf.Max(0.06f * Mathf.Min ( sus ,  str ),0.1f * Mathf.Min (  fre ,  str  ));
+		
+		v1 = Mathf.Max(0.03f * Mathf.Max( lgt ,  sus ), 0.2f * fre - 0.1f * Mathf.Min( ind  ,  fre  ));
+		
+		texp = 1f + 2f* sud + (0.2f * Mathf.Min(str, sud) - 0.6f* Mathf.Min(fre, sud	)) - 0.2f * Mathf.Max(str, 0.5f* Mathf.Min(dir, sus)) - 0.4f * fre - 0.1f * Mathf.Min(ind, fre); //chi
+		//texp = 1f + 2f* sud + (0.2f * Mathf.Min(str, sud) - 0.1f* Mathf.Min(fre, sud)) - 0.2f * Mathf.Max(str, Mathf.Min(dir, sus)) - 0.4f * fre - 0.5f * Mathf.Min(ind, fre); //emote
+
+        
+	}
+	
+	float TimingControl() {
+		
+		float tpp = Mathf.Pow(tp, texp);
+		float tpp2 = tpp * tpp;
+		const float t0 = 0.01f; //EMOTE values
+		const float t1 = 0.99f; //EMOTE values
+		const float t02 = t0 * t0;
+		const float t12 = t1 * t1;
+		float ti2 = ti * ti;		
+		float s = 0f;
+		float vi = (2f + 2f * v1 * t1  - v1  + v0 * ti - v1 * ti)/ (t1 - t0);
+		float area1, area2, area3, area4;
+		
+		area1 =  -0.5f * v0 * t0; 
+		area2 = area1 + (-0.5f * (v0 + vi) * ti2 + (v0 * ti + t0 * vi) * ti - ( -0.5f * (v0 + vi) * t02 + (v0 * ti + t0 * vi) * t0 )) / (t0 - ti);
+		area3 = area2 + (-0.5f * (v1 + vi) * t12 + (v1 * ti + t1 * vi) * t1 - ( -0.5f * (v1 + vi) * ti2 + (v1 * ti + t1 * vi) * ti )) / (t1 - ti);
+		area4 = area3 + 0.5f * v1 * (t1 - 1f);
+
+        
+		//Compute s
+		if(tpp >=0f && tpp < t0) {
+			vel = (-v0 / t0) * tpp;
+			s = 0.5f * (-v0 / t0) * tpp2 ;
+			//s = 0.5f * v0 * t0; //integral of vel 
+			
+		}
+		else if(tpp >=t0 && tpp < ti) {
+			vel = (-(v0 + vi) * tpp + v0 * ti + t0 * vi) / (t0 - ti);
+			s =  area1 + (-(v0 + vi) * tpp2 * 0.5f + (v0 * ti + t0 * vi) * tpp - (-(v0 + vi) * t02 * 0.5f + (v0 * ti + t0 * vi) * t0)) / (t0 - ti);
+            //Debug.Log("1 " + s + " " + Time.time);
+			//s = (ti / (t0 - ti) ) * ( 0.5f * ti * -(v0 + ti)   + v0 * ti + t0 * ti) -  (t0 / (t0 - ti) ) * ( 0.5f * t0 * -(v0 + ti)   + v0 * ti + t0 * ti);
+			
+		}
+		else if(tpp >=ti && tpp < t1) {
+			vel = (-(v1 + vi) * tpp + v1 * ti + t1 * vi) / (t1 - ti);
+			s =  area2 + (-(v1 + vi) * tpp2 * 0.5f + (v1 * ti + t1 * vi) * tpp - (-(v1 + vi) * ti2 * 0.5f + (v1 * ti + t1 * vi) * ti)) / (t1 - ti);
+		//	Debug.Log("2 " + s+ " " + Time.time);
+			//s = (t1 / (t1 - ti) ) * ( 0.5f * t1 * -(v0 + ti)   + v1 * ti + t1 * ti) -  (ti / (t1 - ti) ) * ( 0.5f * ti * -(v0 + ti)   + v1 * ti + t1 * ti);
+			
+		}
+		else if(tpp >=t1 && tpp <= 1f)  {
+			vel = (-v1 * tpp + v1) / (t1 - 1f);
+			s =  area3 + (-v1 * tpp2  * 0.5f + v1 * tpp - (-v1 * t12  * 0.5f + v1 * t1))/ (t1 - 1f);
+          //  Debug.Log("3 " + s+ " " + Time.time);
+			//s = (1f/ (t1 -1f)) * ( 0.5f * v1  - v1 * t1 * ( -0.5f * t1 + 1));
+			
+		}
+		else {
+			vel = s = 0f;			
+		}
+
+        
+		if(s < 0.0001f)
+			s = 0f;
+        if (s > 1.0f)
+            s = 1.0f;
+      //  Debug.Log(tp + " " + tpp + " " + Time.time);
+      //  Debug.Log(s + " " + animInfo.curr+  " " + vi + " " + Time.time);
+		return s;
+		
+		
+		
+	}
+	//Tn = normalized time between keypoints 
+	void Flourish(int arm, float tn) {		
+		ArmInfo armInfo = arms[arm];
+		float wrist_bend;
+		float wrist_twist;
+		float elbow_twist;
+		float elbow_angle = 0f;
+		
+		
+				
+		//rotate wrist around the x-axis in local coordinate system	(x-axis in EMOTE coordinate system)	
+		if(wbmag ==0)
+			wrist_bend = 0.6f;
+		else
+			wrist_bend = wbmag * (Mathf.Sin( 2f * Mathf.PI * (tn +0.75f)) + 1f - wxmag);
+
+        if (arm == 1)
+            wrist_bend *= -1;
+		
+		//rotate of wrist around the y-axis	(z-axis in EMOTE coordinate system)			
+		wrist_twist = wtmag * Mathf.Sin( wfmag * Mathf.PI * tn);		
+		
+	
+        if (arm == 1)
+            wrist_twist *= -1;
+		
+		//rot = Quaternion.Euler(Mathf.Rad2Deg * wrist_bend ,Mathf.Rad2Deg * wrist_twist, arms[arm].wrist.transform.localEulerAngles.z);
+		/*kullanmiyor	rot = Quaternion.Euler(arms[arm].wrist.transform.localEulerAngles.x ,Mathf.Rad2Deg * wrist_twist, arms[arm].wrist.transform.localEulerAngles.z);
+			//rot = Quaternion.Euler(Mathf.Rad2Deg * wrist_bend ,arms[arm].wrist.transform.localEulerAngles.y, arms[arm].wrist.transform.localEulerAngles.z);
+		*/		
+		
+		//arms[arm].wrist.transform.localRotation = rot;
+		
+		arms[arm].wrist.transform.Rotate(Mathf.Rad2Deg * wrist_bend ,0, 0);
+		arms[arm].wrist.transform.Rotate(0, Mathf.Rad2Deg * wrist_twist, 0);
+		
+		//rotate elbow  around the y-axis	(z-axis in EMOTE coordinate system)	
+		
+		elbow_twist = etmag * Mathf.Sin( efmag * Mathf.PI * tn);		
+	
+         if (arm == 1)
+            elbow_twist *= -1;
+		
+	//	rot = Quaternion.Euler(arms[arm].elbow.transform.localEulerAngles.x ,Mathf.Rad2Deg * elbow_twist, arms[arm].elbow.transform.localEulerAngles.z);
+
+	
+		// Elbow displacement angle
+		
+		//elbow_angle = armInfo.elbow.transform.localEulerAngles.z * ( 1f + dmag * Mathf.Sin(2 * Mathf.PI * tn ));
+        elbow_angle = 1f + dmag * Mathf.Sin(2 * Mathf.PI * tn );
+
+ 
+
+        if (arm == 0 && elbow_twist < 0 || arm == 1 && elbow_twist > 0)
+            elbow_twist = 0f;
+                
+        arms[arm].elbow.transform.Rotate(0,Mathf.Rad2Deg * elbow_twist,0);
+
+        arms[arm].elbow.transform.Rotate(Mathf.Rad2Deg *elbow_angle,0,0);
+	}
+	
+	
+	/// Solve IK for the given arm
+	void SolveIK(int arm, Vector3 target) {
+		ArmInfo armInfo = arms[arm];
+		
+	
+		// Choose IK solver		
+		if(armInfo.armChain.Length == 3) 
+				ikSolver = new IKArm();
+		else
+				ikSolver = new IKSimple();
+		
+		//ikSolver = new IKSolverRestriction();
+		//TODO: Apply constraints for arm angles
+		// Solve the inverse kinematics
+		ikSolver.Solve(armInfo.armChain, target);
+	
+	}
+	
+	
+	void OnDrawGizmosSelected() {
+		  Gizmos.color = Color.yellow;
+   		 Gizmos.DrawSphere (targetL, 0.01f);
+		Gizmos.DrawSphere (targetR, 0.01f);
+	}
+}

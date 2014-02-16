@@ -1,0 +1,93 @@
+using UnityEngine;
+using System.Collections;
+
+[RequireComponent(typeof(TorsoController))]
+public class TorsoAnimator : MonoBehaviour {
+	
+	public TorsoController torsoC;
+	//Shape parameters
+	public float spr = 0f; 
+	public float enc = 0f;
+	public float ris = 0f;
+	public float sin = 0f;
+	public float adv = 0f;
+	public float ret = 0f;
+
+	float clavicleAngleL, clavicleAngleR;
+	float pelvisAngleL, pelvisAngleR;
+	float neckAngle;
+	float spineAngle, spine1Angle, spine2Angle;
+	
+	
+	
+	void Start() {
+		torsoC = GetComponent(typeof(TorsoController)) as TorsoController;
+		
+		clavicleAngleL = torsoC.torso.clavicleL.rotation.eulerAngles.y; //Spreading/enclosing around z in EMOTE
+		clavicleAngleR = torsoC.torso.clavicleR.rotation.eulerAngles.y; //Spreading/enclosing around z in EMOTE
+				
+		pelvisAngleL = torsoC.torso.pelvisL.rotation.eulerAngles.x ; //Spreading/enclosing around y in EMOTE
+		pelvisAngleL = torsoC.torso.pelvisR.rotation.eulerAngles.x ; //Spreading/enclosing around y in EMOTE
+		
+		spineAngle = torsoC.torso.spine.rotation.eulerAngles.x ;
+		spine1Angle = torsoC.torso.spine1.rotation.eulerAngles.x ;
+		//spine2Angle = torsoC.torso.spine2.rotation.eulerAngles.x ;
+		
+		neckAngle = torsoC.torso.neck.rotation.eulerAngles.x ;
+				
+	}
+
+	
+	public void LateUpdate() {
+		
+		UpdateClavicle();
+		
+		UpdatePelvis();
+		
+		UpdateSpine();
+	
+	}
+	
+	void UpdateClavicle() {
+					
+		//Compute angle around y axis
+		float caL = ris * torsoC.rising_clavicle_angle + sin * torsoC.sinking_clavicle_angle + spr * torsoC.spreading_clavicle_angle + enc * torsoC.enclosing_clavicle_angle;
+		float caR = ris * -torsoC.rising_clavicle_angle + sin * -torsoC.sinking_clavicle_angle + spr * -torsoC.spreading_clavicle_angle + enc * -torsoC.enclosing_clavicle_angle;
+		
+		
+		torsoC.torso.clavicleL.Rotate (0, caL, 0);
+		
+		torsoC.torso.clavicleR.Rotate (0, caR, 0);
+	}
+	
+	
+	void UpdateSpine() {
+		
+		float sa =  spr * torsoC.spreading_spine_angle + enc * torsoC.enclosing_spine_angle;
+		float sa1 =  spr * torsoC.spreading_spine1_angle + enc * torsoC.enclosing_spine1_angle;	
+		float na =  spr * torsoC.spreading_neck_angle + enc * torsoC.enclosing_neck_angle;
+		
+		torsoC.torso.spine.Rotate (0,sa,0); //something wrong with spine angle in rctaman-- supposed to rotate around x axis
+		torsoC.torso.spine1.Rotate (sa1,0,0);	
+		torsoC.torso.neck.Rotate (na,0,0);   
+        torsoC.torso.head.Rotate (na,0,0); //rotate with the neck		
+		
+		
+	}
+	
+	
+	void UpdatePelvis() {
+	
+		//Compute angle around y axis
+		float paL = spr * torsoC.spreading_pelvis_angle + enc * torsoC.enclosing_pelvis_angle + adv * torsoC.advancing_pelvis_angle + ret * torsoC.retreating_pelvis_angle ;
+		float paR = spr * torsoC.spreading_pelvis_angle + enc * torsoC.enclosing_pelvis_angle + adv * torsoC.advancing_pelvis_angle + ret * torsoC.retreating_pelvis_angle ;
+		
+		//Rotate
+		torsoC.torso.pelvisL.Rotate(paL, 0,0);
+		torsoC.torso.pelvisR.Rotate(paR,0,0);
+
+		
+	}
+	
+	
+}

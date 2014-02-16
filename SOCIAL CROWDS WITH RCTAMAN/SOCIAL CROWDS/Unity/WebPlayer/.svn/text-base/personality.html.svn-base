@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>Personality User Study</title>
+
+<script type="text/javascript" src="UnityObject.js"></script>
+<script type="text/javascript">
+<!--
+function GetUnity() {
+if (typeof unityObject != "undefined") {
+return unityObject.getObjectById("unityPlayer");
+}
+return null;
+}
+if (typeof unityObject != "undefined") {
+unityObject.embedUnity("unityPlayer", "WebPlayer.unity3d", 800, 800);
+}
+-->
+</script>
+<style type="text/css">
+<!--
+body {
+font-family: Helvetica, Verdana, Arial, sans-serif;
+background-color: white;
+color: black;
+text-align: center;
+}
+a:link, a:visited {
+color: #000;
+}
+a:active, a:hover {
+color: #666;
+}
+p.header {
+font-size: small;
+}
+p.header span {
+font-weight: bold;
+}
+p.footer {
+font-size: x-small;
+}
+div.content {
+margin: auto;
+width: 600px;
+}
+div.missing {
+margin: auto;
+position: relative;
+top: 50%;
+width: 193px;
+}
+div.missing a {
+height: 63px;
+position: relative;
+top: -31px;
+}
+div.missing img {
+border-width: 0px;
+}
+div#unityPlayer {
+cursor: default;
+height: 450px;
+width: 600px;
+}
+-->
+</style>
+</head>
+
+	<body>
+<p class="header"><span><br />
+</span></p>
+<h1>User Study for Character Animation with Personality<o:p>&nbsp;</o:p></h1>
+<div style="margin-left: 40px;"><br />
+<div style="margin-left: 200px; text-align: justify;">This&nbsp;
+study aims to find motion parameters corresponding
+to OCEAN personality traits. Please scroll down for information about
+the OCEAN personality model.<br />
+</div>
+<p style="font-weight: bold; margin-left: 200px; text-align: justify;" class="MsoNormal"><big><big><o:p>&nbsp;Instructions:</o:p></big></big></p>
+<ol style="margin-top: 0in; margin-left: 200px; text-align: justify;" start="1" type="1">
+<li class="MsoNormal">Please select a unique user
+name.&nbsp; </li>
+<li class="MsoNormal">Please select your gender and
+write your age in the text box.</li>
+<li class="MsoNormal">Press "Start" button.&nbsp;</li>
+<li class="MsoNormal">There are two animations
+demonstrating the model pointing to a spot and knocking. You can switch
+animations using the up and down keys of your keyboard. </li>
+<li style="width: 1241px;" class="MsoNormal">There
+are 10 sliders, each
+modifying a different motion parameter. You are asked to adjust these
+motion parameters to convey the personality trait indicated in red
+fonts.<span style="">&nbsp; </span>When you
+adjusting a trait, press "Submit Trait" button at the bottom of
+the screen. Then, move on to the next trait by pressing the right arrow
+key. You can move between personality traits using the left and right
+keys of your keyboard. There are 10 different personality traits ( +
+and - factors of OCEAN elements). </li>
+<li class="MsoNormal">You can quit&nbsp; when you
+finish adjusting all the parameters for 10 personality traits for both
+of the animations. &nbsp;<span style=""></span> </li>
+</ol>
+<div style="margin-left: 200px; text-align: justify;"><span style="font-weight: bold;">Controls</span>:<br />
+</div>
+<div style="margin-left: 200px; text-align: justify;"><span style="font-style: italic;">Mouse:</span><br />
+</div>
+<div style="text-align: left; margin-left: 120px;">
+<ul style="margin-left: 80px; text-align: justify;">
+<li>Middle mouse + left alt : Orbit</li>
+<li> Middle mouse + left alt + left ctrl OR wheel : Zoom in/out</li>
+<li> Middle mouse : Pan</li>
+</ul>
+<div style="margin-left: 80px; text-align: justify;"><span style="font-style: italic;">Keyboard:</span></div>
+<ul style="margin-left: 80px; text-align: justify;">
+<li>Left and right&nbsp;keys: Change personality trait</li>
+<li>Up and down keys: Change animation </li>
+</ul>
+</div>
+</div>
+<a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!"> </a>
+<div style="text-align: center; margin-left: 61px; width: 1556px;"><a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!"><img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" height="63" width="193" /> </a></div>
+<div style="margin-left: 455px; width: 530px;" class="content">
+<div style="margin-left: 0px; width: 592px;" id="unityPlayer">
+<div class="missing"> </div>
+</div>
+</div>
+<p class="footer"><span>Unity Web Player | </span>WebPlayer
+« created with <a href="http://unity3d.com/unity/" title="Go to unity3d.com">Unity</a>
+»</p>
+<p class="footer"></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><big><big><span style="font-weight: bold;">Background</span></big></big></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><big><big><span style="font-weight: bold;"><small>OCEAN Personality
+Model:&nbsp;</small></span><small><small class="content">Describes five orthogonal aspects of
+personality. It is also known as the five factor model.</small></small></big></big></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">(O)</b>penness
+describes the imaginative and creative aspect of human character. <o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">(C)</b>
+onscientiousness determines to what level a person is organized and
+careful.<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">(E)</b>xtroversion
+relates to how outgoing and sociable a person is.<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">(A)</b>greeableness
+is friendliness, generosity, and the tendency to get along with other
+people.<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">(N)</b>euroticism
+refers to emotional instability and the tendency to experience negative
+emotions.</p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal">Each
+factor is bipolar and characterized by certain traits:<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Open+ </b>:
+<span style="">&nbsp;</span>Curious,
+alert, informed, perceptive<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Open-</b> :
+Simple,
+narrow, ignorant<o:p></o:p></p>
+<p style="width: 1240px; text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Conscientious+</b>
+:
+Persistent, orderly, predictable, dependable, prompt<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Conscientious-</b>
+:
+Messy, careless, rude, changeable<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Extrovert+</b>
+:
+Social, active, assertive, dominant, energetic<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Extrovert-</b>
+: Distant,
+unsocial, lethargic, vigorless, shy<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Agreeable+</b>
+:
+Cooperative, tolerant, patient, kind<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Agreeable-</b>
+:
+Bossy, negative, contrary, stubborn, harsh<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Neurotic+</b>
+:
+Oversensitive, fearful, dependent, submissive, unconfident<o:p></o:p></p>
+<p style="text-align: left; margin-left: 240px;" class="MsoNormal"><b style="">Neurotic-</b>
+: Calm,
+independent, confident<o:p></o:p></p>
+<p style="text-align: left;" class="MsoNormal"></p>
+<br />
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+</body></html>

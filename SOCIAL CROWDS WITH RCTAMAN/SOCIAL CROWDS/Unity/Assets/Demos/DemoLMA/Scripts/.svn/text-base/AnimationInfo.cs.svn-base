@@ -1,0 +1,284 @@
+#define EDITORMODE
+
+using UnityEngine;
+using System.Collections;
+using System.IO;
+
+
+
+#if EDITORMODE
+using UnityEditor;
+#endif
+
+[System.Serializable]
+public class KeyInfo  {
+	public int frameNo;	
+	public Vector3[] eePos = new Vector3[2]; 	  			//end effector key position	
+	public Vector3[] eePosOrig  = new Vector3[2]; 	 //original end effector key position before modified by armshape
+	public Vector3[] desiredElbowPos  = new Vector3[2];   	//local elbow swivel angle in degrees
+}
+[System.Serializable]
+public class MyKeyframe {
+   public float time { get; set; }
+}
+
+public class AnimationInfo : MonoBehaviour {
+	
+	public float fps;
+	public float animLength;
+	public KeyInfo[] keys;
+	public int prevKeyInd = 0;
+	public int nextKeyInd = 1;
+	
+	
+	SplineInterpolator[] sIEE  = new SplineInterpolator[2]; //End effector position interpolator
+	SplineInterpolator[] sISA = new SplineInterpolator[2]; //Swivel angle interpolator
+	public string animName;
+	public int frameCnt;
+	
+	
+	public bool allKeys = true; //are all keys keyframes
+	
+	[SerializeField]
+    //For noneditor mode --> happy hand gesture animation
+	public int[] goalKeys ;  //keeps the keyframe number (not actual index)  we need to include the start and end keyframes {0, 3, 5, 8};
+    public float[] myKeyTimes; //{ 0f, 0.3333333f, 0.5333334f, 0.7666667f, 1.166667f, 1.533333f, 2.033334f, 2.9f, 2.933333f };
+
+    public int Curr;
+	//public KeyFrameExtraction keyInfo;
+	
+	//Current frame number
+	public int curr {
+		get {
+			int val = Mathf.CeilToInt(animation[animName].time * animation[animName].clip.frameRate)%frameCnt;
+            
+			if(val == 0 && next == frameCnt)
+				val = frameCnt;
+			//return keyInfo.frames.CurrentFrame();
+
+           
+			return val ;			
+			
+			//return frameNo % frameCnt;			
+		}
+	}
+	//Previous keyframe's frame number
+	public int prev {		
+		get {			 			
+			return keys[prevKeyInd].frameNo;				
+		}
+	}
+	//Next keyframe's frame number
+	public int next{		
+		get {		
+			return keys[nextKeyInd].frameNo;		
+		
+		}
+	}
+		
+	void Start() {
+        animName = animation.clip.name;
+		fps = animation[animName].clip.frameRate;        
+        animLength = animation[animName].clip.length;		
+		frameCnt = (int)(fps * animLength);				
+	}
+
+    public void Reset() {
+        animName = animation.clip.name;
+		fps = animation[animName].clip.frameRate;        
+        animLength = animation[animName].clip.length;		
+		frameCnt = (int)(fps * animLength);				
+    }
+    void AssignGoalKeys() {
+
+        if(animName.Contains("pointing") || animName.Contains("Pointing")) {
+            goalKeys = new int[7];
+            goalKeys[0] = 0;
+            goalKeys[1] = 3;
+            goalKeys[2] = 4;
+            goalKeys[3] = 5;
+            goalKeys[4] = 6;
+            goalKeys[5] = 7;
+            goalKeys[6] = 8;
+
+
+            myKeyTimes = new float[9];
+            myKeyTimes[0] = 0.00000024f;
+            myKeyTimes[1] = 0.5833335f;
+            myKeyTimes[2] = 1.291667f;
+            myKeyTimes[3] = 2.75f;
+            myKeyTimes[4] = 4.791667f;
+            myKeyTimes[5] = 6.833334f;
+            myKeyTimes[6] = 8.916667f;
+            myKeyTimes[7] = 10.95833f;
+            myKeyTimes[8] = 11f;
+
+        }
+        if(animName.Contains("knock") || animName.Contains("Knock")) {
+            goalKeys = new int[7];
+            goalKeys[0] = 0;
+            goalKeys[1] = 3;
+            goalKeys[2] = 4;
+            goalKeys[3] = 5;
+            goalKeys[4] = 6;
+            goalKeys[5] = 7;
+            goalKeys[6] = 8;
+
+
+            myKeyTimes = new float[9];
+            myKeyTimes[0] = 0.00000024f;
+            myKeyTimes[1] = 0.7083337f;
+            myKeyTimes[2] = 1.75f;
+            myKeyTimes[3] = 2.916667f;
+            myKeyTimes[4] = 4.291667f;
+            myKeyTimes[5] = 5.916667f;
+            myKeyTimes[6] = 7.750001f;
+            myKeyTimes[7] = 9.166667f;
+            myKeyTimes[8] = 9.208333f;
+
+        }
+
+
+    }
+    //Vector3 ComputeInitialSwivelAngle(ArmInfo armInfo) {
+    //    float theta;		
+    //    Vector3 u = new Vector3(1,0,0); //Local x axis		
+    //    Vector3 n = armInfo.wrist.position - armInfo.shoulder.position;		
+    //    Vector3 c =  HandleUtility.ProjectPointLine (armInfo.elbow.position, armInfo.shoulder.position, armInfo.wrist.position);		
+    //    Vector3 pcap = armInfo.elbow.position - c;		
+    //    Vector3 ptilda = pcap - Vector3.Dot (pcap, n) * n; 		
+    //    theta = Mathf.Atan2(Vector3.Cross(pcap, u).magnitude , Vector3.Dot (ptilda,u));		
+    //    return new Vector3(theta,0,0);
+		
+    //}
+	
+	//ARminfo is passed as a transform because animation is sampled
+	//We want the end effector position at the sampled time
+	public void InitKeyPoints(ArmInfo[] arms ) {	
+        animName = animation.clip.name;
+        AssignGoalKeys();
+
+#if EDITORMODE
+	  
+        AnimationClipCurveData[] curveDatas = AnimationUtility.GetAllCurves(animation[animName].clip, true);
+      
+		Keyframe[] frames = curveDatas[0].curve.keys;
+        
+        using (StreamWriter sw = new StreamWriter("keyframes.txt")) {
+            foreach (Keyframe kf in frames) {
+                sw.WriteLine(kf.time);                
+            }
+        }        
+#elif !EDITORMODE
+      
+  		//file io does not work in web player
+  /*      string[] content = File.ReadAllLines("keyframes.txt");        
+        MyKeyframe[] frames = new MyKeyframe[content.Length];
+        
+         
+        for (int i = 0; i < content.Length; i++) {
+            frames[i] = new MyKeyframe();           
+            frames[i].time = float.Parse(content[i]);        
+            
+        }*/
+
+        MyKeyframe[] frames = new MyKeyframe[myKeyTimes.Length];
+        for (int i = 0; i < myKeyTimes.Length; i++) {
+            frames[i] = new MyKeyframe();           
+            frames[i].time = myKeyTimes[i];
+            
+         
+        }
+            
+        
+      
+#endif
+
+        
+
+		if(allKeys){ // all are goal keys 
+			keys = new KeyInfo[frames.Length ];			
+			for(int i = 0; i < frames.Length; i++) {
+				//animation[animName].normalizedTime = (float) keys[i].frameNo / frameCnt;
+				animation[animName].time = frames[i].time;//(float) keys[i].frameNo / animation[animName].clip.frameRate;			
+				animation.Sample ();	
+				keys[i] = new KeyInfo();			
+				keys[i].frameNo  = Mathf.CeilToInt(animation[animName].time * animation[animName].clip.frameRate);		
+				for(int arm = 0; arm < 2; arm++) {
+					keys[i].eePos[arm] = keys[i].eePosOrig[arm] = arms[arm].wrist.position;				
+					keys[i].desiredElbowPos[arm] = arms[arm].elbow.position; //
+				}							
+			}			
+		}
+		else  {
+			keys = new KeyInfo[goalKeys.Length ];            
+			for(int i = 0; i < goalKeys.Length; i++) {
+				//animation[animName].normalizedTime = (float) keys[i].frameNo / frameCnt;      
+            
+				animation[animName].time = frames[goalKeys[i]].time;//(float) keys[i].frameNo / animation[animName].clip.frameRate;		
+              
+				animation.Sample ();	
+				keys[i] = new KeyInfo();			
+								
+				keys[i].frameNo  = Mathf.CeilToInt(animation[animName].time * animation[animName].clip.frameRate);
+                //Debug.Log(keys[i].frameNo + " " + Mathf.FloorToInt(animation[animName].time * animation[animName].clip.frameRate) + " " + animation[animName].time + " " + animation[animName].clip.frameRate);
+				for(int arm = 0; arm < 2; arm++) {
+					keys[i].eePos[arm] = keys[i].eePosOrig[arm] = arms[arm].wrist.position;				
+					keys[i].desiredElbowPos[arm] = arms[arm].elbow.position; //
+				}							
+			}			
+		}
+		
+		InitInterpolators();
+			
+	}
+	
+	
+	public void InitInterpolators ()  {		
+	
+		for(int arm = 0; arm < 2; arm++) {
+			sIEE[arm] = new SplineInterpolator();
+			for(int i = 0; i< keys.Length; i++)
+				sIEE[arm].AddSplinePoint(keys[i].eePos[arm]);
+
+            sISA[arm] = new SplineInterpolator();
+			for(int i = 0; i< keys.Length; i++)
+				sISA[arm].AddSplinePoint(keys[i].desiredElbowPos[arm]);
+			
+		}				
+	}
+
+	public Vector3 ComputeInterpolatedTarget(float t, float Tval, int arm) {		
+			return sIEE[arm].GetInterpolatedSplinePoint(t, Tval);			
+	}
+	public Vector3 ComputeInterpolatedElbowPos(float t, float Tval, int arm) {
+		//return Mathf.Lerp(keys[prevKeyInd].swivelAngle, keys[nextKeyInd].swivelAngle, t);
+		return sISA[arm].GetInterpolatedSplinePoint(t, Tval);		
+			
+	}
+	
+	void Update () {
+        
+		if(curr == 0) {
+			prevKeyInd = 0;
+			nextKeyInd = 1;
+			
+		}
+		if(nextKeyInd > 0 && curr >= keys[nextKeyInd].frameNo) {
+			prevKeyInd = nextKeyInd;
+			nextKeyInd++;
+			if( nextKeyInd >= keys.Length) {
+				prevKeyInd = 0;
+				nextKeyInd = 1;
+
+			}
+           
+		}
+
+        Curr = curr;
+		
+        
+	}
+	
+	
+}

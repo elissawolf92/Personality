@@ -1,0 +1,197 @@
+using UnityEngine;
+using System.Collections;
+
+public class ControlPoint{
+	public Vector3 position;
+	public Vector3 tangent;
+}
+
+public class Segment{
+	ControlPoint begin;
+	public ControlPoint Begin
+	{
+		get{
+			return begin;
+		}
+		set{
+			begin = value;
+		}
+	}
+	ControlPoint end;
+	public ControlPoint End
+	{
+		get{
+			return end;
+		}
+		set{
+			end = value;
+		}
+	}
+	
+	float length;
+	public float Length
+	{
+		get{
+			return length;
+		}
+		set{
+			length = value;
+		}
+	}
+	
+	float lengthFromBeginning;
+	public float LengthFromBeginning
+	{
+		get{
+			return lengthFromBeginning;
+		}
+		set{
+			lengthFromBeginning = value;
+		}
+	}
+	
+	public void SetBeginTangent(float[] tangent)
+	{
+		Begin.tangent.x = tangent[0];
+		Begin.tangent.y = tangent[1];
+		Begin.tangent.z = tangent[2];
+	}
+	
+	public void SetEndTangent(float[] tangent)
+	{
+		End.tangent.x = tangent[0];
+		End.tangent.y = tangent[1];
+		End.tangent.z = tangent[2];
+	}
+}
+
+public class KCBSpline : MonoBehaviour {
+	
+	Segment[] segments;
+	int amount;
+	float mLength = 0f;
+	
+	KCBSpline(ControlPoint[] controlPoints, int amount, float tension, float continuity, float bias)
+	{
+		segments = new Segment[amount-1];
+
+		segments[0] = new Segment();
+		segments[0].Begin = controlPoints[0];
+		segments[0].End = controlPoints[1];
+
+		for(int i = 1; i < amount-1; ++i)
+		{
+			segments[i] = new Segment();
+			segments[i].Begin = controlPoints[i];
+			segments[i].End = controlPoints[i+1];
+		}
+	
+		
+		CalculateTangents(tension, continuity, bias);
+		CalculateLength(1000.0f);
+	}
+
+	
+	
+	
+	
+	void CalculateTangents(float tension, float continuity, float bias)
+	{
+		float[] positionA = new float[3];
+		float[] positionB = new float[3];
+		float a, b;
+
+		positionA[0] = segments[0].End.position.x - segments[0].Begin.position.x;
+		positionA[1] = segments[0].End.position.y - segments[0].Begin.position.y;
+		positionA[2] = segments[0].End.position.z - segments[0].Begin.position.z;
+		segments[0].SetBeginTangent(positionA);
+
+		// REWRITTEN WITHOUT TESTED
+		for(int i = 0; i < amount-2; ++i)
+		{
+			positionA[0] = segments[i].End.position.x - segments[i].Begin.position.x;
+			positionA[1] = segments[i].End.position.y - segments[i].Begin.position.y;
+			positionA[2] = segments[i].End.position.z - segments[i].Begin.position.z;
+
+			positionB[0] = segments[i+1].End.position.x - segments[i+1].Begin.position.x;
+			positionB[1] = segments[i+1].End.position.y - segments[i+1].Begin.position.y;
+			positionB[2] = segments[i+1].End.position.z - segments[i+1].Begin.position.z;
+
+			a = 0.5f * (1.0f-tension) * (1.0f+continuity) * (1.0f+bias);
+			b = 0.5f * (1.0f-tension) * (1.0f-continuity) * (1.0f-bias);
+
+			positionA[0] *= a; positionA[1] *= a; positionA[2] *= a;
+			positionB[0] *= b; positionB[1] *= b; positionB[2] *= b;
+			positionA[0] += positionB[0]; positionA[1] += positionB[1]; positionA[2] += positionB[2];
+
+			segments[i].SetEndTangent(positionA);
+		}
+
+		positionA[0] = segments[amount-2].Begin.tangent.x;
+		positionA[1] = segments[amount-2].Begin.tangent.y;
+		positionA[2] = segments[amount-2].Begin.tangent.z;
+		segments[amount-2].SetEndTangent(positionA);
+	}
+	
+	void CalculateLength(float resolution)
+	{
+		float[] positionA = new float[3];
+		float[] positionB = new float[3];
+
+		float stepLength = 1.0f / resolution;
+
+		for(int i = 0; i < amount-1; ++i)
+		{
+			float segmentLength = 0;
+
+			for(float j = 0; j < 1.0f; j += stepLength)
+			{
+				if(j > (1.0f - stepLength))
+					j = 1.0f - stepLength;
+
+				positionA = GetPositionOnSegment(positionA, j + stepLength, i);
+				positionB = GetPositionOnSegment(positionB, j, i);
+				positionA[0] -= positionB[0];
+				positionA[1] -= positionB[1];
+				positionA[2] -= positionB[2];
+
+				segmentLength += MathDefs.GetLength(positionA);
+			}
+
+			segments[i].Length = segmentLength;
+			segments[i].LengthFromBeginning = mLength;
+
+			mLength += segmentLength;
+		}
+	}
+	
+	float[] GetPositionOnSegment(float[] position,	float distance,	int segment)
+	{
+		float dMuld = distance * distance;
+		float fH1 = (2.0f * distance - 3.0f) * dMuld + 1.0f;
+		float fH2 = (distance - 2.0f) * dMuld + distance;
+		float fH3 = (dMuld - distance) * distance;
+		float fH4 = (-2.0f * distance + 3.0f) * dMuld;
+
+		ControlPoint begin = segments[segment].Begin;
+		ControlPoint end   = segments[segment].End;
+
+		position[0] = begin.position.x * fH1 +
+			begin.tangent.x  * fH2 +
+			end.tangent.x    * fH3 +
+			end.position.x   * fH4;
+		position[1] = begin.position.y * fH1 +
+			begin.tangent.y  * fH2 +
+			end.tangent.y    * fH3 +
+			end.position.y   * fH4;
+		position[2] = begin.position.z * fH1 +
+			begin.tangent.z  * fH2 +
+			end.tangent.z    * fH3 +
+			end.position.z   * fH4;
+		return position;
+	
+	}
+	
+	
+}
+ 

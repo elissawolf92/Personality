@@ -1,0 +1,180 @@
+create table userEntry (
+     	userId varchar(180)not null,
+     	animName varchar(60) not null,
+	persName varchar(60) not null,
+     	space float not null,
+	weight float not null,
+	time float not null,
+	flow float not null,
+	horArm float not null,
+	verArm float not null,
+	sagArm float not null,
+	horTorso float not null,
+	verTorso float not null,
+	sagTorso float not null, 
+	primary key(userId ,animName, persName)
+);
+
+create table userComparisonDataRCTAMAN (
+     	userId varchar(180)not null,
+     	animName varchar(60) not null,
+	effortInd int not null,
+     	answerOE int not null,
+	answerNCA int not null,
+	primary key(userId ,animName, effortInd)
+);
+
+
+create table userInfoRCTAMAN(
+userId varchar(180)not null,
+age int not null,
+gender bool not null,
+primary key(userId));
+
+
+ALTER TABLE userComparisonDataRCTAMAN
+  ADD (areSwapped varchar(180) not null);
+
+create table userScalingData (
+     	userId varchar(180)not null,
+     	animName varchar(60) not null,
+	effortInd int not null,
+     	answerOE int not null,
+	answerNCA int not null,
+	primary key(userId ,animName, effortInd)
+);
+create table shapeData(
+	userId varchar(180)not null,
+	shapeInd int not null,
+     	head float not null,
+     	neck float not null,
+     	spine float not null,
+     	spine1 float not null,
+     	shouldersX float not null,
+     	shouldersY float not null,
+     	shouldersZ float not null,
+     	claviclesX float not null,
+     	claviclesY float not null,
+     	claviclesZ float not null,
+		pelvisLX float not null,
+		pelvisRX float not null,
+		pelvisY float not null,
+		pelvisZ float not null,
+		kneeX float not null,
+		hipsX float not null,
+		primary key(userId, shapeInd)
+);
+
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '0', '15',	'-12',	'0',	'0',	'6',	'2',	'3',	'-2',	'6',	'5',	'-8', '-8',	'3',	'10', '0', '0');				 
+
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '1', '7',	'-12',	'-2',	'10',	'34',	'-11',	'12',	'4',	'9',	'13',	'-3',	'-3', '-5',	'-2', '0', '0');				 
+
+				 
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '2', '-2',	'-10',	'-2',	'6',	'-12',	'-22',	'11.6667',	'8',	'20',	'3',	'0',	'0', '0',	'6', '0', '0'	);				 
+
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '3', '17',	'-10',	'-4',	'5.33333',	'23.3333',	'-15.3333',	'-8.33333',	'11',	'-2',	'7',	'-2','-2',	'-0.66667',	'1', '0', '0'	);		
+
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '4', '3',	'19',	'10',	'-16',	'9',	'8',	'9',	'3',	'8',	'-17',	'-1', '-1',	'1',	'0', '0', '0');				 
+
+
+INSERT INTO shapeData(userId, shapeInd, head, neck, spine, spine1, shouldersX, shouldersY, shouldersZ, claviclesX, claviclesY, claviclesZ, pelvisLX, pelvisRX, pelvisY, pelvisZ, kneeX, hipsX) 
+                 VALUES ('susand948', '15', '5', '-12',	'-8',	'0',	'-24',	'25',	'3',	'-5',	'6',	'3',	'-9', '-9',	'0',	'-1', '0', '0');				 
+				 
+create table driveData(
+	userId varchar(180)not null,
+	driveInd int not null,
+     	speed float not null,
+     	v0 float not null,
+     	v1 float not null,
+     	ti float not null,
+     	texp float not null,
+     	tval float not null,
+     	t0 float not null,
+     	t1 float not null,
+     	hr float not null,
+     	hf float not null,
+     	squash float not null,
+     	wb float not null,
+     	wx float not null,
+     	wt float not null,
+     	wf float not null,
+     	et float not null,
+     	ef float not null,
+     	d float not null,
+	primary key(userId, driveInd)
+);
+
+ALTER TABLE driveData
+  ADD (tr float not null,
+       tf float not null);
+
+ALTER TABLE driveData
+  ADD (encSpr0 float not null,
+       sinRis0 float not null,
+retAdv0 float not null,
+encSpr1 float not null,
+       sinRis1 float not null,
+retAdv1 float not null
+);
+
+
+ALTER TABLE driveData
+  ADD (armLX float not null,
+       armLY float not null,
+armLZ float not null,
+armRX float not null,
+       armRY float not null,
+armRZ float not null
+);
+
+
+
+
+ALTER TABLE driveData
+DROP COLUMN encSpr;
+
+ALTER TABLE userComparisonData
+  RENAME COLUMN answerOE TO answerPlastic;
+
+
+RENAME COLUMN UserComparisonData.AnswerOE AS AnswerPlastic;
+
+ALTER TABLE driveData
+  RENAME COLUMN encSpr TO encSpr0;
+
+ALTER TABLE driveData
+  RENAME COLUMN sinRis to sinRis0;
+
+ALTER TABLE driveData
+  RENAME COLUMN retAdv to retAdv0;
+
+
+ALTER TABLE driveData
+  ADD (continuity float not null,
+       bias float not null);
+
+ALTER TABLE shapeData
+  ADD (kneeX float not null);
+
+
+ALTER TABLE shapeData
+  ADD (spineLength float not null);
+
+
+
+   "INSERT INTO userEntry(userId, animName, persName, space, weight, time, flow, horArm, verArm, sagArm, horTorso, verTorso, sagTorso) 
+                 VALUES ('0', 'deneme', 'iyi','0','0','0','0','0','0','0','0','0', '0' )";
+
+
+"INSERT INTO 'driveData'(userId, driveInd, speed, v0, v1, ti, texp, tval, t0, t1, hr, hf, squash, wb, wx, wt, ef, et, d, ef) 
+                 VALUES ('deneme', '0', '0','0','0','0','0','0','0','0','0','0','0', '0', '0','0','0','0','0','0')";
+				 
+				 
+
+				 
+				 

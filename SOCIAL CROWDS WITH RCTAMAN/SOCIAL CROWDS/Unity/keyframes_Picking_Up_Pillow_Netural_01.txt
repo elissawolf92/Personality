@@ -1,0 +1,14 @@
+myKeyTimes = new float[13];
+myKeyTimes[i++]  = 0f; 
+myKeyTimes[i++]  = 0.75f; 
+myKeyTimes[i++]  = 1.625f; 
+myKeyTimes[i++]  = 2.583333f; 
+myKeyTimes[i++]  = 3.208333f; 
+myKeyTimes[i++]  = 4.208333f; 
+myKeyTimes[i++]  = 5.5f; 
+myKeyTimes[i++]  = 6.125f; 
+myKeyTimes[i++]  = 6.5f; 
+myKeyTimes[i++]  = 7.125f; 
+myKeyTimes[i++]  = 7.958334f; 
+myKeyTimes[i++]  = 9.541667f; 
+myKeyTimes[i++]  = 10.41667f; 

@@ -1,0 +1,128 @@
+using UnityEngine;
+using System.Collections;
+
+[System.Serializable]
+public class TorsoInfo{
+	
+	public Transform neck;
+    public Transform head;
+    public Transform spine, spine1;//, spine2;
+	public Transform clavicleL;
+	public Transform clavicleR;
+	public Transform pelvisL;
+	public Transform pelvisR;
+
+
+//	[HideInInspector] 
+	 public Transform[] torsoChain;
+	
+	
+	public Quaternion[] initRot;
+	public Vector3[] initPos;
+}
+
+public class TorsoController : MonoBehaviour {
+	
+	public TorsoInfo torso;
+	
+
+	//In degrees
+	public float spreading_clavicle_angle = 20;
+	public float enclosing_clavicle_angle = -20; 
+	public float rising_clavicle_angle = 20;
+	public float sinking_clavicle_angle = -10;
+	
+	public float advancing_clavicle_angle = 20;
+	public float retreating_clavicle_angle = -20;
+	
+	
+	public float spreading_pelvis_angle = -5;
+	public float enclosing_pelvis_angle = 5;
+	public float rising_pelvis_angle = -5;
+	public float sinking_pelvis_angle = 5;
+	public float advancing_pelvis_angle = -5;
+	public float retreating_pelvis_angle = 5;
+	
+	public float spreading_spine_angle = -10;
+	public float enclosing_spine_angle = 10;
+	
+	
+	public float spreading_spine1_angle = -10;
+	public float enclosing_spine1_angle = 10;
+	
+	
+	public float spreading_neck_angle = -20;
+	public float enclosing_neck_angle = 20;
+	
+	// Use this for initialization
+	void Awake () {
+		
+		
+		torso.initRot = new Quaternion[8];
+		
+		torso.initPos = new Vector3[8];
+		
+		torso.initRot[0] = torso.neck.rotation;
+		torso.initPos[0] = torso.neck.position;
+		
+		torso.initRot[1] = torso.spine.rotation;
+		torso.initPos[1] = torso.spine.position;
+		
+		torso.initRot[2] = torso.spine1.rotation;
+		torso.initPos[2] = torso.spine1.position;
+		
+	//	torso.initRot[3] = torso.spine2.rotation;
+//		torso.initPos[3] = torso.spine2.position;
+		
+		
+		torso.initRot[3] = torso.clavicleL.rotation;
+		torso.initPos[3] = torso.clavicleL.position;
+		
+		
+		torso.initRot[4] = torso.clavicleR.rotation;
+		torso.initPos[4] = torso.clavicleR.position;
+		
+		torso.initRot[5] = torso.pelvisL.rotation;
+		torso.initPos[5] = torso.pelvisL.position;
+		
+		torso.initRot[6] = torso.pelvisR.rotation;
+		torso.initPos[6] = torso.pelvisR.position;
+		
+		
+        torso.initRot[7] = torso.head.rotation;
+		torso.initPos[7] = torso.head.position;
+		
+
+	}
+	
+
+    public void Reset(){
+    }
+	//Reset to initial transforms
+	public void ResetTransforms()
+	{
+		
+		torso.neck.rotation = torso.initRot[0] ;			
+		torso.spine.rotation = torso.initRot[1] ;	
+		torso.spine1.rotation = torso.initRot[2] ;	
+	//	torso.spine2.rotation = torso.initRot[3] ;			
+		torso.clavicleL.rotation = torso.initRot[3] ;			
+		torso.clavicleR.rotation = torso.initRot[4] ;			
+		torso.pelvisL.rotation = torso.initRot[5] ;		
+		torso.pelvisR.rotation = torso.initRot[6] ;	
+        torso.head.rotation = torso.initRot[7] ;	
+		
+		torso.neck.position = torso.initPos[0] ;			
+		torso.spine.position = torso.initPos[1] ;	
+		torso.spine1.position = torso.initPos[2] ;	
+	//	torso.spine2.position = torso.initPos[3] ;			
+		torso.clavicleL.position = torso.initPos[3] ;			
+		torso.clavicleR.position = torso.initPos[4] ;			
+		torso.pelvisL.position = torso.initPos[5] ;		
+		torso.pelvisR.position = torso.initPos[6] ;	
+        torso.head.position = torso.initPos[7] ;	
+		
+	}
+	
+	
+}

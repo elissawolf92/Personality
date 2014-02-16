@@ -1,0 +1,160 @@
+fileFormatVersion: 2
+guid: d5bb27c287a1ef445bf9caff5975ec87
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: RightShoulder
+    100002: L_Wrist_End
+    100004: Site 3
+    100006: R_Wrist_End
+    100008: Site 4
+    100010: RightHandThumb
+    100012: //RootNode
+    100014: LeftHandThumb
+    100016: LeftHand
+    100018: LeftForeArm
+    100020: LeftArm
+    100022: Site 1
+    100024: RightToeBase
+    100026: RightFoot
+    100028: RightLeg
+    100030: RightUpLeg
+    100032: Site
+    100034: LeftToeBase
+    100036: LeftFoot
+    100038: LeftLeg
+    100040: LeftUpLeg
+    100042: Hips
+    100044: RightHand
+    100046: RightForeArm
+    100048: LeftShoulder
+    100050: Site 2
+    100052: Head
+    100054: Neck
+    100056: Spine1
+    100058: Spine
+    100060: RightArm
+    100062: ADAPTMan:Mesh
+    100064: group1
+    100066: null1
+    400000: RightShoulder
+    400002: L_Wrist_End
+    400004: Site 3
+    400006: R_Wrist_End
+    400008: Site 4
+    400010: RightHandThumb
+    400012: //RootNode
+    400014: LeftHandThumb
+    400016: LeftHand
+    400018: LeftForeArm
+    400020: LeftArm
+    400022: Site 1
+    400024: RightToeBase
+    400026: RightFoot
+    400028: RightLeg
+    400030: RightUpLeg
+    400032: Site
+    400034: LeftToeBase
+    400036: LeftFoot
+    400038: LeftLeg
+    400040: LeftUpLeg
+    400042: Hips
+    400044: RightHand
+    400046: RightForeArm
+    400048: LeftShoulder
+    400050: Site 2
+    400052: Head
+    400054: Neck
+    400056: Spine1
+    400058: Spine
+    400060: RightArm
+    400062: ADAPTMan:Mesh
+    400064: group1
+    400066: null1
+    4300000: ADAPTMan:Mesh
+    7400000: Take 001
+    7400002: idle
+    7400004: Pointing_to_Spot
+    7400006: RCTAMan@Pointing_to_Spot_Netural_02_Updated
+    7400008: Pointing_to_Spot_Netural_02_Updated
+    11100000: //RootNode
+    13700000: Hips
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 3
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 2
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Pointing_to_Spot_Netural_02_Updated
+      takeName: 
+      firstFrame: 80
+      lastFrame: 340
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  additionalBone: 0
+  userData: 

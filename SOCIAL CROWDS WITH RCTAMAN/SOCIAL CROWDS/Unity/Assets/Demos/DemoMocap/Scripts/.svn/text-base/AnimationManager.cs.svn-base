@@ -1,0 +1,104 @@
+
+using UnityEngine;
+using System.Collections;
+using System.IO;
+using UnityEditor;
+
+
+//[System.Serializable]
+//public class KeyInfo  {
+//    public int frameNo;	
+//    public Vector3[] eePos = new Vector3[2]; 	  			//end effector key position	
+//    public Vector3[] eePosOrig  = new Vector3[2]; 	 //original end effector key position before modified by armshape
+//    public Vector3[] desiredElbowPos  = new Vector3[2];   	//local elbow swivel angle in degrees
+//}
+
+public class AnimationManager : MonoBehaviour {
+	
+	public float fps;
+	public float animLength;
+	public KeyInfo[] keys;
+	public int prevKeyInd = 0;
+	public int nextKeyInd = 1;
+	
+	public string animName;
+	public int frameCnt;
+	
+	
+	 
+	//public KeyFrameExtraction keyInfo;
+	
+	//Current frame number
+	public int curr {
+		get {
+			int val = Mathf.CeilToInt(animation[animName].time * animation[animName].clip.frameRate)%frameCnt;
+			if(val == 0 && next == frameCnt)
+				val = frameCnt;
+			//return keyInfo.frames.CurrentFrame();
+			return val ;			
+			
+			
+		}
+	}
+	//Previous keyframe's frame number
+	public int prev {		
+		get {			 			
+			return keys[prevKeyInd].frameNo;				
+		}
+	}
+	//Next keyframe's frame number
+	public int next{		
+		get {		
+			return keys[nextKeyInd].frameNo;				
+		}
+	}
+	
+	
+	void Start() {
+        animName = animation.clip.name;
+		fps = animation[animName].clip.frameRate;        
+        animLength = animation[animName].clip.length;		
+		frameCnt = (int)(fps * animLength);		
+		
+        InitKeyPoints();
+	}
+
+    
+	public void InitKeyPoints() {	
+
+
+		AnimationClipCurveData[] curveDatas = AnimationUtility.GetAllCurves(animation[animName].clip, true);			
+		Keyframe[] frames = curveDatas[0].curve.keys;
+        keys = new KeyInfo[frames.Length ];			
+		for(int i = 0; i < frames.Length; i++) {
+			//animation[animName].normalizedTime = (float) keys[i].frameNo / frameCnt;
+			animation[animName].time = frames[i].time;//(float) keys[i].frameNo / animation[animName].clip.frameRate;			
+			animation.Sample ();	
+			keys[i] = new KeyInfo();			
+			keys[i].frameNo  = Mathf.CeilToInt(animation[animName].time * animation[animName].clip.frameRate);		
+		}			
+		
+			
+	}
+	
+		
+	void Update () {
+		if(curr == 0) {
+			prevKeyInd = 0;
+			nextKeyInd = 1;
+			
+		}
+		if(nextKeyInd > 0 && curr >= keys[nextKeyInd].frameNo) {
+			prevKeyInd = nextKeyInd;
+			nextKeyInd++;
+			if( nextKeyInd >= keys.Length) {
+				prevKeyInd = 0;
+				nextKeyInd = 1;
+			}
+		}		
+        //animation[animation.clip.name].speed = 2f;
+	}
+
+	
+	
+}

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{CD8C9303-404B-FB8D-6B9B-21988D5CAC0A}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_4;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\BlendText.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\CameraControl3dsMaxStyle.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\CameraControlScript.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\CameraScript.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\DemoKeyCommands.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\FlyingCamera.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\HelpText.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\OrbitCamera.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Camera\ShootBall.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Locomotion\CharacterMotor.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Locomotion\NormalCharacterMotor.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Locomotion\PlatformCharacterController.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\Shadow\DummyCoordinator.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\UI\CursorChild.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\UI\CursorParent.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\UI\GoToTarget.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\UI\MoveTarget.cs" />
+     <Compile Include="Assets\Demos\Common\Scripts\UI\Screenshot.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Affect\AffectComponent.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Affect\Appraisal.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Affect\Contagion.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Affect\PersonalityMapper.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\AgentComponent.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\ExplosionBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\Expression.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\FightBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\LeaderComponent.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\PoliceBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\ProtesterBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\ProvocateurBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\ShopperBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Behaviors\ZoneComponent.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Crowd\AgentAttributes.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Crowd\GroupBuilder.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\CrowdManager.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\GUIHandler.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\MathDefs.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\ObjComponent.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\ObjScript.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\TriggerExplosionBehavior.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\UpdateAnimation.cs" />
+     <Compile Include="Assets\Demos\DemoAffect\Scripts\Misc\UpdateProtestCenter.cs" />
+     <Compile Include="Assets\Demos\DemoDrives\Scripts\DrivesGUI.cs" />
+     <Compile Include="Assets\Demos\DemoHeadLook\Scripts\DummyHeadlookCoordinator.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\AnimationInfo.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\ArmAnimator.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\ArmController.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\EditDriveData.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\IKArm.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAComparisonGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAScalingGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\LMATuningGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\SelectorGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\SplineInterpolator.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\TCBSpline.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\TorsoAnimator.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\TorsoController.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\UserGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\UserGUILowLevel.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\UserInfo.cs" />
+     <Compile Include="Assets\Demos\DemoMocap\Scripts\AnimationManager.cs" />
+     <Compile Include="Assets\Demos\DemoMocap\Scripts\MetricRecorder.cs" />
+     <Compile Include="Assets\Demos\DemoMocap\Scripts\Metrics.cs" />
+     <Compile Include="Assets\Demos\DemoRagdoll\Scripts\DummyRagdollCoordinator.cs" />
+     <Compile Include="Assets\Demos\DemoReach\Scripts\DummyReachCoordinator.cs" />
+     <Compile Include="Assets\Development\GoToTarget2.cs" />
+     <Compile Include="Assets\Development\INCOMPLETE\DemoChair\Approach.cs" />
+     <Compile Include="Assets\Development\INCOMPLETE\DemoSitting\BodyController.cs" />
+     <Compile Include="Assets\Development\LookAtMe.cs" />
+     <Compile Include="Assets\Development\NewBehaviourScript.cs" />
+     <Compile Include="Assets\Development\SmartChair.cs" />
+     <Compile Include="Assets\Development\StayInPlace.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Behavior.cs" />
+     <Compile Include="Assets\Scripts\Behavior\BehaviorComponent.cs" />
+     <Compile Include="Assets\Scripts\Behavior\BehaviorEvent.cs" />
+     <Compile Include="Assets\Scripts\Behavior\BehaviorManager.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\DecoratorInvert.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\DecoratorLoop.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\ITreeNode.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\LeafAction.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\LeafAssert.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Param.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\Composite.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\CompositeGroup.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\CompositeGroupWeighted.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\Decorator.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\Executable.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\Parallel.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Primitive\RunStatus.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Selector.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\SelectorParallel.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\SelectorStochastic.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Sequence.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\SequenceParallel.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\SequenceStochastic.cs" />
+     <Compile Include="Assets\Scripts\Behavior\Include\TreeSharpPlus\Wait.cs" />
+     <Compile Include="Assets\Scripts\Character\View\BodyCoordinator.cs" />
+     <Compile Include="Assets\Scripts\Character\View\BodyInterface.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Animation\ShadowAnimationController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Dummy\ShadowDummyController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\HeadLook\Include\BendingSegment.cs" />
+     <Compile Include="Assets\Scripts\Controllers\HeadLook\Include\NonAffectedJoint.cs" />
+     <Compile Include="Assets\Scripts\Controllers\HeadLook\Legacy\HeadLookController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\HeadLook\ShadowHeadLookController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Idle\ShadowIdleController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\AlignmentTracker.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\GhostOriginal.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\IMotionAnalyzer.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\Interpolator.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\MotionAnalyzer.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\MotionAnalyzerBackwards.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\PolarGradientBandInterpolator.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\TrajectoryVisualizer.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Include\Util.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\LegController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\Legacy\LegAnimator.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Locomotion\ShadowLocomotionController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Ragdoll\Include\CollisionDetector.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Ragdoll\Include\CollisionNotifier.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Ragdoll\ShadowRagdollController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Reach\ShadowReachController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\Sitting\ShadowSittingController.cs" />
+     <Compile Include="Assets\Scripts\Debug\GizmoDraw.cs" />
+     <Compile Include="Assets\Scripts\Debug\LockPosition.cs" />
+     <Compile Include="Assets\Scripts\Debug\ToggleRender.cs" />
+     <Compile Include="Assets\Scripts\Gizmo\Gizmo.cs" />
+     <Compile Include="Assets\Scripts\Gizmo\GizmoHandle.cs" />
+     <Compile Include="Assets\Scripts\Gizmo\Gizmonizer.cs" />
+     <Compile Include="Assets\Scripts\IK\IK1JointAnalytic.cs" />
+     <Compile Include="Assets\Scripts\IK\IKCCD3D.cs" />
+     <Compile Include="Assets\Scripts\IK\IKJoint.cs" />
+     <Compile Include="Assets\Scripts\IK\IKSimple.cs" />
+     <Compile Include="Assets\Scripts\IK\IKSolver.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Recast\Navmesh\Navmesh.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Recast\Navmesh\NavmeshBuilder.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Recast\Navmesh\NavmeshDebugRenderer.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Recast\Steering\RecastSteeringController.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Recast\Steering\RecastSteeringManager.cs" />
+     <Compile Include="Assets\Scripts\Navigation\SteeringController.cs" />
+     <Compile Include="Assets\Scripts\Navigation\Unity\UnitySteeringController.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Debug\ShadowGizmo.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Debug\ShadowRender.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Include\BlendSystem.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Include\Blender.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Include\FilterList.cs" />
+     <Compile Include="Assets\Scripts\Shadow\Shadow.cs" />
+     <Compile Include="Assets\Scripts\Shadow\ShadowController.cs" />
+     <Compile Include="Assets\Scripts\Shadow\ShadowCoordinator.cs" />
+     <Compile Include="Assets\Scripts\Shadow\ShadowTransform.cs" />
+     <None Include="Assets\Demos\Common\Projector\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\Resources\NavmeshDebugShader.shader" />
+     <None Include="Assets\Prefabs\Character\ADAPTManParams.txt" />
+     <None Include="Assets\Demos\DemoSteering\Recast\README.txt" />
+     <None Include="Assets\Demos\Common\Projector\Shaders\Projector Light.shader" />
+     <None Include="Assets\Resources\README.txt" />
+ <Reference Include="Assets\Plugins\Meta.Numerics">
+ <HintPath>Assets\Plugins\Meta.Numerics.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>

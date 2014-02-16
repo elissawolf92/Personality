@@ -1,0 +1,46 @@
+using UnityEngine;
+using TreeSharpPlus;
+using System.Collections;
+
+[RequireComponent(typeof(SteeringController))]
+public class Behavior_GoToTarget : Behavior
+{
+	private GameObject target = null;
+    public Vector3 targetPos = Vector3.zero;
+	static int sd = 0;
+	 
+    public override ITreeNode BakeTree()
+    {			
+		
+		this.target = GameObject.Find("Target");
+		
+    	SteeringController steering = this.GetComponent<SteeringController>();	
+	
+		this.targetPos = this.target.transform.position;
+	
+		
+       return new Sequence(
+            new LeafAction<SteeringController, Vector3>((SteeringController comp, Vector3 vec) =>
+            {
+			 	comp.orientationBehavior = OrientationBehavior.LookAtTarget;
+				comp.StickyStopping = true;
+                comp.NewTarget(vec);
+                return RunStatus.Success;
+            }, steering, this.targetPos));
+    
+	}
+	
+	// Update is called once per frame
+    void Update()
+    {
+		
+        if (this.targetPos != this.target.transform.position)
+        {
+			
+			this.targetPos = this.target.transform.position;
+			SteeringController steering = this.GetComponent<SteeringController>();	
+			steering.Target = this.targetPos;
+	
+		}
+	}
+}

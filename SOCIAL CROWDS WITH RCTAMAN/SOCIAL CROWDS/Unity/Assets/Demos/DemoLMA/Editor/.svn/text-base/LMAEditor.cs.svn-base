@@ -1,0 +1,231 @@
+using UnityEngine;
+using System.Collections;
+using UnityEditor;
+
+
+public class LMAEditor : EditorWindow {
+	
+	
+	static float space, weight, time, flow;  //[-1 1]
+	static float verArm, horArm, sagArm; //[-1 1]
+	static float verTorso, horTorso, sagTorso;
+	float effortMin = -1.0f;
+	float effortMax = 1.0f;	
+	float shapeMin = -1.0f;
+	float shapeMax = 1.0f;	
+	int arm = 1; //arm index
+	int[] armInds = {0,1,2};
+	string[] armNames = {"Left", "Right", "Both"};
+	
+	
+		[MenuItem ("ADAPT/LMA/EMOTE")]
+	 static void Init () {
+		LMAEditor window = (LMAEditor)EditorWindow.GetWindow(typeof (LMAEditor));		
+	
+	}
+
+	void OnGUI () {  
+		
+		arm = EditorGUILayout.IntPopup("Arm: ", arm, armNames,armInds);
+		
+		
+		GUILayout.Label ("Effort", EditorStyles.boldLabel);
+		
+		EditorGUILayout.BeginHorizontal ();
+		//GUILayout.Label("Ind");
+		GUILayout.Label("");
+		GUILayout.Label("Ind");
+		GUILayout.Label("Dir");
+		EditorGUILayout.EndHorizontal ();
+		space = EditorGUILayout.Slider ("Space", space, effortMin, effortMax);
+	//	GUILayout.Label("Dir");
+		
+	
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Lgt");
+		GUILayout.Label("Str");
+		EditorGUILayout.EndHorizontal ();
+		weight = EditorGUILayout.Slider ("Weight", weight, effortMin, effortMax);
+		
+		
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Sus");
+		GUILayout.Label("Sud");
+		EditorGUILayout.EndHorizontal ();
+		time = EditorGUILayout.Slider ("Time", time, effortMin, effortMax);
+		
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Fre");
+		GUILayout.Label("Bnd");
+		EditorGUILayout.EndHorizontal ();
+		flow = EditorGUILayout.Slider ("Flow", flow, effortMin, effortMax);
+		
+		if(GUILayout.Button("Reset Effort", GUILayout.ExpandWidth(false))){
+			space = weight = time = flow = 0f;				
+		    ResetTransforms();			
+		}
+		
+		EditorGUILayout.Separator();	
+	
+		GUILayout.Label ("Arm Shape", EditorStyles.boldLabel);
+		
+		horArm = EditorGUILayout.Slider ("Horizontal", horArm, shapeMin, shapeMax);
+		verArm = EditorGUILayout.Slider ("Vertical", verArm, shapeMin, shapeMax);
+		sagArm = EditorGUILayout.Slider ("Sagittal", sagArm, shapeMin, shapeMax);
+		
+		
+		
+		if(GUILayout.Button("Reset Arm Shape", GUILayout.ExpandWidth(false))){
+			horArm = verArm = sagArm = 0f;	
+		}
+	
+		EditorGUILayout.Separator();
+		
+		GUILayout.Label ("Torso Shape", EditorStyles.boldLabel);
+		
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Enclosing");
+		GUILayout.Label("Spreading");		
+		EditorGUILayout.EndHorizontal ();
+		horTorso = EditorGUILayout.Slider ("Horizontal", horTorso, shapeMin, shapeMax);
+		
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Sinking");
+		GUILayout.Label("Rising");		
+		EditorGUILayout.EndHorizontal ();
+		verTorso = EditorGUILayout.Slider ("Vertical", verTorso, shapeMin, shapeMax);
+		
+		EditorGUILayout.BeginHorizontal ();
+		GUILayout.Label("");
+		GUILayout.Label("Retreating");
+		GUILayout.Label("Advancing");		
+		EditorGUILayout.EndHorizontal ();
+		sagTorso = EditorGUILayout.Slider ("Sagittal", sagTorso, shapeMin, shapeMax);
+		
+		if(GUILayout.Button("Reset Torso Shape", GUILayout.ExpandWidth(false))){
+			horTorso = verTorso = sagTorso = 0f;	
+		}
+	
+	
+		UpdateAgentParams();
+	
+	}
+	
+	void ResetTransforms() {
+		GameObject agent = GameObject.Find("AgentPrefab");	
+		
+		if(agent.GetComponent<ArmAnimator>().armC == null  ||agent.GetComponent<TorsoAnimator>().torsoC == null) {
+			Debug.Log ("Controller not assigned");
+			return;
+		}
+			
+			
+		agent.GetComponent<ArmAnimator>().armC.ResetTransforms();
+		agent.GetComponent<TorsoAnimator>().torsoC.ResetTransforms();
+	}
+	
+	void UpdateAgentParams() {
+		GameObject agent = GameObject.Find("AgentPrefab");
+		if(agent == null){		
+			Debug.Log("AgentPrefab not found");
+			return;
+		}
+		//Update arm Shape params
+		agent.GetComponent<ArmAnimator>().hor = horArm;
+		agent.GetComponent<ArmAnimator>().ver = verArm;
+		agent.GetComponent<ArmAnimator>().sag = sagArm;
+		
+		
+		//Update keypoints
+		if(arm == 2) {
+			agent.GetComponent<ArmAnimator>().UpdateKeypoints(0);
+			agent.GetComponent<ArmAnimator>().UpdateKeypoints(1);
+		}
+		else
+			agent.GetComponent<ArmAnimator>().UpdateKeypoints(arm);
+		
+		//Updates keypoints
+		
+		
+		//Update arm Effort params
+		//Space
+		if(space > 0){
+			agent.GetComponent<ArmAnimator>().dir = space;
+			agent.GetComponent<ArmAnimator>().ind = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().ind = -space;
+			agent.GetComponent<ArmAnimator>().dir = 0f;
+		}
+		//Weight
+		if(weight > 0){
+			agent.GetComponent<ArmAnimator>().str = weight;
+			agent.GetComponent<ArmAnimator>().lgt = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().lgt = -weight;
+			agent.GetComponent<ArmAnimator>().str = 0f;
+		}
+		//Time				
+		if(time > 0){
+			agent.GetComponent<ArmAnimator>().sud = time;
+			agent.GetComponent<ArmAnimator>().sus = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().sus = -time;
+			agent.GetComponent<ArmAnimator>().sud = 0f;
+		}
+		
+		//Flow
+		if(flow > 0){
+			agent.GetComponent<ArmAnimator>().bnd = flow;
+			agent.GetComponent<ArmAnimator>().fre = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().fre = -flow	;
+			agent.GetComponent<ArmAnimator>().bnd = 0;
+		}
+		
+		
+		//Update effort parameters
+		agent.GetComponent<ArmAnimator>().Effort2LowLevel();
+		
+		
+		//Update torso shape parameters
+		
+		if(horTorso > 0){
+			agent.GetComponent<TorsoAnimator>().spr = horTorso;
+			agent.GetComponent<TorsoAnimator>().enc = 0f;
+		}
+		else{
+			agent.GetComponent<TorsoAnimator>().enc = -horTorso;
+			agent.GetComponent<TorsoAnimator>().spr = 0f;
+		}
+		
+		if(verTorso > 0){
+			agent.GetComponent<TorsoAnimator>().ris = verTorso;
+			agent.GetComponent<TorsoAnimator>().sin = 0f;
+		}
+		else{
+			agent.GetComponent<TorsoAnimator>().sin = -verTorso;
+			agent.GetComponent<TorsoAnimator>().ris = 0f;
+		}
+		
+		if(sagTorso > 0){
+			agent.GetComponent<TorsoAnimator>().adv = sagTorso;
+			agent.GetComponent<TorsoAnimator>().ret = 0f;
+		}
+		else{
+			agent.GetComponent<TorsoAnimator>().ret = -sagTorso;
+			agent.GetComponent<TorsoAnimator>().adv = 0f;
+		}
+
+//           agent.GetComponent<TorsoAnimator>().TorsoShape();
+				
+	}
+}

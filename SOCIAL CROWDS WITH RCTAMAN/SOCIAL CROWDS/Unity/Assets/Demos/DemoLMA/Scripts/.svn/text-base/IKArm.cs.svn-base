@@ -1,0 +1,106 @@
+/*
+Copyright (c) 2008, Rune Skovbo Johansen & Unity Technologies ApS
+
+See the document "TERMS OF USE" included in the project folder for licencing details.
+*/
+using UnityEngine;
+using System.Collections;
+
+
+
+public class IKArm : IKSolver {
+	
+	
+	
+	public override void Solve(Transform[] bones, Vector3 target) {
+		
+		Transform shoulder = bones[0];
+		Transform elbow = bones[1];
+		Transform wrist = bones[2];
+		
+		// Calculate the direction in which the elbow should be pointing
+		Vector3 vElbowDir = Vector3.Cross(
+			wrist.position - shoulder.position,
+			Vector3.Cross(
+				wrist.position-shoulder.position,
+				wrist.position-elbow.position
+			)
+		);
+		
+		// Get lengths of arm bones
+		float fUpperArmLength = (elbow.position-shoulder.position).magnitude;
+		float fLowerArmLength = (wrist.position-elbow.position).magnitude;
+		
+		// Calculate the desired new joint positions
+		Vector3 pShoulder = shoulder.position;
+		Vector3 pWrist = target;
+		Vector3 pElbow = findElbow(pShoulder,pWrist,fUpperArmLength,fLowerArmLength,vElbowDir);
+		
+		// Rotate the bone transformations to align correctly
+		Quaternion shoulderRot = Quaternion.FromToRotation(elbow.position-shoulder.position, pElbow-pShoulder) * shoulder.rotation;
+		if (System.Single.IsNaN(shoulderRot.x)) {
+			Debug.LogWarning("shoulderRot="+shoulderRot+" pShoulder="+pShoulder+" pWrist="+pWrist+" fUpperArmLength="+fUpperArmLength+" fLowerArmLength="+fLowerArmLength+" vElbowDir="+vElbowDir);
+		}
+		else {
+			shoulder.rotation = shoulderRot;
+			elbow.rotation = Quaternion.FromToRotation(wrist.position-elbow.position, pWrist-pElbow) * elbow.rotation;
+		}
+		
+		
+		
+		//CheckRestrictions(shoulder,new Vector3(36,36,36),,new Vector3(0,0,0))'
+		
+		
+	}
+	
+	public Vector3 findElbow(Vector3 pShoulder, Vector3 pWrist, float fUpperArm, float fLowerArm, Vector3 vElbowDir) {
+		Vector3 vB = pWrist-pShoulder;
+		float LB = vB.magnitude;
+		
+		float maxDist = (fUpperArm+fLowerArm)*0.999f;
+		if (LB>maxDist) {
+			// wrist is too far away from shoulder - adjust wrist position
+			pWrist = pShoulder+(vB.normalized*maxDist);
+			vB = pWrist-pShoulder;
+			LB = maxDist;
+		}
+		
+		float minDist = Mathf.Abs(fUpperArm-fLowerArm)*1.001f;
+		if (LB<minDist) {
+			// wrist is too close to shoulder - adjust wrist position
+			pWrist = pShoulder+(vB.normalized*minDist);
+			vB = pWrist-pShoulder;
+			LB = minDist;
+		}
+		
+		float aa = (LB*LB+fUpperArm*fUpperArm-fLowerArm*fLowerArm)/2/LB;
+		float bb = Mathf.Sqrt(fUpperArm*fUpperArm-aa*aa);
+		Vector3 vF = Vector3.Cross(vB,Vector3.Cross(vElbowDir,vB));
+		return pShoulder+(aa*vB.normalized)+(bb*vF.normalized);
+	}
+	
+	void CheckRestrictions (Transform bone, Vector3 maxRot, Vector3 minRot)
+	{
+		
+ 
+		// FIRST STEP IS TO CONVERT LINK QUATERNION BACK TO EULER ANGLES
+		Vector3 euler = bone.localRotation.eulerAngles;
+ 
+		// CHECK THE DOF SETTINGS
+		if (euler.x > maxRot.x)
+			euler.x = maxRot.x;
+		if (euler.x < minRot.x)
+			euler.x = minRot.x;
+		if (euler.y > maxRot.y)
+			euler.y = maxRot.y;
+		if (euler.y < minRot.y)
+			euler.y = minRot.y;
+		if (euler.z > maxRot.z)
+			euler.z = maxRot.z;
+		if (euler.z < minRot.z)
+			euler.z = minRot.z;
+ 
+		// BACK TO QUATERNION
+		bone.localRotation = Quaternion.Euler (euler);
+	}
+}
