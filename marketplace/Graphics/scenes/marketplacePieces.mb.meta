@@ -1,0 +1,60 @@
+fileFormatVersion: 1
+guid: fa677c8bea4fc9045825a41a05833fa6
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: tightCrate
+    4300002: pancakePile1
+    4300004: yam1
+    4300006: looseCrate
+    4300008: looseTray
+    4300010: greenApple
+    4300012: pancake1
+    4300014: pancakePile2
+    4300016: polySurface2
+    4300018: transform1
+    4300020: largeTable
+    4300022: tightTray
+    4300024: flatTray
+    4300026: stallRoof
+    4300028: roughStallCover
+    4300030: stallBody
+    4300032: pallet
+    4300034: polySurface1
+    4300036: redApple
+    4300038: skewedStallCover
+    4300040: redApplePile
+    4300042: wallPillar
+    4300044: longWall
+    4300046: ground
+    4300048: canopy
+    4300050: pole
+    4300052: medTable
+    4300054: squareTable
+    4300056: halfCanopy
+    4300058: thinTable
+    4300060: largeQuadCanopy
+    4300062: halfCanopy1
+    4300064: halfCanopy2
+    4300066: largeQuadCanopy1

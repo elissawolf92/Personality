@@ -1,0 +1,400 @@
+fileFormatVersion: 1
+guid: f66606fe9dec578489c27d729232a39b
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    ThongSandals:
+    - 100000
+    - 400000
+    - 13700000
+    leftPinkieTip:
+    - 100002
+    - 400002
+    leftPinkie3:
+    - 100004
+    - 400004
+    leftPinkie2:
+    - 100006
+    - 400006
+    leftPinkie1:
+    - 100008
+    - 400008
+    leftRingTipq:
+    - 100010
+    - 400010
+    leftRing3:
+    - 100012
+    - 400012
+    leftRing2:
+    - 100014
+    - 400014
+    leftRing1:
+    - 100016
+    - 400016
+    leftMiddleTipq:
+    - 100018
+    - 400018
+    leftMiddle3:
+    - 100020
+    - 400020
+    //RootNode:
+    - 100022
+    - 400022
+    - 11100000
+    leftMiddle2:
+    - 100024
+    - 400024
+    leftMiddle1:
+    - 100026
+    - 400026
+    leftIndexTip:
+    - 100028
+    - 400028
+    leftFoot:
+    - 100030
+    - 400030
+    leftIndex3:
+    - 100032
+    - 400032
+    leftIndex2:
+    - 100034
+    - 400034
+    leftIndex1:
+    - 100036
+    - 400036
+    leftThumbTip:
+    - 100038
+    - 400038
+    leftThumb2:
+    - 100040
+    - 400040
+    rightFoot:
+    - 100042
+    - 400042
+    leftThumb1:
+    - 100044
+    - 400044
+    leftWrist:
+    - 100046
+    - 400046
+    leftElbow:
+    - 100048
+    - 400048
+    rightPinkieTip:
+    - 100050
+    - 400050
+    rightPinkie3:
+    - 100052
+    - 400052
+    rightPinkie2:
+    - 100054
+    - 400054
+    rightPinkie1:
+    - 100056
+    - 400056
+    rightRingTipq:
+    - 100058
+    - 400058
+    rightRing3:
+    - 100060
+    - 400060
+    rightRing2:
+    - 100062
+    - 400062
+    leftShoulder:
+    - 100064
+    - 400064
+    rightRing1:
+    - 100066
+    - 400066
+    rightMiddleTipq:
+    - 100068
+    - 400068
+    rightMiddle3:
+    - 100070
+    - 400070
+    rightMiddle2:
+    - 100072
+    - 400072
+    rightMiddle1:
+    - 100074
+    - 400074
+    rightIndexTip:
+    - 100076
+    - 400076
+    rightIndex3:
+    - 100078
+    - 400078
+    rightIndex2:
+    - 100080
+    - 400080
+    rightIndex1:
+    - 100082
+    - 400082
+    rightThumbTip:
+    - 100084
+    - 400084
+    rightThumb2:
+    - 100086
+    - 400086
+    rightThumb1:
+    - 100088
+    - 400088
+    rightWrist:
+    - 100090
+    - 400090
+    rightElbow:
+    - 100092
+    - 400092
+    spine4:
+    - 100094
+    - 400094
+    spine3:
+    - 100096
+    - 400096
+    spine2:
+    - 100098
+    - 400098
+    waist:
+    - 100100
+    - 400100
+    leftFootThumbA:
+    - 100102
+    - 400102
+    leftAnkle:
+    - 100104
+    - 400104
+    leftKnee:
+    - 100106
+    - 400106
+    leftHip:
+    - 100108
+    - 400108
+    rightFootThumbA:
+    - 100110
+    - 400110
+    rightAnkle:
+    - 100112
+    - 400112
+    rightKnee:
+    - 100114
+    - 400114
+    rightHip:
+    - 100116
+    - 400116
+    RolledShortDress:
+    - 100118
+    - 400118
+    - 13700002
+    ShortSkirt:
+    - 100120
+    - 400120
+    - 13700004
+    ShortDress:
+    - 100122
+    - 400122
+    - 13700006
+    ShirtRolled:
+    - 100124
+    - 400124
+    - 13700008
+    ArmsBare:
+    - 100126
+    - 400126
+    - 13700010
+    Shemagh:
+    - 100128
+    - 400128
+    - 13700012
+    rightShoulder:
+    - 100130
+    - 400130
+    ScarfBrown:
+    - 100132
+    - 400132
+    - 13700014
+    SandalShort:
+    - 100134
+    - 400134
+    - 13700016
+    head:
+    - 100136
+    - 400136
+    neck:
+    - 100138
+    - 400138
+    SandalLong:
+    - 100140
+    - 400140
+    - 13700018
+    Pants:
+    - 100142
+    - 400142
+    - 13700020
+    PantCalves:
+    - 100144
+    - 400144
+    - 13700022
+    FullDress:
+    - 100146
+    - 400146
+    - 13700024
+    hips:
+    - 100148
+    - 400148
+    LongSkirt:
+    - 100150
+    - 400150
+    - 13700026
+    KufiB:
+    - 100152
+    - 400152
+    - 13700028
+    KufiA:
+    - 100154
+    - 400154
+    - 13700030
+    Head:
+    - 100156
+    - 400156
+    - 13700032
+    HeadBeard:
+    - 100158
+    - 400158
+    - 13700034
+    Shades:
+    - 100190
+    - 400190
+    - 13700040
+    TShirt:
+    - 100198
+    - 400198
+    - 13700048
+    HandsBrown:
+    - 100214
+    - 400214
+    - 13700064
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: ShirtLong_A_01
+    4300002: ArmsLong_A_01
+    4300004: Jeans_B_01
+    4300006: Hands_C_01
+    4300008: Head_verG_Beard_01
+    4300010: Sandal_A_01
+    4300012: FootBare_B_01
+    4300014: Kufi_A_01
+    4300016: DressLonger_B_01
+    4300018: Scarf_A_02
+    4300020: LongArms_A_02
+    4300022: Hands_C_02
+    4300024: Sandal_C_01
+    4300026: Head_verH_01
+    4300028: Kufi_B_01
+    4300030: TShirt_G_01
+    4300032: Sandal_C_01
+    4300034: DressLonger_B_02
+    4300036: Shemagh_B_01
+    4300038: Scarf_D_01
+    4300040: Head_verV_01
+    4300042: Shades_B_01
+    4300044: Sandal_C_03
+    4300046: Trouser_A_03
+    4300048: Shirt_Rolled_01
+    4300050: ArmsBare_C_01
+    4300052: DressLong_A_01
+    4300054: Head_verU_01
+    4300056: Shemagh_A_02
+    4300058: ArmsBare_C_02
+    4300060: Head_verS_01
+    4300062: ShirtLong_Rolled_01
+    4300064: Sandal_C_02
+    4300066: Trouser_A_02
+    4300068: Shemagh_B_02
+    4300070: Sandal_C_04
+    4300072: Scarf_C
+    4300074: Scarf_D1
+    4300076: Sandal_C_05
+    4300078: Trouser_A_04
+    4300080: Shemagh_B_03
+    4300082: PantsJean
+    4300084: HandsBrown
+    4300086: FootlessSandal
+    4300088: FootBare
+    4300090: ScarfRedCheck
+    4300092: SandalLongBlack
+    4300094: LongSkirtWhite
+    4300096: ShemaghBlue
+    4300098: Shades
+    4300100: SandalShortBlue
+    4300102: PantCalvesCanvas
+    4300104: ShirtRolledBlack
+    4300106: ShortSkirtBlue
+    4300108: ShemaghGreenCheck
+    4300110: ScarfGreenCheck
+    4300112: ScarfBrownCheck
+    4300114: SandalShortBlack
+    4300116: SandalShortWhite
+    4300118: PantCalvesJean
+    4300120: ShemaghCotton
+    4300122: ShemaghWhite
+    4300124: FullDressBlack
+    4300126: FullDressWhite
+    4300128: ShortDressWhite
+    4300130: ShortDressBlack
+    4300132: ShortDressStriped
+    4300134: ShortDressBlue
+    4300136: FullDressStriped
+    4300138: FullDressBlue
+    4300140: ShemaghRedCheck
+    4300142: ShemaghBrownCheck
+    4300144: PantsCanvas
+    4300146: ShirtRolledWhite
+    4300148: ShirtRolledStriped
+    4300150: ShirtRolledBlue
+    4300152: ShortSkirtBlack
+    4300154: TShirt
+    4300156: ArmsBare
+    4300158: HeadBeardG
+    4300160: HeadH
+    4300162: Kufi_A1
+    4300164: Kufi_B
+    4300166: RolledShortDress_Striped
+    4300168: ThongSandals
+    4300170: HeadBeard
+    4300172: Head
+    4300174: KufiA
+    4300176: KufiB
+    4300178: LongSkirt
+    4300180: FullDress
+    4300182: RolledShortDress
+    4300184: PantCalves
+    4300186: Pants
+    4300188: SandalLong
+    4300190: SandalShort
+    4300192: ScarfBrown
+    4300194: Shemagh
+    4300196: ShirtRolled
+    4300198: ShortDress
+    4300200: ShortSkirt
+    7400000: Take 001 //// arab male

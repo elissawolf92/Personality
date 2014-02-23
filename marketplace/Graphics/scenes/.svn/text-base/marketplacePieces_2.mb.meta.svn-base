@@ -1,0 +1,700 @@
+fileFormatVersion: 1
+guid: 1125735daa406b14b8a61f077367336d
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+    generateSecondaryUV: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    //RootNode:
+    - 100000
+    - 400000
+    - 11100000
+    tent_tarp_reverse:
+    - 100002
+    - 400002
+    - 3300016
+    - 2300016
+    well_hole_reverse:
+    - 100004
+    - 400004
+    - 3300018
+    - 2300018
+    plate_stack_uniform2:
+    - 100006
+    - 400006
+    - 3300022
+    - 2300022
+    mango_stack:
+    - 100008
+    - 400008
+    - 3300024
+    - 2300024
+    plate_stack_mixed1:
+    - 100010
+    - 400010
+    - 3300026
+    - 2300026
+    blanket_stack_large:
+    - 100012
+    - 400012
+    - 3300028
+    - 2300028
+    banana_stack2:
+    - 100014
+    - 400014
+    - 3300030
+    - 2300030
+    plate2:
+    - 100016
+    - 400016
+    - 3300008
+    - 2300008
+    plate1:
+    - 100018
+    - 400018
+    - 3300010
+    - 2300010
+    banana_stack1:
+    - 100020
+    - 400020
+    - 3300032
+    - 2300032
+    plate3:
+    - 100022
+    - 400022
+    - 3300014
+    - 2300014
+    mat2:
+    - 100024
+    - 400024
+    - 3300034
+    - 2300034
+    eggplant_stack:
+    - 100026
+    - 400026
+    - 3300036
+    - 2300036
+    spice_basket:
+    - 100028
+    - 400028
+    - 3300000
+    - 2300000
+    plate4:
+    - 100030
+    - 400030
+    - 3300020
+    - 2300020
+    banana_pile1:
+    - 100032
+    - 400032
+    - 3300038
+    - 2300038
+    plate_stack_mixed2:
+    - 100034
+    - 400034
+    - 3300040
+    - 2300040
+    banana_stack3:
+    - 100036
+    - 400036
+    - 3300042
+    - 2300042
+    onion_stack:
+    - 100038
+    - 400038
+    - 3300044
+    - 2300044
+    coconut_stack:
+    - 100040
+    - 400040
+    - 3300046
+    - 2300046
+    blanket_stack_grey:
+    - 100042
+    - 400042
+    - 3300048
+    - 2300048
+    plate_stack_uniform3:
+    - 100044
+    - 400044
+    - 3300050
+    - 2300050
+    plate_stack_mixed3:
+    - 100046
+    - 400046
+    - 3300052
+    - 2300052
+    plate_stack_uniform1:
+    - 100048
+    - 400048
+    - 3300054
+    - 2300054
+    watermelon_stack:
+    - 100050
+    - 400050
+    - 3300056
+    - 2300056
+    transform2:
+    - 100052
+    - 400052
+    watermelon2:
+    - 100054
+    - 400054
+    plate_stack_mixed4:
+    - 100056
+    - 400056
+    - 3300060
+    - 2300060
+    lemon_stack:
+    - 100058
+    - 400058
+    - 3300062
+    - 2300062
+    fish_stack:
+    - 100060
+    - 400060
+    - 3300064
+    - 2300064
+    blanket_stack_green:
+    - 100062
+    - 400062
+    - 3300066
+    - 2300066
+    blanket_stack_black:
+    - 100064
+    - 400064
+    - 3300068
+    - 2300068
+    pepper_stack:
+    - 100066
+    - 400066
+    - 3300070
+    - 2300070
+    plate_stack_uniform4:
+    - 100068
+    - 400068
+    - 3300072
+    - 2300072
+    transform1:
+    - 100070
+    - 400070
+    watermelon1:
+    - 100072
+    - 400072
+    tent_cover:
+    - 100074
+    - 400074
+    - 3300058
+    - 2300058
+    halfCanopy4:
+    - 100076
+    - 400076
+    - 3300074
+    - 2300074
+    halfCanopy3:
+    - 100078
+    - 400078
+    - 3300076
+    - 2300076
+    halfCanopy2:
+    - 100080
+    - 400080
+    - 3300078
+    - 2300078
+    tent_cover1:
+    - 100082
+    - 400082
+    - 3300080
+    - 2300080
+    tent_tarp:
+    - 100188
+    - 400188
+    - 3300094
+    - 2300094
+    well_hole:
+    - 100236
+    - 400236
+    - 3300120
+    - 2300120
+    pole9:
+    - 100494
+    - 400494
+    - 3300252
+    - 2300252
+    pole8:
+    - 100496
+    - 400496
+    - 3300254
+    - 2300254
+    pole7:
+    - 100498
+    - 400498
+    - 3300256
+    - 2300256
+    pole6:
+    - 100500
+    - 400500
+    - 3300258
+    - 2300258
+    pole5:
+    - 100502
+    - 400502
+    - 3300260
+    - 2300260
+    pole4:
+    - 100504
+    - 400504
+    - 3300262
+    - 2300262
+    pole3:
+    - 100506
+    - 400506
+    - 3300264
+    - 2300264
+    pole2:
+    - 100508
+    - 400508
+    - 3300266
+    - 2300266
+    pole1:
+    - 100510
+    - 400510
+    - 3300268
+    - 2300268
+    well_pole3:
+    - 100598
+    - 400598
+    - 3300352
+    - 2300352
+    well_pole2:
+    - 100600
+    - 400600
+    - 3300354
+    - 2300354
+    well_pole1:
+    - 100602
+    - 400602
+    - 3300356
+    - 2300356
+    well:
+    - 100604
+    - 400604
+    - 3300002
+    - 2300002
+    rug3:
+    - 100700
+    - 400700
+    - 3300004
+    - 2300004
+    rug2:
+    - 100710
+    - 400710
+    - 3300006
+    - 2300006
+    rug1:
+    - 100720
+    - 400720
+    - 3300012
+    - 2300012
+    well_bucket:
+    - 100722
+    - 400722
+    - 3300424
+    - 2300424
+    mat1:
+    - 100724
+    - 400724
+    - 3300426
+    - 2300426
+    basket2:
+    - 100726
+    - 400726
+    - 3300428
+    - 2300428
+    basket1:
+    - 100728
+    - 400728
+    - 3300430
+    - 2300430
+    onion:
+    - 100730
+    - 400730
+    - 3300432
+    - 2300432
+    lemon:
+    - 100732
+    - 400732
+    - 3300434
+    - 2300434
+    spice1:
+    - 100734
+    - 400734
+    - 3300436
+    - 2300436
+    spice2:
+    - 100736
+    - 400736
+    - 3300438
+    - 2300438
+    spice3:
+    - 100738
+    - 400738
+    - 3300440
+    - 2300440
+    spice4:
+    - 100740
+    - 400740
+    - 3300442
+    - 2300442
+    coconut:
+    - 100756
+    - 400756
+    - 3300452
+    - 2300452
+    watermelon:
+    - 100758
+    - 400758
+    - 3300454
+    - 2300454
+    pepper:
+    - 100760
+    - 400760
+    - 3300456
+    - 2300456
+    eggplant:
+    - 100762
+    - 400762
+    - 3300458
+    - 2300458
+    mango:
+    - 100764
+    - 400764
+    - 3300460
+    - 2300460
+    clock:
+    - 100766
+    - 400766
+    - 3300462
+    - 2300462
+    banana:
+    - 100768
+    - 400768
+    - 3300464
+    - 2300464
+    jar:
+    - 100770
+    - 400770
+    - 3300466
+    - 2300466
+    tuna:
+    - 100772
+    - 400772
+    - 3300468
+    - 2300468
+    lamp:
+    - 100774
+    - 400774
+    - 3300470
+    - 2300470
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: lamp1
+    4300002: tuna1
+    4300004: plate1
+    4300006: pCube3
+    4300008: pPlane2
+    4300010: pPlane3
+    4300012: revolvedSurface1
+    4300014: revolvedSurface2
+    4300016: plate2
+    4300018: plate3
+    4300020: plate4
+    4300022: lamp
+    4300024: tuna
+    4300026: jar
+    4300028: banana
+    4300030: clock
+    4300032: mango
+    4300034: eggplant
+    4300036: pepper
+    4300038: watermelon
+    4300040: coconut
+    4300042: blanket1
+    4300044: blanket2
+    4300046: blanket3
+    4300048: basket
+    4300050: spice4
+    4300052: spice3
+    4300054: spice2
+    4300056: spice1
+    4300058: lemon
+    4300060: onion
+    4300062: basket1
+    4300064: basket2
+    4300066: mat1
+    4300068: well_bucket
+    4300070: rug1
+    4300072: rug1_pole
+    4300074: rug1_hanger
+    4300076: transform136
+    4300078: rug2
+    4300080: rug2_pole
+    4300082: rug2_hanger
+    4300084: transform137
+    4300086: rug3
+    4300088: rug3_pole
+    4300090: rug3_hanger
+    4300092: transform138
+    4300094: transform12
+    4300096: transform11
+    4300098: transform13
+    4300100: transform73
+    4300102: transform72
+    4300104: transform71
+    4300106: transform68
+    4300108: transform15
+    4300110: transform14
+    4300112: transform16
+    4300114: transform76
+    4300116: transform75
+    4300118: transform74
+    4300120: transform69
+    4300122: transform79
+    4300124: transform78
+    4300126: transform77
+    4300128: transform70
+    4300130: transform18
+    4300132: transform17
+    4300134: transform19
+    4300136: well_pole1
+    4300138: well_pole2
+    4300140: well_pole3
+    4300142: transform134
+    4300144: polySurface54
+    4300146: polySurface55
+    4300148: polySurface56
+    4300150: polySurface57
+    4300152: polySurface58
+    4300154: polySurface59
+    4300156: polySurface60
+    4300158: polySurface61
+    4300160: polySurface62
+    4300162: polySurface63
+    4300164: polySurface64
+    4300166: polySurface65
+    4300168: polySurface66
+    4300170: polySurface67
+    4300172: polySurface68
+    4300174: polySurface69
+    4300176: polySurface70
+    4300178: polySurface71
+    4300180: polySurface72
+    4300182: polySurface73
+    4300184: polySurface74
+    4300186: polySurface75
+    4300188: polySurface76
+    4300190: polySurface77
+    4300192: polySurface78
+    4300194: polySurface79
+    4300196: polySurface80
+    4300198: polySurface81
+    4300200: polySurface82
+    4300202: polySurface83
+    4300204: polySurface84
+    4300206: polySurface85
+    4300208: polySurface86
+    4300210: polySurface87
+    4300212: polySurface88
+    4300214: polySurface89
+    4300216: polySurface90
+    4300218: polySurface91
+    4300220: polySurface92
+    4300222: polySurface93
+    4300224: transform123
+    4300226: transform122
+    4300228: transform121
+    4300230: transform120
+    4300232: transform66
+    4300234: transform119
+    4300236: transform118
+    4300238: transform117
+    4300240: transform116
+    4300242: transform115
+    4300244: transform114
+    4300246: transform113
+    4300248: transform112
+    4300250: transform111
+    4300252: transform110
+    4300254: transform109
+    4300256: transform108
+    4300258: transform107
+    4300260: transform106
+    4300262: transform105
+    4300264: transform104
+    4300266: transform103
+    4300268: transform102
+    4300270: transform101
+    4300272: transform100
+    4300274: transform99
+    4300276: transform98
+    4300278: transform97
+    4300280: transform96
+    4300282: transform95
+    4300284: transform94
+    4300286: transform93
+    4300288: transform92
+    4300290: transform91
+    4300292: transform90
+    4300294: transform89
+    4300296: transform88
+    4300298: transform87
+    4300300: transform86
+    4300302: transform85
+    4300304: transform84
+    4300306: transform83
+    4300308: transform82
+    4300310: transform81
+    4300312: transform80
+    4300314: transform23
+    4300316: transform22
+    4300318: transform21
+    4300320: transform63
+    4300322: transform62
+    4300324: transform61
+    4300326: transform60
+    4300328: transform59
+    4300330: transform58
+    4300332: transform57
+    4300334: transform56
+    4300336: transform55
+    4300338: transform54
+    4300340: transform53
+    4300342: transform52
+    4300344: transform51
+    4300346: transform50
+    4300348: transform49
+    4300350: transform48
+    4300352: transform47
+    4300354: transform46
+    4300356: transform45
+    4300358: transform44
+    4300360: transform43
+    4300362: transform42
+    4300364: transform41
+    4300366: transform40
+    4300368: transform39
+    4300370: transform38
+    4300372: transform37
+    4300374: transform36
+    4300376: transform35
+    4300378: transform34
+    4300380: transform33
+    4300382: transform32
+    4300384: transform31
+    4300386: transform30
+    4300388: transform29
+    4300390: transform28
+    4300392: transform27
+    4300394: transform26
+    4300396: transform25
+    4300398: transform24
+    4300400: transform20
+    4300402: tent_tarp
+    4300404: pole1
+    4300406: pole2
+    4300408: pole3
+    4300410: pole4
+    4300412: pole5
+    4300414: pole6
+    4300416: pole7
+    4300418: pole8
+    4300420: pole9
+    4300422: transform135
+    4300424: tent_pole1
+    4300426: transform9
+    4300428: tent_pole2
+    4300430: transform8
+    4300432: tent_pole3
+    4300434: transform7
+    4300436: tent_pole4
+    4300438: transform6
+    4300440: tent_pole5
+    4300442: transform5
+    4300444: tent_pole6
+    4300446: transform4
+    4300448: tent_pole7
+    4300450: transform3
+    4300452: tent_pole8
+    4300454: transform2
+    4300456: tent_pole9
+    4300458: transform1
+    4300460: transform10
+    4300462: transform133
+    4300464: transform132
+    4300466: transform131
+    4300468: transform130
+    4300470: transform129
+    4300472: transform128
+    4300474: transform127
+    4300476: transform126
+    4300478: transform125
+    4300480: transform124
+    4300482: transform67
+    4300484: well_hole
+    4300486: tent_tarp_reverse
+    4300488: well
+    4300490: spice_basket
+    4300492: well_hole_reverse
+    4300494: banana_stack1
+    4300496: banana_stack2
+    4300498: banana_stack3
+    4300500: banana_pile1
+    4300502: watermelon_stack
+    4300504: lemon_stack
+    4300506: mango_stack
+    4300508: coconut_stack
+    4300510: eggplant_stack
+    4300512: pepper_stack
+    4300514: onion_stack
+    4300516: fish_stack
+    4300518: plate_stack_mixed1
+    4300520: plate_stack_mixed2
+    4300522: plate_stack_mixed3
+    4300524: plate_stack_mixed4
+    4300526: plate_stack_uniform1
+    4300528: plate_stack_uniform2
+    4300530: plate_stack_uniform3
+    4300532: plate_stack_uniform4
+    4300534: blanket_stack_green
+    4300536: blanket_stack_grey
+    4300538: blanket_stack_large
+    4300540: blanket_stack_black
+    4300542: mat2
+    4300544: tent_cover
+    4300546: halfCanopy2
+    4300548: halfCanopy3
+    4300550: halfCanopy4
+    4300552: tent_cover1

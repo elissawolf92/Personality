@@ -1,0 +1,48 @@
+fileFormatVersion: 1
+guid: 0bda6695828512340b05163002311ef0
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: ArmsBare
+    4300002: HandsBrown
+    4300004: HeadBeard
+    4300006: Head
+    4300008: KufiA
+    4300010: KufiB
+    4300012: LongSkirt
+    4300014: FullDress
+    4300016: RolledShortDress
+    4300018: PantCalves
+    4300020: Pants
+    4300022: SandalLong
+    4300024: SandalShort
+    4300026: Scarf
+    4300028: Shades
+    4300030: Shemagh
+    4300032: ShirtRolled
+    4300034: ShortDress
+    4300036: ShortSkirt
+    4300038: TShirt
+    4300040: ThongSandals
+    7400000: mixamo.com //// arab male@examine

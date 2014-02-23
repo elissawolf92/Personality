@@ -1,0 +1,48 @@
+fileFormatVersion: 1
+guid: 2daa792d28236854486c881d9b0fa1f9
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+    generateSecondaryUV: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: pCube1
+    4300002: wall1
+    4300004: wall2
+    4300006: wall3
+    4300008: pillow1
+    4300010: pillow2
+    4300012: pillow3
+    4300014: pillow4
+    4300016: pillow5
+    4300018: lantern
+    4300020: bench
+    4300022: stool1
+    4300024: stool
+    4300026: wall_variant
+    4300028: wall4
+    4300030: wall5
+    4300032: tower

@@ -1,0 +1,273 @@
+fileFormatVersion: 1
+guid: 2329aeae652338a458ae5031678a92ab
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    leftIndex1:
+    - 100000
+    - 400000
+    leftThumbTip:
+    - 100002
+    - 400002
+    leftThumb2:
+    - 100004
+    - 400004
+    leftThumb1:
+    - 100006
+    - 400006
+    leftWrist:
+    - 100008
+    - 400008
+    leftElbow:
+    - 100010
+    - 400010
+    leftShoulder:
+    - 100012
+    - 400012
+    rightPinkieTip:
+    - 100014
+    - 400014
+    rightPinkie3:
+    - 100016
+    - 400016
+    rightPinkie2:
+    - 100018
+    - 400018
+    rightPinkie1:
+    - 100020
+    - 400020
+    rightRingTipq:
+    - 100022
+    - 400022
+    rightRing3:
+    - 100024
+    - 400024
+    rightRing2:
+    - 100026
+    - 400026
+    rightRing1:
+    - 100028
+    - 400028
+    rightMiddleTipq:
+    - 100030
+    - 400030
+    rightMiddle3:
+    - 100032
+    - 400032
+    rightMiddle2:
+    - 100034
+    - 400034
+    rightMiddle1:
+    - 100036
+    - 400036
+    rightIndexTip:
+    - 100038
+    - 400038
+    rightIndex3:
+    - 100040
+    - 400040
+    rightIndex2:
+    - 100042
+    - 400042
+    rightIndex1:
+    - 100044
+    - 400044
+    rightThumbTip:
+    - 100046
+    - 400046
+    rightThumb2:
+    - 100048
+    - 400048
+    rightThumb1:
+    - 100050
+    - 400050
+    rightWrist:
+    - 100052
+    - 400052
+    rightElbow:
+    - 100054
+    - 400054
+    rightShoulder:
+    - 100056
+    - 400056
+    spine4:
+    - 100058
+    - 400058
+    spine3:
+    - 100060
+    - 400060
+    spine2:
+    - 100062
+    - 400062
+    ShortSkirt_Filligree:
+    - 100064
+    - 400064
+    - 13700012
+    LongSkirt_Black:
+    - 100066
+    - 400066
+    - 13700014
+    leftFoot:
+    - 100068
+    - 400068
+    leftAnkle:
+    - 100070
+    - 400070
+    leftKnee:
+    - 100072
+    - 400072
+    leftHip:
+    - 100074
+    - 400074
+    waist:
+    - 100076
+    - 400076
+    rightFoot:
+    - 100078
+    - 400078
+    rightAnkle:
+    - 100080
+    - 400080
+    rightKnee:
+    - 100082
+    - 400082
+    rightHip:
+    - 100084
+    - 400084
+    hips:
+    - 100086
+    - 400086
+    leftFootThumbA:
+    - 100088
+    - 400088
+    Trouser_Tan:
+    - 100090
+    - 400090
+    - 13700006
+    Head_Scarf_Blue:
+    - 100092
+    - 400092
+    - 13700008
+    rightFootThumbA:
+    - 100094
+    - 400094
+    Arms_Black:
+    - 100096
+    - 400096
+    - 13700010
+    Hands:
+    - 100098
+    - 400098
+    - 13700000
+    Blouse_Gray:
+    - 100100
+    - 400100
+    - 13700016
+    BurkaArms_Gray:
+    - 100102
+    - 400102
+    - 13700002
+    Head_Full_Black:
+    - 100104
+    - 400104
+    - 13700004
+    Head_Partial_Black:
+    - 100108
+    - 400108
+    - 13700018
+    FullSandal_Black:
+    - 100110
+    - 400110
+    - 13700020
+    //RootNode:
+    - 100112
+    - 400112
+    - 11100000
+    head:
+    - 100114
+    - 400114
+    neck:
+    - 100116
+    - 400116
+    leftPinkieTip:
+    - 100118
+    - 400118
+    leftPinkie3:
+    - 100120
+    - 400120
+    leftPinkie2:
+    - 100122
+    - 400122
+    leftPinkie1:
+    - 100124
+    - 400124
+    leftRingTipq:
+    - 100126
+    - 400126
+    leftRing3:
+    - 100128
+    - 400128
+    leftRing2:
+    - 100130
+    - 400130
+    leftRing1:
+    - 100132
+    - 400132
+    leftMiddleTipq:
+    - 100134
+    - 400134
+    leftMiddle3:
+    - 100136
+    - 400136
+    leftMiddle2:
+    - 100138
+    - 400138
+    leftMiddle1:
+    - 100140
+    - 400140
+    leftIndexTip:
+    - 100142
+    - 400142
+    leftIndex3:
+    - 100144
+    - 400144
+    leftIndex2:
+    - 100146
+    - 400146
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: Head_Full_Black
+    4300002: FullSandal_Black
+    4300004: BurkaArms_Gray
+    4300006: Dress_Gray
+    4300008: Head_Partial_Black
+    4300010: Hands
+    4300012: Arms_Black
+    4300014: Dress_Black
+    4300016: Head_Scarf_Blue
+    4300018: Trouser_Tan
+    4300020: Arms_White
+    4300022: ShortDress_Filligree
+    4300024: Blouse_Gray
+    4300026: ShortSkirt_Filligree
+    4300028: LongSkirt_Black

@@ -1,0 +1,215 @@
+fileFormatVersion: 1
+guid: da3703678b7939d4690c118ad8ecf914
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    rightRing3:
+    - 100000
+    - 400000
+    leftShoulder:
+    - 100002
+    - 400002
+    rightThumb1:
+    - 100004
+    - 400004
+    waist:
+    - 100006
+    - 400006
+    rightPinkie1:
+    - 100008
+    - 400008
+    leftFootThumbA:
+    - 100010
+    - 400010
+    leftAnkle:
+    - 100012
+    - 400012
+    leftIndex1:
+    - 100014
+    - 400014
+    leftPinkie1:
+    - 100016
+    - 400016
+    leftMiddle1:
+    - 100018
+    - 400018
+    leftFoot:
+    - 100020
+    - 400020
+    rightPinkie3:
+    - 100022
+    - 400022
+    rightRing2:
+    - 100024
+    - 400024
+    leftMiddle3:
+    - 100026
+    - 400026
+    leftMiddleTipq:
+    - 100028
+    - 400028
+    leftPinkie3:
+    - 100030
+    - 400030
+    rightRing1:
+    - 100032
+    - 400032
+    rightIndex2:
+    - 100034
+    - 400034
+    leftThumb2:
+    - 100036
+    - 400036
+    rightMiddleTipq:
+    - 100038
+    - 400038
+    rightWrist:
+    - 100040
+    - 400040
+    leftMiddle2:
+    - 100042
+    - 400042
+    rightElbow:
+    - 100044
+    - 400044
+    rightRingTipq:
+    - 100046
+    - 400046
+    leftRingTipq:
+    - 100048
+    - 400048
+    rightMiddle3:
+    - 100050
+    - 400050
+    rightIndex3:
+    - 100052
+    - 400052
+    leftPinkie2:
+    - 100054
+    - 400054
+    rightIndex1:
+    - 100056
+    - 400056
+    spine2:
+    - 100058
+    - 400058
+    spine4:
+    - 100060
+    - 400060
+    rightIndexTip:
+    - 100062
+    - 400062
+    leftIndexTip:
+    - 100064
+    - 400064
+    leftRing2:
+    - 100066
+    - 400066
+    leftIndex3:
+    - 100068
+    - 400068
+    leftRing1:
+    - 100070
+    - 400070
+    rightPinkie2:
+    - 100072
+    - 400072
+    leftHip:
+    - 100074
+    - 400074
+    leftKnee:
+    - 100076
+    - 400076
+    rightThumbTip:
+    - 100078
+    - 400078
+    rightShoulder:
+    - 100080
+    - 400080
+    rightMiddle2:
+    - 100082
+    - 400082
+    rightPinkieTip:
+    - 100084
+    - 400084
+    rightThumb2:
+    - 100086
+    - 400086
+    rightMiddle1:
+    - 100088
+    - 400088
+    leftElbow:
+    - 100090
+    - 400090
+    leftWrist:
+    - 100092
+    - 400092
+    spine3:
+    - 100094
+    - 400094
+    leftRing3:
+    - 100096
+    - 400096
+    leftIndex2:
+    - 100098
+    - 400098
+    leftThumb1:
+    - 100100
+    - 400100
+    leftThumbTip:
+    - 100102
+    - 400102
+    neck:
+    - 100104
+    - 400104
+    leftPinkieTip:
+    - 100106
+    - 400106
+    head:
+    - 100108
+    - 400108
+    hips:
+    - 100110
+    - 400110
+    rightKnee:
+    - 100112
+    - 400112
+    rightAnkle:
+    - 100114
+    - 400114
+    rightFootThumbA:
+    - 100116
+    - 400116
+    rightFoot:
+    - 100118
+    - 400118
+    rightHip:
+    - 100120
+    - 400120
+    //RootNode:
+    - 100122
+    - 400122
+    - 11100000
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    7400000: mixamo.com //// arab male@praying_high

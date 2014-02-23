@@ -1,0 +1,75 @@
+fileFormatVersion: 1
+guid: 7bfeea38c3fb4f94f99d04a1ca92aa0c
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: PantsJean
+    4300002: HandsBrown
+    4300004: Head_verG_Beard_01
+    4300006: FootlessSandal
+    4300008: FootBare
+    4300010: Kufi_A_01
+    4300012: ScarfRedCheck
+    4300014: SandalLongBlack
+    4300016: Head_verH_01
+    4300018: Kufi_B_01
+    4300020: TShirt
+    4300022: LongSkirtWhite
+    4300024: ShemaghBlue
+    4300026: Head_verV_01
+    4300028: Shades
+    4300030: SandalShortBlue
+    4300032: PantCalvesCanvas
+    4300034: ShirtRolledBlack
+    4300036: ArmsBare_C_01
+    4300038: ShortSkirtBlue
+    4300040: Head_verU_01
+    4300042: ShemaghGreenCheck
+    4300044: Head_verS_01
+    4300046: ShirtLong_Rolled_01
+    4300048: ScarfGreenCheck
+    4300050: ScarfBrownCheck
+    4300052: SandalShortBlack
+    4300054: SandalShortWhite
+    4300056: PantCalvesJean
+    4300058: ShemaghCotton
+    4300060: ShemaghWhite
+    4300062: FullDressBlack
+    4300064: FullDressWhite
+    4300066: ShortDressWhite
+    4300068: ShortDressBlack
+    4300070: ShortDressStriped
+    4300072: ShortDressBlue
+    4300074: FullDressStriped
+    4300076: FullDressBlue
+    4300078: ShemaghRedCheck
+    4300080: ShemaghBrownCheck
+    4300082: PantsCanvas
+    4300084: ShirtRolledWhite
+    4300086: ShirtRolledStriped
+    4300088: ShirtRolledBlue
+    4300090: ShortSkirtBlack
+    7400000: Take 001 //// arab_male@walking_backwards
+    7400002: mixamo.com //// arab_male@walking_backwards
+    7400004: mixamo.com //// arab male@walking_backwards

@@ -1,6 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI.cs">
+    <Files>
+      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI_backup.cs" Line="264" Column="9" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI.cs" Line="242" Column="27" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

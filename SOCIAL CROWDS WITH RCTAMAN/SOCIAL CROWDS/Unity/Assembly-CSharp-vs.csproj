@@ -96,6 +96,7 @@
      <Compile Include="Assets\Demos\DemoLMA\Scripts\EditDriveData.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\IKArm.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAComparisonGUI.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAPlayerGUI.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAScalingGUI.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\LMATuningGUI.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\SelectorGUI.cs" />

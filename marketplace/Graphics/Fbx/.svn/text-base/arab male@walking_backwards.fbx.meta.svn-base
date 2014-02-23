@@ -1,0 +1,263 @@
+fileFormatVersion: 1
+guid: 7bfeea38c3fb4f94f99d04a1ca92aa0c
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    leftPinkie3:
+    - 100000
+    - 400000
+    leftPinkie2:
+    - 100002
+    - 400002
+    leftPinkie1:
+    - 100004
+    - 400004
+    leftRingTipq:
+    - 100006
+    - 400006
+    leftRing3:
+    - 100008
+    - 400008
+    leftRing2:
+    - 100010
+    - 400010
+    leftRing1:
+    - 100012
+    - 400012
+    leftMiddleTipq:
+    - 100014
+    - 400014
+    leftMiddle3:
+    - 100016
+    - 400016
+    leftMiddle2:
+    - 100018
+    - 400018
+    leftMiddle1:
+    - 100020
+    - 400020
+    leftIndexTip:
+    - 100022
+    - 400022
+    leftIndex3:
+    - 100024
+    - 400024
+    leftIndex2:
+    - 100026
+    - 400026
+    leftIndex1:
+    - 100028
+    - 400028
+    leftThumbTip:
+    - 100030
+    - 400030
+    leftThumb2:
+    - 100032
+    - 400032
+    leftThumb1:
+    - 100034
+    - 400034
+    leftWrist:
+    - 100036
+    - 400036
+    leftElbow:
+    - 100038
+    - 400038
+    rightPinkieTip:
+    - 100040
+    - 400040
+    rightPinkie3:
+    - 100042
+    - 400042
+    rightPinkie2:
+    - 100044
+    - 400044
+    rightPinkie1:
+    - 100046
+    - 400046
+    rightRingTipq:
+    - 100048
+    - 400048
+    rightRing3:
+    - 100050
+    - 400050
+    rightRing2:
+    - 100052
+    - 400052
+    rightRing1:
+    - 100054
+    - 400054
+    rightMiddleTipq:
+    - 100056
+    - 400056
+    rightMiddle3:
+    - 100058
+    - 400058
+    rightMiddle2:
+    - 100060
+    - 400060
+    leftShoulder:
+    - 100062
+    - 400062
+    rightMiddle1:
+    - 100064
+    - 400064
+    rightIndexTip:
+    - 100066
+    - 400066
+    rightIndex3:
+    - 100068
+    - 400068
+    rightIndex2:
+    - 100070
+    - 400070
+    rightIndex1:
+    - 100072
+    - 400072
+    rightThumbTip:
+    - 100074
+    - 400074
+    rightThumb2:
+    - 100076
+    - 400076
+    rightThumb1:
+    - 100078
+    - 400078
+    rightWrist:
+    - 100080
+    - 400080
+    rightElbow:
+    - 100082
+    - 400082
+    spine4:
+    - 100084
+    - 400084
+    spine3:
+    - 100086
+    - 400086
+    spine2:
+    - 100088
+    - 400088
+    waist:
+    - 100090
+    - 400090
+    leftFootThumbA:
+    - 100092
+    - 400092
+    leftAnkle:
+    - 100094
+    - 400094
+    leftKnee:
+    - 100096
+    - 400096
+    leftHip:
+    - 100098
+    - 400098
+    rightFootThumbA:
+    - 100100
+    - 400100
+    rightAnkle:
+    - 100102
+    - 400102
+    rightKnee:
+    - 100104
+    - 400104
+    rightHip:
+    - 100106
+    - 400106
+    leftPinkieTip:
+    - 100108
+    - 400108
+    leftFoot:
+    - 100112
+    - 400112
+    rightFoot:
+    - 100124
+    - 400124
+    rightShoulder:
+    - 100132
+    - 400132
+    head:
+    - 100138
+    - 400138
+    neck:
+    - 100140
+    - 400140
+    hips:
+    - 100150
+    - 400150
+    //RootNode:
+    - 100252
+    - 400252
+    - 11100000
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: PantsJean
+    4300002: HandsBrown
+    4300004: Head_verG_Beard_01
+    4300006: FootlessSandal
+    4300008: FootBare
+    4300010: Kufi_A_01
+    4300012: ScarfRedCheck
+    4300014: SandalLongBlack
+    4300016: Head_verH_01
+    4300018: Kufi_B_01
+    4300020: TShirt
+    4300022: LongSkirtWhite
+    4300024: ShemaghBlue
+    4300026: Head_verV_01
+    4300028: Shades
+    4300030: SandalShortBlue
+    4300032: PantCalvesCanvas
+    4300034: ShirtRolledBlack
+    4300036: ArmsBare_C_01
+    4300038: ShortSkirtBlue
+    4300040: Head_verU_01
+    4300042: ShemaghGreenCheck
+    4300044: Head_verS_01
+    4300046: ShirtLong_Rolled_01
+    4300048: ScarfGreenCheck
+    4300050: ScarfBrownCheck
+    4300052: SandalShortBlack
+    4300054: SandalShortWhite
+    4300056: PantCalvesJean
+    4300058: ShemaghCotton
+    4300060: ShemaghWhite
+    4300062: FullDressBlack
+    4300064: FullDressWhite
+    4300066: ShortDressWhite
+    4300068: ShortDressBlack
+    4300070: ShortDressStriped
+    4300072: ShortDressBlue
+    4300074: FullDressStriped
+    4300076: FullDressBlue
+    4300078: ShemaghRedCheck
+    4300080: ShemaghBrownCheck
+    4300082: PantsCanvas
+    4300084: ShirtRolledWhite
+    4300086: ShirtRolledStriped
+    4300088: ShirtRolledBlue
+    4300090: ShortSkirtBlack
+    7400000: Take 001 //// arab_male@walking_backwards
+    7400002: mixamo.com //// arab_male@walking_backwards
+    7400004: mixamo.com //// arab male@walking_backwards

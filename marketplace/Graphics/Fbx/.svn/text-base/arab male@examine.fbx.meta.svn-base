@@ -1,0 +1,554 @@
+fileFormatVersion: 1
+guid: 0bda6695828512340b05163002311ef0
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 0.01
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    RightHandPinkyEffector:
+    - 100000
+    - 400000
+    RightHandIndexEffector:
+    - 100002
+    - 400002
+    RightHandRingEffector:
+    - 100004
+    - 400004
+    RightHandMiddleEffector:
+    - 100006
+    - 400006
+    LeftHipEffector:
+    - 100008
+    - 400008
+    //RootNode:
+    - 100010
+    - 400010
+    - 11100000
+    HeadEffector:
+    - 100012
+    - 400012
+    HipsEffector:
+    - 100014
+    - 400014
+    Head 1:
+    - 100016
+    - 400016
+    Neck:
+    - 100018
+    - 400018
+    RightHandPinky3:
+    - 100020
+    - 400020
+    RightHandPinky2:
+    - 100022
+    - 400022
+    RightHandPinky1:
+    - 100024
+    - 400024
+    RightHandRing3:
+    - 100026
+    - 400026
+    RightHandRing2:
+    - 100028
+    - 400028
+    RightHandRing1:
+    - 100030
+    - 400030
+    RightHandIndex3:
+    - 100032
+    - 400032
+    RightHandIndex2:
+    - 100034
+    - 400034
+    RightHandIndex1:
+    - 100036
+    - 400036
+    RightHandThumb2:
+    - 100038
+    - 400038
+    RightHandThumb1:
+    - 100040
+    - 400040
+    RightHand:
+    - 100042
+    - 400042
+    RightForeArm:
+    - 100044
+    - 400044
+    RightArm:
+    - 100046
+    - 400046
+    LeftHandPinky3:
+    - 100048
+    - 400048
+    LeftHandPinky2:
+    - 100050
+    - 400050
+    LeftHandPinky1:
+    - 100052
+    - 400052
+    LeftHandRing3:
+    - 100054
+    - 400054
+    LeftHandRing2:
+    - 100056
+    - 400056
+    LeftHandRing1:
+    - 100058
+    - 400058
+    LeftHandMiddle3:
+    - 100060
+    - 400060
+    LeftHandMiddle2:
+    - 100062
+    - 400062
+    LeftHandMiddle1:
+    - 100064
+    - 400064
+    LeftHandIndex3:
+    - 100066
+    - 400066
+    LeftHandIndex2:
+    - 100068
+    - 400068
+    LeftHandIndex1:
+    - 100070
+    - 400070
+    LeftHandThumb2:
+    - 100072
+    - 400072
+    LeftHandThumb1:
+    - 100074
+    - 400074
+    LeftHand:
+    - 100076
+    - 400076
+    LeftForeArm:
+    - 100078
+    - 400078
+    LeftArm:
+    - 100080
+    - 400080
+    Spine3:
+    - 100082
+    - 400082
+    Spine2:
+    - 100084
+    - 400084
+    Spine1:
+    - 100086
+    - 400086
+    Spine:
+    - 100088
+    - 400088
+    RightToeBase:
+    - 100090
+    - 400090
+    RightFoot:
+    - 100092
+    - 400092
+    RightLeg:
+    - 100094
+    - 400094
+    RightUpLeg:
+    - 100096
+    - 400096
+    RightHipEffector:
+    - 100098
+    - 400098
+    ChestOriginEffector:
+    - 100100
+    - 400100
+    LeftHandMiddleEffector:
+    - 100102
+    - 400102
+    RightWristEffector:
+    - 100104
+    - 400104
+    LeftHandIndexEffector:
+    - 100106
+    - 400106
+    RightFootEffector:
+    - 100108
+    - 400108
+    RightAnkleEffector:
+    - 100110
+    - 400110
+    ChestEndEffector:
+    - 100112
+    - 400112
+    LeftShoulderEffector:
+    - 100114
+    - 400114
+    RightHandThumbEffector:
+    - 100116
+    - 400116
+    LeftFootEffector:
+    - 100118
+    - 400118
+    LeftHandThumbEffector:
+    - 100120
+    - 400120
+    LeftElbowEffector:
+    - 100122
+    - 400122
+    LeftWristEffector:
+    - 100124
+    - 400124
+    RightShoulderEffector:
+    - 100126
+    - 400126
+    LeftHandPinkyEffector:
+    - 100128
+    - 400128
+    RightKneeEffector:
+    - 100130
+    - 400130
+    LeftAnkleEffector:
+    - 100132
+    - 400132
+    RightElbowEffector:
+    - 100134
+    - 400134
+    LeftHandRingEffector:
+    - 100136
+    - 400136
+    LeftKneeEffector:
+    - 100138
+    - 400138
+    leftWrist:
+    - 100140
+    - 400140
+    leftElbow:
+    - 100142
+    - 400142
+    leftShoulder:
+    - 100144
+    - 400144
+    rightPinkieTip:
+    - 100146
+    - 400146
+    rightPinkie3:
+    - 100148
+    - 400148
+    rightPinkie2:
+    - 100150
+    - 400150
+    rightPinkie1:
+    - 100152
+    - 400152
+    rightRingTipq:
+    - 100154
+    - 400154
+    rightRing3:
+    - 100156
+    - 400156
+    rightRing2:
+    - 100158
+    - 400158
+    rightRing1:
+    - 100160
+    - 400160
+    rightMiddleTipq:
+    - 100162
+    - 400162
+    rightMiddle3:
+    - 100164
+    - 400164
+    rightMiddle2:
+    - 100166
+    - 400166
+    rightMiddle1:
+    - 100168
+    - 400168
+    rightIndexTip:
+    - 100170
+    - 400170
+    rightIndex3:
+    - 100172
+    - 400172
+    rightIndex2:
+    - 100174
+    - 400174
+    rightIndex1:
+    - 100176
+    - 400176
+    rightThumbTip:
+    - 100178
+    - 400178
+    rightThumb2:
+    - 100180
+    - 400180
+    rightThumb1:
+    - 100182
+    - 400182
+    rightWrist:
+    - 100184
+    - 400184
+    rightElbow:
+    - 100186
+    - 400186
+    rightShoulder:
+    - 100188
+    - 400188
+    spine4:
+    - 100190
+    - 400190
+    spine3:
+    - 100192
+    - 400192
+    spine2:
+    - 100194
+    - 400194
+    waist:
+    - 100196
+    - 400196
+    leftFootThumbA:
+    - 100198
+    - 400198
+    leftFoot:
+    - 100200
+    - 400200
+    leftAnkle:
+    - 100202
+    - 400202
+    leftKnee:
+    - 100204
+    - 400204
+    leftHip:
+    - 100206
+    - 400206
+    rightFootThumbA:
+    - 100208
+    - 400208
+    rightFoot:
+    - 100210
+    - 400210
+    rightAnkle:
+    - 100212
+    - 400212
+    rightKnee:
+    - 100214
+    - 400214
+    rightHip:
+    - 100216
+    - 400216
+    hips:
+    - 100218
+    - 400218
+    TShirt:
+    - 100220
+    - 400220
+    - 13700000
+    ShortSkirt:
+    - 100222
+    - 400222
+    - 13700002
+    ShortDress:
+    - 100224
+    - 400224
+    - 13700004
+    ShirtRolled:
+    - 100226
+    - 400226
+    - 13700006
+    Shemagh:
+    - 100228
+    - 400228
+    - 13700008
+    Shades:
+    - 100230
+    - 400230
+    - 13700010
+    Scarf:
+    - 100232
+    - 400232
+    - 13700012
+    SandalShort:
+    - 100234
+    - 400234
+    - 13700014
+    SandalLong:
+    - 100236
+    - 400236
+    - 13700016
+    Pants:
+    - 100238
+    - 400238
+    - 13700018
+    PantCalves:
+    - 100240
+    - 400240
+    - 13700020
+    FullDress:
+    - 100242
+    - 400242
+    - 13700022
+    LongSkirt:
+    - 100244
+    - 400244
+    - 13700024
+    KufiB:
+    - 100246
+    - 400246
+    - 13700026
+    KufiA:
+    - 100248
+    - 400248
+    - 13700028
+    Head:
+    - 100250
+    - 400250
+    - 13700030
+    HeadBeard:
+    - 100252
+    - 400252
+    - 13700032
+    HandsBrown:
+    - 100254
+    - 400254
+    - 13700034
+    ArmsBare:
+    - 100256
+    - 400256
+    - 13700036
+    RightHandMiddle2:
+    - 100258
+    - 400258
+    Character_Ctrl:Reference:
+    - 100260
+    - 400260
+    RightHandMiddle3:
+    - 100262
+    - 400262
+    RolledShortDress:
+    - 100264
+    - 400264
+    - 13700038
+    RightHandMiddle1:
+    - 100266
+    - 400266
+    LeftToeBase:
+    - 100268
+    - 400268
+    LeftFoot:
+    - 100270
+    - 400270
+    LeftLeg:
+    - 100272
+    - 400272
+    LeftUpLeg:
+    - 100274
+    - 400274
+    Hips:
+    - 100276
+    - 400276
+    ThongSandals:
+    - 100278
+    - 400278
+    - 13700040
+    head:
+    - 100280
+    - 400280
+    neck:
+    - 100282
+    - 400282
+    leftPinkieTip:
+    - 100284
+    - 400284
+    leftPinkie3:
+    - 100286
+    - 400286
+    leftPinkie2:
+    - 100288
+    - 400288
+    leftPinkie1:
+    - 100290
+    - 400290
+    leftRingTipq:
+    - 100292
+    - 400292
+    leftRing3:
+    - 100294
+    - 400294
+    leftRing2:
+    - 100296
+    - 400296
+    leftRing1:
+    - 100298
+    - 400298
+    leftMiddleTipq:
+    - 100300
+    - 400300
+    leftMiddle3:
+    - 100302
+    - 400302
+    leftMiddle2:
+    - 100304
+    - 400304
+    leftMiddle1:
+    - 100306
+    - 400306
+    leftIndexTip:
+    - 100308
+    - 400308
+    leftIndex3:
+    - 100310
+    - 400310
+    leftIndex2:
+    - 100312
+    - 400312
+    leftIndex1:
+    - 100314
+    - 400314
+    leftThumbTip:
+    - 100316
+    - 400316
+    leftThumb2:
+    - 100318
+    - 400318
+    leftThumb1:
+    - 100320
+    - 400320
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: ArmsBare
+    4300002: HandsBrown
+    4300004: HeadBeard
+    4300006: Head
+    4300008: KufiA
+    4300010: KufiB
+    4300012: LongSkirt
+    4300014: FullDress
+    4300016: RolledShortDress
+    4300018: PantCalves
+    4300020: Pants
+    4300022: SandalLong
+    4300024: SandalShort
+    4300026: Scarf
+    4300028: Shades
+    4300030: Shemagh
+    4300032: ShirtRolled
+    4300034: ShortDress
+    4300036: ShortSkirt
+    4300038: TShirt
+    4300040: ThongSandals
+    7400000: mixamo.com //// arab male@examine
