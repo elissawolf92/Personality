@@ -9,8 +9,19 @@ using System.IO;
 
 public class LMAPlayerGUI : MonoBehaviour {
 
-	private static int EFFORT_COMB_COUNT = 48;
-	private static int ANIM_COUNT = 2;
+	// Stuff for the ComboBox
+	GUIContent[] comboBoxList;
+	private ComboBox comboBoxControl; // = new ComboBox();
+	private GUIStyle listStyle = new GUIStyle();
+
+	private int selected = 0;
+
+	// Ocean personality parameters
+	private float o = 0.0f;
+	private float c = 0.0f;
+	private float e = 0.0f;
+	private float a = 0.0f;
+	private float n = 0.0f;
 
     private float[] _speed = new float[32];
     private float[] _v0 = new float[32];
@@ -56,13 +67,22 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-    private string[] _animNameStr = { "Pointing", "Picking up a pillow"};
-    private static int _animInd = 0;
-
-	int _driveInd = 0;
-    static int _qInd = 0; //question index
-    private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
-                                       {-1, -1, 0, -1}, {-1, -1, 0, 1},{-1, 1,0,  -1}, {-1, 1, 0, 1}, {1, -1, 0, -1},{1, -1, 0,  1}, {1, 1, 0, -1}, {1, 1, 0, 1},
+    private string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow"};
+	private static int _animInd = 0;
+	private string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
+		"Picking_Up_Pillow_Netural_01",
+		"Lifting_Netural_01",
+		"Knocking_Neutral_1",
+		"Punching_Netural_02",
+		"Pushing_Netural_02",
+		"Throwing_Netural_02",
+		"Walking_Netural_02", 
+		"Waving_Netural_02"};
+		
+		int _driveInd = 0;
+		static int _qInd = 0; //question index
+		private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
+			{-1, -1, 0, -1}, {-1, -1, 0, 1},{-1, 1,0,  -1}, {-1, 1, 0, 1}, {1, -1, 0, -1},{1, -1, 0,  1}, {1, 1, 0, -1}, {1, 1, 0, 1},
                                         {-1,  0, -1, -1}, {-1, 0, -1,  1}, {-1, 0, 1,  -1}, {-1, 0, 1, 1}, {1, 0, -1, -1}, {1, 0, -1,  1}, {1, 0, 1, -1}, {1,  0, 1, 1},
                                        { 0, -1, -1, -1}, {0, -1, -1,  1}, {0, -1, 1,  -1}, {0, -1, 1, 1}, {0, 1, -1, -1}, {0, 1, -1,  1}, {0, 1, 1, -1}, {0, 1, 1, 1}};
 
@@ -70,16 +90,11 @@ public class LMAPlayerGUI : MonoBehaviour {
     Dictionary<int, int> _effortCombination = new Dictionary<int , int>();
 
     private string[] _effortNames = { "Space", "Weight", "Time", "Flow" };
-	
-    static int _answerOe = -1, _answerNca = -1; //to ensure that none is selected by default
 
     //Record the positions of the left and right agents
     //Vector3 _leftPos, _rightPos;
 	// NEW: Only one agent
 	Vector3 _pos;
-
-    private float[] _oe = new float[EFFORT_COMB_COUNT * ANIM_COUNT];   
-    private float[] _nca = new float[EFFORT_COMB_COUNT * ANIM_COUNT];
 
     public string ShapeInfo = "";
     public string Info = "waiting...";
@@ -95,7 +110,40 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     void Start(){
 
-        for (int i = 0; i < 32; i++) {
+		// Setting up the combo box
+
+
+		comboBoxList = new GUIContent[_animDisplayNameStr.Length];
+		for (int i= 0; i < _animDisplayNameStr.Length; i++) {
+			comboBoxList[i] = new GUIContent(_animDisplayNameStr[i]);
+				}
+
+
+
+		/*
+		comboBoxList = new GUIContent[5];
+		comboBoxList[0] = new GUIContent("Thing 1");
+		comboBoxList[1] = new GUIContent("Thing 2");
+		comboBoxList[2] = new GUIContent("Thing 3");
+		comboBoxList[3] = new GUIContent("Thing 4");
+		comboBoxList[4] = new GUIContent("Thing 5");
+		*/
+
+
+		listStyle.normal.textColor = Color.white; 
+		listStyle.onHover.background =
+		listStyle.hover.background = new Texture2D(2, 2);
+		listStyle.padding.left =
+		listStyle.padding.right =
+		listStyle.padding.top =
+		listStyle.padding.bottom = 4;
+
+		
+		comboBoxControl = new ComboBox(new Rect(30, 30, 200, 20), comboBoxList[0], comboBoxList, "button", "box", listStyle);
+
+        
+
+		for (int i = 0; i < 32; i++) {
             _arm[i] = new Vector3[2];
         }
         
@@ -122,23 +170,26 @@ public class LMAPlayerGUI : MonoBehaviour {
 
         //Read all drive and shape parameters
 
-#if !WEBMODE
+//#if !WEBMODE
         for (int i = 0; i < 32; i++)
             ReadValuesDrives(i);
 
-        for (int i = 5; i >= 0; i--) {            
+        for (int i = 5; i >= 0; i--) { 
             ReadValuesShapes( i);
         }
 
-#elif WEBMODE
 
+//#elif WEBMODE
+		/*
         for (int i = 0; i < 32; i++)
             this.StartCoroutine(GetValuesDrives(i));
 
         for (int i = 5; i >= 0; i--)
             this.StartCoroutine(GetValuesShapes(i));
+            */
 
-#endif
+//#endif
+
         //Read all shape parameters
 
 
@@ -152,15 +203,10 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 
     public void Reset() {
-        for (int i = 0; i < _oe.Length; i++) {
-            _oe[i] = _nca[i] = 0;
-        }
-
 		InitAgent (_agent, "Pointing_to_Spot_Netural_02_Updated");
         UpdateParameters();
         PlayAnim(_agent, _animInd);
         StopAnim(_agent);  
-        
     }
 
     void UpdateCameraBoundaries() {
@@ -177,10 +223,10 @@ public class LMAPlayerGUI : MonoBehaviour {
     void Update(){
         UpdateCameraBoundaries();
 
-        if (Input.GetKeyDown("up"))  {
+        /*if (Input.GetKeyDown("up"))  {
             _animInd++;
-            if (_animInd >= _animNameStr.Length)
-                    _animInd = _animNameStr.Length - 1;
+            if (_animInd >= _animDisplayNameStr.Length)
+                    _animInd = _animDisplayNameStr.Length - 1;
             StopAnimations();
 
             //Animation changed -- reassign foot and root positions
@@ -195,15 +241,24 @@ public class LMAPlayerGUI : MonoBehaviour {
 
             //Animation changed -- reassign foot and root positions
             _agent.GetComponent<TorsoController>().AssignInitRootandFootPos();
-        }
+        }*/
 
-		else if(Input.GetKeyDown("p")) {
+//		else 
+		if(Input.GetKeyDown("p")) {
 			Debug.Log("P pressed");
 			_agent.GetComponent<TorsoController>().Reset();
 			
 			PlayAnim(_agent, _animInd);
 			UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
 		}
+
+
+		if (_animInd != comboBoxControl.SelectedItemIndex) {
+			// User selected a new animation
+			_animInd = comboBoxControl.SelectedItemIndex;
+			StopAnimations();
+			_agent.GetComponent<TorsoController>().AssignInitRootandFootPos();
+		} 
 
     }
     
@@ -334,25 +389,45 @@ public class LMAPlayerGUI : MonoBehaviour {
         GUILayout.EndHorizontal ();	
         GUILayout.EndArea();
     
-        GUILayout.BeginArea (new Rect (20,10,250,250));
+        GUILayout.BeginArea (new Rect (30,25,250,300));
         style.fontSize = 18;
         style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
 
-        GUILayout.Label ("Animation: " + GetAnimName(_animInd), style);
-        style.fontSize = 14;
+		GUILayout.Label ("Select Animation: ", style);
+		comboBoxControl.Show ();
 
         GUILayout.EndArea();
 
         //GUI.color = Color.white;
 
 
-        _scrollPosition = GUI.BeginScrollView(new Rect(Screen.width / 2f - 480, Screen.height - 270f, 1000, 290), _scrollPosition, new Rect(0, 0, 220, 230));
+        //_scrollPosition = GUI.BeginScrollView(new Rect(Screen.width / 2f - 480, Screen.height - 270f, 1000, 290), _scrollPosition, new Rect(0, 0, 220, 230));
 
         style.fontSize = 20;
 
         //GUI.contentColor = new Color(0, 0, 0, 1);
         //GUI.color = Color.white;
 
+
+		//GUILayout.BeginArea (new Rect (450,30,250,250));
+		GUILayout.BeginArea (new Rect (Screen.width - 300,30,250,250));
+
+		GUILayout.Label ("Personality Settings", style);		
+
+		float minVal = -1.0f;
+		float maxVal = 1.0f;
+
+		style.fontSize = 14;
+		GUILayout.Label ("Openness",style);
+		o = GUILayout.HorizontalSlider (o, minVal, maxVal);
+		GUILayout.Label("Conscientiousness", style);
+		c = GUILayout.HorizontalSlider (c, minVal, maxVal);
+		GUILayout.Label ("Extroversion", style);
+		e = GUILayout.HorizontalSlider (e, minVal, maxVal);
+		GUILayout.Label ("Agreeableness", style);
+		a = GUILayout.HorizontalSlider (a, minVal, maxVal);
+		GUILayout.Label ("Neuroticism", style);
+		n = GUILayout.HorizontalSlider (n, minVal, maxVal);
       
         GUI.color = Color.white;
         if(GUILayout.Button ( "Play")) {
@@ -364,7 +439,10 @@ public class LMAPlayerGUI : MonoBehaviour {
 		style.fontSize = 18;
 		GUILayout.Label("");
 		      
-		GUI.EndScrollView();
+		GUILayout.EndArea();
+
+
+		//GUI.EndScrollView();
 
 	}
    
@@ -417,18 +495,6 @@ public class LMAPlayerGUI : MonoBehaviour {
             return;
         agent.GetComponent<AnimationInfo>().Reset(animName);                            
         agent.GetComponent<ArmAnimator>().Reset();                
-        //agent.GetComponent<TorsoAnimator>().Reset();
-        //Read values for the shape parameters 
-        //Need to call this only once
-
-//#if !WEBMODE
-//        for (int i = 5; i >= 0; i--) {            
-//            ReadValuesShapes(agent, i);
-//        }
-//#elif WEBMODE
-//        for(int i = 5; i >= 0; i--)                
-//            this.StartCoroutine(GetValuesShapes(agent, i));
-//#endif
         
         agent.animation.enabled = true;                        
         agent.animation.Play(animName);
@@ -492,7 +558,7 @@ public class LMAPlayerGUI : MonoBehaviour {
      
     string GetAnimName(int ind) {
         
-        return _animNameStr[ind];        
+        return _animDisplayNameStr[ind];        
     }
 
 
@@ -581,9 +647,10 @@ public class LMAPlayerGUI : MonoBehaviour {
 
         if (download.error != null) {
             Info = download.error;
-//            print("Error: " + download.error);
+            Debug.Log("Error: " + download.error);
         }
         else {
+			Debug.Log("Getting drive values");
             Info = download.text;
             String[] vals = Info.Split('\t');
             //Assign drive values 

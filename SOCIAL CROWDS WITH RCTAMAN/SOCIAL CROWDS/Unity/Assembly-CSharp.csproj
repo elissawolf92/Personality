@@ -93,6 +93,7 @@
      <Compile Include="Assets\Demos\DemoLMA\Scripts\AnimationInfo.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\ArmAnimator.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\ArmController.cs" />
+     <Compile Include="Assets\Demos\DemoLMA\Scripts\ComboBox.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\EditDriveData.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\IKArm.cs" />
      <Compile Include="Assets\Demos\DemoLMA\Scripts\LMAComparisonGUI.cs" />

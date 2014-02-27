@@ -1,9 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI.cs">
     <Files>
-      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI_backup.cs" Line="264" Column="9" />
-      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI.cs" Line="242" Column="27" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAPlayerGUI.cs" Line="385" Column="50" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/LMAComparisonGUI.cs" Line="57" Column="1" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/AnimationInfo.cs" Line="1" Column="1" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/EditDriveData.cs" Line="1" Column="1" />
+      <File FileName="Assets/Demos/DemoLMA/Scripts/ComboBox.cs" Line="25" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
