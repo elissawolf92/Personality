@@ -9,20 +9,49 @@ using System.IO;
 
 public class LMAPlayerGUI : MonoBehaviour {
 
-	// Stuff for the ComboBox
-	GUIContent[] comboBoxList;
-	private ComboBox comboBoxControl; // = new ComboBox();
+	// Animation selector
+	GUIContent[] animComboBoxList;
+	private ComboBox animComboBoxControl; // = new ComboBox();
 	private GUIStyle listStyle = new GUIStyle();
 
-	private int selected = 0;
+	// Culture selector
+	GUIContent[] cultureComboBoxList;
+	private ComboBox cultureComboBoxControl;
 
-	// Ocean personality parameters
-	private float o = 0.0f;
-	private float c = 0.0f;
-	private float e = 0.0f;
-	private float a = 0.0f;
-	private float n = 0.0f;
+	// Ocean personality parameters, range from -50 to 50
+	// Relative
+	private float[] _oceanRel = new float[5] {0,0,0,0,0};
+	// Need a temp one to detect changes to the sliders
+	private float[] _oceanRelTemp = new float[5] {0,0,0,0,0};
+	/*
+	private int oRel = 0;
+	private int cRel = 0;
+	private int eRel = 0;
+	private int aRel = 0;
+	private int nRel = 0;
+	*/
 
+	// Absolute (combines relative with cultural baseline)
+	private float[] _oceanAbs = new float[5] {0,0,0,0,0};
+	private float _absRange = 50;
+	/*
+	private int oAbs = 0;
+	private int cAbs = 0;
+	private int eAbs = 0;
+	private int aAbs = 0;
+	private int nAbs = 0;
+	*/
+
+	// Cultures
+	private static string[] _cultureNames = {"American", "Arab"};
+	private int _cultureInd = 0;
+	// Mean OCEAN values for different cultures          
+	// Row is culture, col is personality factor            O    C    E    A   N
+	private static int[,] _cultureMeans= new int[2, 5] {  { 30, -10,  10, -20, 0}, 
+		          									      {-30,  20, -10,  30, 0}};
+	private static int[,] _cultureRanges = new int[2, 5] {{ 40,  50,  50,  20, 40},
+														  { 20,  50,  30,  40, 50}};
+		
     private float[] _speed = new float[32];
     private float[] _v0 = new float[32];
     private float[] _v1 = new float[32];
@@ -67,9 +96,9 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-    private string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow"};
-	private static int _animInd = 0;
-	private string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
+    private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow"};
+	private int _animInd = 0;
+	private static string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
 		"Picking_Up_Pillow_Netural_01",
 		"Lifting_Netural_01",
 		"Knocking_Neutral_1",
@@ -79,12 +108,12 @@ public class LMAPlayerGUI : MonoBehaviour {
 		"Walking_Netural_02", 
 		"Waving_Netural_02"};
 		
-		int _driveInd = 0;
-		static int _qInd = 0; //question index
-		private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
+	int _driveInd = 0;
+	static int _qInd = 0; //question index
+	private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
 			{-1, -1, 0, -1}, {-1, -1, 0, 1},{-1, 1,0,  -1}, {-1, 1, 0, 1}, {1, -1, 0, -1},{1, -1, 0,  1}, {1, 1, 0, -1}, {1, 1, 0, 1},
-                                        {-1,  0, -1, -1}, {-1, 0, -1,  1}, {-1, 0, 1,  -1}, {-1, 0, 1, 1}, {1, 0, -1, -1}, {1, 0, -1,  1}, {1, 0, 1, -1}, {1,  0, 1, 1},
-                                       { 0, -1, -1, -1}, {0, -1, -1,  1}, {0, -1, 1,  -1}, {0, -1, 1, 1}, {0, 1, -1, -1}, {0, 1, -1,  1}, {0, 1, 1, -1}, {0, 1, 1, 1}};
+            {-1,  0, -1, -1}, {-1, 0, -1,  1}, {-1, 0, 1,  -1}, {-1, 0, 1, 1}, {1, 0, -1, -1}, {1, 0, -1,  1}, {1, 0, 1, -1}, {1,  0, 1, 1},
+            { 0, -1, -1, -1}, {0, -1, -1,  1}, {0, -1, 1,  -1}, {0, -1, 1, 1}, {0, 1, -1, -1}, {0, 1, -1,  1}, {0, 1, 1, -1}, {0, 1, 1, 1}};
 
 
     Dictionary<int, int> _effortCombination = new Dictionary<int , int>();
@@ -108,27 +137,15 @@ public class LMAPlayerGUI : MonoBehaviour {
 	// NEW: Only one agent
     GameObject _agent;
 
+
+
     void Start(){
 
-		// Setting up the combo box
-
-
-		comboBoxList = new GUIContent[_animDisplayNameStr.Length];
+		// Setting up the combo boxes
+		animComboBoxList = new GUIContent[_animDisplayNameStr.Length];
 		for (int i= 0; i < _animDisplayNameStr.Length; i++) {
-			comboBoxList[i] = new GUIContent(_animDisplayNameStr[i]);
+			animComboBoxList[i] = new GUIContent(_animDisplayNameStr[i]);
 				}
-
-
-
-		/*
-		comboBoxList = new GUIContent[5];
-		comboBoxList[0] = new GUIContent("Thing 1");
-		comboBoxList[1] = new GUIContent("Thing 2");
-		comboBoxList[2] = new GUIContent("Thing 3");
-		comboBoxList[3] = new GUIContent("Thing 4");
-		comboBoxList[4] = new GUIContent("Thing 5");
-		*/
-
 
 		listStyle.normal.textColor = Color.white; 
 		listStyle.onHover.background =
@@ -139,14 +156,20 @@ public class LMAPlayerGUI : MonoBehaviour {
 		listStyle.padding.bottom = 4;
 
 		
-		comboBoxControl = new ComboBox(new Rect(30, 30, 200, 20), comboBoxList[0], comboBoxList, "button", "box", listStyle);
+		animComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), animComboBoxList[0], animComboBoxList, "button", "box", listStyle);
 
-        
-
+		cultureComboBoxList = new GUIContent[_cultureNames.Length];
+		for (int i= 0; i < _cultureNames.Length; i++) {
+			cultureComboBoxList[i] = new GUIContent(_cultureNames[i]);
+		}
+		cultureComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), cultureComboBoxList[0], 
+		                                      cultureComboBoxList, "button", "box", listStyle);
+		
 		for (int i = 0; i < 32; i++) {
             _arm[i] = new Vector3[2];
         }
         
+		// Load the agent
 		_agent = GameObject.Find ("AgentPrefab");
 
 		if (!_agent) {
@@ -205,6 +228,7 @@ public class LMAPlayerGUI : MonoBehaviour {
     public void Reset() {
 		InitAgent (_agent, "Pointing_to_Spot_Netural_02_Updated");
         UpdateParameters();
+		CalculateAbsolutePersonality ();
         PlayAnim(_agent, _animInd);
         StopAnim(_agent);  
     }
@@ -214,36 +238,27 @@ public class LMAPlayerGUI : MonoBehaviour {
         GameObject camChar = GameObject.Find("CharacterCamera");
 
         camButton.camera.rect = new Rect(0, 0, _scrollWidth / Screen.width, 1); //320 is the width of the parameters
-		camChar.camera.rect = new Rect(_scrollWidth / Screen.width, 0, ((Screen.width - _scrollWidth)) / Screen.width, 1);
+		camChar.camera.rect = new Rect((_scrollWidth / Screen.width) *2, 0, ((Screen.width - _scrollWidth)) / Screen.width, 1);
        
     }
 
-   
+    void CalculateAbsolutePersonality() {
+		//  For o,c,e,a,n
+		for (int i = 0; i < 5; i++) {
+			// Get mean and range for current culture
+			float mean = _cultureMeans[_cultureInd, i];
+			float range = _cultureRanges[_cultureInd, i];
+			// Calculate what to add to the mean - the relative diff normalized for this range
+			float diff = _oceanRel[i] * (range/_absRange);
+			// Absolute value is this diff added to the cultural mean
+			// Make sure it stays in absolute range
+			_oceanAbs[i] = Mathf.Clamp(mean + diff, -50.0f, 50.0f);
+		}
+	}
 
     void Update(){
         UpdateCameraBoundaries();
 
-        /*if (Input.GetKeyDown("up"))  {
-            _animInd++;
-            if (_animInd >= _animDisplayNameStr.Length)
-                    _animInd = _animDisplayNameStr.Length - 1;
-            StopAnimations();
-
-            //Animation changed -- reassign foot and root positions
-            _agent.GetComponent<TorsoController>().AssignInitRootandFootPos();
-        }
-
-        else if(Input.GetKeyDown("down")) {
-            _animInd--;            
-            if (_animInd < 0)
-                _animInd = 0;
-            StopAnimations();
-
-            //Animation changed -- reassign foot and root positions
-            _agent.GetComponent<TorsoController>().AssignInitRootandFootPos();
-        }*/
-
-//		else 
 		if(Input.GetKeyDown("p")) {
 			Debug.Log("P pressed");
 			_agent.GetComponent<TorsoController>().Reset();
@@ -252,13 +267,30 @@ public class LMAPlayerGUI : MonoBehaviour {
 			UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
 		}
 
-
-		if (_animInd != comboBoxControl.SelectedItemIndex) {
+		// Check if the animation has changed
+		if (_animInd != animComboBoxControl.SelectedItemIndex) {
 			// User selected a new animation
-			_animInd = comboBoxControl.SelectedItemIndex;
+			_animInd = animComboBoxControl.SelectedItemIndex;
 			StopAnimations();
 			_agent.GetComponent<TorsoController>().AssignInitRootandFootPos();
 		} 
+
+		// Check if the selected culture has changed
+		if (_cultureInd != cultureComboBoxControl.SelectedItemIndex) {
+			_cultureInd = cultureComboBoxControl.SelectedItemIndex;
+			// Recalculate absolute personality
+			CalculateAbsolutePersonality();
+		}
+
+		// Check if any of the sliders have changed
+		for (int i = 0; i < 5; i++) {
+			if (_oceanRelTemp[i] != _oceanRel[i]) {
+				// Update to the new value
+				_oceanRel[i] = _oceanRelTemp[i];
+				// Recalculate absolute personality
+				CalculateAbsolutePersonality();
+			}
+		}
 
     }
     
@@ -378,71 +410,83 @@ public class LMAPlayerGUI : MonoBehaviour {
 	void OnGUI () {
         
         GUIStyle style = new GUIStyle();
-
-        GUI.DrawTexture(new Rect(Screen.width / 2f - 1f, 0, 2, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
         GUI.skin = ButtonSkin;
-        GUILayout.BeginArea (new Rect (220,10,300,250));
-        GUILayout.BeginHorizontal ();	
-        //GUI.color = Color.black;
-        style.fontSize = 22;
-      
-        GUILayout.EndHorizontal ();	
-        GUILayout.EndArea();
     
+		// Left side
+		// Includes dropdowns for animation and culture, play button
+
+		// Animation selector
         GUILayout.BeginArea (new Rect (30,25,250,300));
         style.fontSize = 18;
         style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
 
-		GUILayout.Label ("Select Animation: ", style);
-		comboBoxControl.Show ();
+		GUILayout.Label ("Animation: ", style);
+		animComboBoxControl.Show ();
+		GUILayout.EndArea ();
 
-        GUILayout.EndArea();
+		// Culture selector
+		GUILayout.BeginArea (new Rect (275, 25, 250, 300));
+		GUILayout.Label ("Culture: ", style);
+		cultureComboBoxControl.Show ();
 
-        //GUI.color = Color.white;
+		GUILayout.EndArea ();
 
+		// Play button
+		GUILayout.BeginArea (new Rect(30,250,100,100));
+		GUI.color = Color.white;
+		//GUILayout.Space (50);
 
-        //_scrollPosition = GUI.BeginScrollView(new Rect(Screen.width / 2f - 480, Screen.height - 270f, 1000, 290), _scrollPosition, new Rect(0, 0, 220, 230));
-
-        style.fontSize = 20;
-
-        //GUI.contentColor = new Color(0, 0, 0, 1);
-        //GUI.color = Color.white;
-
-
-		//GUILayout.BeginArea (new Rect (450,30,250,250));
-		GUILayout.BeginArea (new Rect (Screen.width - 300,30,250,250));
-
-		GUILayout.Label ("Personality Settings", style);		
-
-		float minVal = -1.0f;
-		float maxVal = 1.0f;
-
-		style.fontSize = 14;
-		GUILayout.Label ("Openness",style);
-		o = GUILayout.HorizontalSlider (o, minVal, maxVal);
-		GUILayout.Label("Conscientiousness", style);
-		c = GUILayout.HorizontalSlider (c, minVal, maxVal);
-		GUILayout.Label ("Extroversion", style);
-		e = GUILayout.HorizontalSlider (e, minVal, maxVal);
-		GUILayout.Label ("Agreeableness", style);
-		a = GUILayout.HorizontalSlider (a, minVal, maxVal);
-		GUILayout.Label ("Neuroticism", style);
-		n = GUILayout.HorizontalSlider (n, minVal, maxVal);
-      
-        GUI.color = Color.white;
-        if(GUILayout.Button ( "Play")) {
-            _agent.GetComponent<TorsoController>().Reset();
-
-            PlayAnim(_agent, _animInd);
-            UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
-        }
-		style.fontSize = 18;
-		GUILayout.Label("");
-		      
+		if(GUILayout.Button ( "Play")) {
+			_agent.GetComponent<TorsoController>().Reset();
+			
+			PlayAnim(_agent, _animInd);
+			UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
+		}
+		
 		GUILayout.EndArea();
 
 
-		//GUI.EndScrollView();
+		// Right side
+		// Includes relative and absolute personality
+
+		//GUILayout.BeginArea (new Rect (450,30,250,250));
+		GUILayout.BeginArea (new Rect (Screen.width - 300,30,250,600));
+
+		GUILayout.Label ("Relative Personality", style);		
+
+		float minVal = -50.0f;
+		float maxVal = 50.0f;
+
+		style.fontSize = 14;
+		GUILayout.Label ("Openness",style);
+		_oceanRelTemp[0] = GUILayout.HorizontalSlider (_oceanRel[0], minVal, maxVal);
+		GUILayout.Label("Conscientiousness", style);
+		_oceanRelTemp[1] = GUILayout.HorizontalSlider (_oceanRel[1], minVal, maxVal);
+		GUILayout.Label ("Extroversion", style);
+		_oceanRelTemp[2] = GUILayout.HorizontalSlider (_oceanRel[2], minVal, maxVal);
+		GUILayout.Label ("Agreeableness", style);
+		_oceanRelTemp[3] = GUILayout.HorizontalSlider (_oceanRel[3], minVal, maxVal);
+		GUILayout.Label ("Neuroticism", style);
+		_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
+      
+		//style.fontSize = 18;
+		//GUILayout.Label("");
+		GUILayout.Space (30);
+		style.fontSize = 18;
+		GUILayout.Label ("Absolute Personality", style);
+		style.fontSize = 14;
+		GUILayout.Label ("Openness",style);
+		GUILayout.Label (_oceanAbs[0].ToString(),style);
+		GUILayout.Label("Conscientiousness", style);
+		GUILayout.Label (_oceanAbs[1].ToString(),style);
+		GUILayout.Label ("Extroversion", style);
+		GUILayout.Label (_oceanAbs[2].ToString(),style);
+		GUILayout.Label ("Agreeableness", style);
+		GUILayout.Label (_oceanAbs[3].ToString(),style);
+		GUILayout.Label ("Neuroticism", style);
+		GUILayout.Label (_oceanAbs[4].ToString(),style);
+
+		GUILayout.EndArea();
 
 	}
    
@@ -827,5 +871,5 @@ public class LMAPlayerGUI : MonoBehaviour {
     }
 
    
-    }		
+ }		
 
