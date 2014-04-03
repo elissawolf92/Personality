@@ -23,24 +23,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private float[] _oceanRel = new float[5] {0,0,0,0,0};
 	// Need a temp one to detect changes to the sliders
 	private float[] _oceanRelTemp = new float[5] {0,0,0,0,0};
-	/*
-	private int oRel = 0;
-	private int cRel = 0;
-	private int eRel = 0;
-	private int aRel = 0;
-	private int nRel = 0;
-	*/
 
 	// Absolute (combines relative with cultural baseline)
 	private float[] _oceanAbs = new float[5] {0,0,0,0,0};
 	private float _absRange = 50;
-	/*
-	private int oAbs = 0;
-	private int cAbs = 0;
-	private int eAbs = 0;
-	private int aAbs = 0;
-	private int nAbs = 0;
-	*/
+
 
 	// Cultures
 	private static string[] _cultureNames = {"American", "Arab"};
@@ -51,8 +38,20 @@ public class LMAPlayerGUI : MonoBehaviour {
 		          									      {-30,  20, -10,  30, 0}};
 	private static int[,] _cultureRanges = new int[2, 5] {{ 40,  50,  50,  20, 40},
 														  { 20,  50,  30,  40, 50}};
-		
-    private float[] _speed = new float[32];
+
+	// LMA Parameters
+	private static float _space = 0f, _weight = 0f, _time = 0f, _flow = 0f;  //[-1 1]
+	private static float _verArm = 0f, _horArm = 0f, _sagArm = 0f; //[-1 1] 
+	private static float _verTorso = 0f, _horTorso = 0f, _sagTorso = 0f;
+	private float _effortMin = -1.0f;
+	private float _effortMax = 1.0f;
+	private float _shapeMin = -1.0f;
+	private float _shapeMax = 1.0f;
+
+
+	// IDK WHAT THIS IS
+	/*
+	private float[] _speed = new float[32];
     private float[] _v0 = new float[32];
     private float[] _v1 = new float[32];
     private float[] _ti = new float[32];
@@ -89,6 +88,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     //Arm shape for drives
     private static Vector3[][] _arm = new Vector3[32][];
+    */
 
     static bool _toggleContinuous = false;
     public Texture TexBorder = new Texture();
@@ -96,7 +96,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-    private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow"};
+	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking"};
+	//, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
 	private int _animInd = 0;
 	private static string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
 		"Picking_Up_Pillow_Netural_01",
@@ -107,7 +108,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 		"Throwing_Netural_02",
 		"Walking_Netural_02", 
 		"Waving_Netural_02"};
-		
+
+	/*
 	int _driveInd = 0;
 	static int _qInd = 0; //question index
 	private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
@@ -117,12 +119,10 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 
     Dictionary<int, int> _effortCombination = new Dictionary<int , int>();
+    */
 
     private string[] _effortNames = { "Space", "Weight", "Time", "Flow" };
 
-    //Record the positions of the left and right agents
-    //Vector3 _leftPos, _rightPos;
-	// NEW: Only one agent
 	Vector3 _pos;
 
     public string ShapeInfo = "";
@@ -164,10 +164,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 		}
 		cultureComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), cultureComboBoxList[0], 
 		                                      cultureComboBoxList, "button", "box", listStyle);
-		
+		/*
 		for (int i = 0; i < 32; i++) {
             _arm[i] = new Vector3[2];
         }
+        */
         
 		// Load the agent
 		_agent = GameObject.Find ("AgentPrefab");
@@ -178,12 +179,14 @@ public class LMAPlayerGUI : MonoBehaviour {
 			return;
 		}
         
+		/*
         _qInd = 0;
         //compute effortCombination hashes
         for (int i = 0; i < 32; i++) {
             int val = _effortList[i, 3] + _effortList[i, 2] * 3 + _effortList[i, 1] * 9 + _effortList[i, 0] * 27;
             _effortCombination.Add(val, i);
         }
+        */
 
 
         UpdateCameraBoundaries();
@@ -194,8 +197,8 @@ public class LMAPlayerGUI : MonoBehaviour {
         //Read all drive and shape parameters
 
 //#if !WEBMODE
-        for (int i = 0; i < 32; i++)
-            ReadValuesDrives(i);
+        //for (int i = 0; i < 32; i++)
+        //    ReadValuesDrives(i);
 
         for (int i = 5; i >= 0; i--) { 
             ReadValuesShapes( i);
@@ -227,11 +230,20 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     public void Reset() {
 		InitAgent (_agent, "Pointing_to_Spot_Netural_02_Updated");
-        UpdateParameters();
+        //UpdateParameters();
 		CalculateAbsolutePersonality ();
+		UpdateLaban ();
+		UpdateEmoteParams (_agent);
         PlayAnim(_agent, _animInd);
         StopAnim(_agent);  
     }
+
+	void ResetPersonality() {
+		for (int i = 0; i < 5; i++){
+			_oceanRel[i] = 0.0f;
+			_oceanRelTemp[i] = 0.0f;
+		}
+	}
 
     void UpdateCameraBoundaries() {
         GameObject camButton = GameObject.Find("ButtonCamera");
@@ -264,7 +276,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_agent.GetComponent<TorsoController>().Reset();
 			
 			PlayAnim(_agent, _animInd);
-			UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
+			//UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
+			UpdateEmoteParams(_agent);
 		}
 
 		// Check if the animation has changed
@@ -280,6 +293,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_cultureInd = cultureComboBoxControl.SelectedItemIndex;
 			// Recalculate absolute personality
 			CalculateAbsolutePersonality();
+			UpdateLaban();
 		}
 
 		// Check if any of the sliders have changed
@@ -289,6 +303,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 				_oceanRel[i] = _oceanRelTemp[i];
 				// Recalculate absolute personality
 				CalculateAbsolutePersonality();
+				UpdateLaban();
 			}
 		}
 
@@ -304,108 +319,84 @@ public class LMAPlayerGUI : MonoBehaviour {
         StopAnim(_agent);
 
         //changes the names of the drives
-       UpdateParameters();
+       //UpdateParameters();
+		UpdateEmoteParams (_agent);
 
     }
 
-    
-   
-    
-    //Left and right drive indices
-    //map ind of 48 to left and right drive indices
-    void ComputeBothDriveInds(int qInd) {
-        int space, weight, time, flow;
-        int key = -1; //key for effort combination dictionary
-        //Find which effort is compared
-        int cVal = qInd % 4;//qInd / 12;
-        int qVal = qInd / 4; //qInd % 12; // between 0 and 11 
-        int[,] othersList = {{-1, -1, 0},  {-1, 1, 0},  {1, -1, 0},  {1, 1, 0},  {-1, 0, -1}, {-1, 0, 1}, {1, 0, -1}, {1, 0, 1}, {0, -1, -1}, {0, -1, 1}, {0, 1, -1}, {0, 1, 1}};
+    void UpdateLaban() {
+		// Calculate Laban parameters from the absolute OCEAN values
+		// Weight each equally - each will be the average of 5 values
+		float[] spaceVals = new float[5];   // Indirect <-> Direct [-1 1]
+		float[] weightVals = new float[5];  // Light <-> Strong
+		float[] timeVals = new float[5];    // Sustained <-> Sudden
+		float[] flowVals = new float[5];    // Free <-> Bound
+
+		// Openness
+		// High O -> Indirect, Light, Sustained, Free
+		spaceVals [0] = _oceanAbs [0] / 50 * -1;
+		weightVals [0] = _oceanAbs [0] / 50 * -1;
+		timeVals[0] = _oceanAbs [0] / 50 * -1;
+		flowVals[0] = _oceanAbs [0] / 50 * -1;
+
+		// Conscientiousness
+		// High C -> Direct, Strong, Sudden, Bound
+		spaceVals [1] = _oceanAbs [1] / 50 * 1;
+		weightVals [1] = _oceanAbs [1] / 50 * 1;
+		timeVals[1] = _oceanAbs [1] / 50 * 1;
+		flowVals[1] = _oceanAbs [1] / 50 * 1;
+
+		// Extroversion
+		// High E -> Indirect, Light, Sustained, Free
+		spaceVals [2] = _oceanAbs [2] / 50 * -1;
+		weightVals [2] = _oceanAbs [2] / 50 * -1;
+		timeVals[2] = _oceanAbs [2] / 50 * -1;
+		flowVals[2] = _oceanAbs [2] / 50 * -1;
+
+		// Agreeableness
+		// High A -> Indirect, Light, Sustained, Free
+		spaceVals [3] = _oceanAbs [3] / 50 * -1;
+		weightVals [3] = _oceanAbs [3] / 50 * -1;
+		timeVals[3] = _oceanAbs [3] / 50 * -1;
+		flowVals[3] = _oceanAbs [3] / 50 * -1;
+
+		// Neuroticism
+		// High N -> Direct, Strong, Sudden, Free
+		spaceVals [4] = _oceanAbs [4] / 50 * 1;
+		weightVals [4] = _oceanAbs [4] / 50 * 1;
+		timeVals[4] = _oceanAbs [4] / 50 * 1;
+		flowVals[4] = _oceanAbs [4] / 50 * -1;
+
+		// Calculate averages
+		_space = 0.0f;  _weight = 0.0f;  _time = 0.0f; _flow = 0.0f;
+		for (int i = 0; i < 5; i++) {
+			_space += spaceVals[i];
+			_weight += weightVals[i];
+			_time += timeVals[i];
+			_flow += flowVals[i];
+				}
+		_space = _space / 5.0f;
+		_weight = _weight / 5.0f;
+		_time = _time / 5.0f;
+		_flow = _flow / 5.0f;
+
+		// Calculate horizontal shape
+		// Associated negatively (?) with space
+		_horArm = -_space;
+		_horTorso = -_space;
+
+		// Calculate vertical shape
+		// Associated negatively (?) with weight
+		_verArm = -_weight;
+		_verTorso = -_weight;
+
+		// Calculate sagittal shape
+		// Associated negatively (?) with time
+		_sagArm = -_time;
+		_sagTorso = -_time;
 
 
-        if (cVal == 0) { //space
-
-            weight = othersList[qVal,0];
-            time = othersList[qVal,1];
-            flow = othersList[qVal,2];
-
-            //Left
-            space = -1;
-            key = space * 27 + weight * 9 + time * 3 + flow;            
-            _driveInd = _effortCombination[key];
-            //right
-            //space = 1;
-            //key = space * 27 + weight * 9 + time * 3 + flow;
-            //_driveIndRight = _effortCombination[key];
-        }
-
-        else if (cVal == 1) { //weight
-
-            space = othersList[qVal,0];
-            time = othersList[qVal,1];
-            flow = othersList[qVal,2];
-
-            //Left
-            weight = -1;
-            key = space * 27 + weight * 9 + time * 3 + flow;
-            _driveInd = _effortCombination[key];
-
-
-            //right
-            //weight = 1;
-            //key = space * 27 + weight * 9 + time * 3 + flow;
-            //_driveIndRight = _effortCombination[key];
-        }
-
-        else if (cVal == 2) { //time
-
-            space = othersList[qVal,0];
-            weight = othersList[qVal,1];
-            flow = othersList[qVal,2];
-
-            //Left
-            time = -1;
-            key = space * 27 + weight * 9 + time * 3 + flow;
-            _driveInd = _effortCombination[key];
-     
-            //right
-            //time = 1;
-            //key = space * 27 + weight * 9 + time * 3 + flow;
-            //_driveIndRight = _effortCombination[key];
-        }
-
-        else if (cVal == 3) { //flow
-
-            space = othersList[qVal,0];
-            weight = othersList[qVal,1];
-            time = othersList[qVal,2];
-
-            //Left
-            flow = -1;
-            key = space * 27 + weight * 9 + time * 3 + flow;
-            _driveInd = _effortCombination[key];
-
-
-            //right
-            //flow = 1;
-            //key = space * 27 + weight * 9 + time * 3 + flow;
-            //_driveIndRight = _effortCombination[key];
-        }
-
-        
-    }
-    
-
-    void UpdateParameters() {
-
-        
-        //Find driveIndLeft and driveIndRight
-        ComputeBothDriveInds(_qInd);
-        //Update character
-        UpdateEmoteParams(_agent, _driveInd);
-
-    }
-
-
+	}
 
 	void OnGUI () {
         
@@ -432,7 +423,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 		GUILayout.EndArea ();
 
 		// Play button
-		GUILayout.BeginArea (new Rect(30,250,100,100));
+		GUILayout.BeginArea (new Rect(Screen.width/2 - 50,500,100,100));
 		GUI.color = Color.white;
 		//GUILayout.Space (50);
 
@@ -440,18 +431,44 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_agent.GetComponent<TorsoController>().Reset();
 			
 			PlayAnim(_agent, _animInd);
-			UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
+			//UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
+			UpdateEmoteParams(_agent);
 		}
 		
 		GUILayout.EndArea();
 
+		// Displaying emote parameters
+		GUILayout.BeginArea (new Rect (30, 250, 200, 500));
+		style.fontSize = 18;
+		GUILayout.Label ("Effort", style);
+		style.fontSize = 14;
+		//GUILayout.Label ("Space: " + (Mathf.Round(_space * 1000)/1000).ToString (), style);
+		GUILayout.Label ("Space: " + _space.ToString (), style);
+		GUILayout.Label ("Weight: " + _weight.ToString (), style);
+		GUILayout.Label ("Time: " + _time.ToString (), style);
+		GUILayout.Label ("Flow: " + _flow.ToString (), style);
+		style.fontSize = 18;
+		GUILayout.Space (10);
+		GUILayout.Label ("Arm shape",style);
+		style.fontSize = 14;
+		GUILayout.Label ("Vertical: " + _verArm.ToString (), style);
+		GUILayout.Label ("Horizontal: " + _horArm.ToString (), style);
+		GUILayout.Label ("Sagittal: " + _sagArm.ToString (), style);
+		style.fontSize = 18;
+		GUILayout.Space (10);
+		GUILayout.Label ("Torso shape",style);
+		style.fontSize = 14;
+		GUILayout.Label ("Vertical: " + _verTorso.ToString (), style);
+		GUILayout.Label ("Horizontal: " + _horTorso.ToString (), style);
+		GUILayout.Label ("Sagittal: " + _sagTorso.ToString (), style);
+		GUILayout.EndArea ();
 
 		// Right side
 		// Includes relative and absolute personality
 
 		//GUILayout.BeginArea (new Rect (450,30,250,250));
 		GUILayout.BeginArea (new Rect (Screen.width - 300,30,250,600));
-
+		style.fontSize = 18;
 		GUILayout.Label ("Relative Personality", style);		
 
 		float minVal = -50.0f;
@@ -468,9 +485,17 @@ public class LMAPlayerGUI : MonoBehaviour {
 		_oceanRelTemp[3] = GUILayout.HorizontalSlider (_oceanRel[3], minVal, maxVal);
 		GUILayout.Label ("Neuroticism", style);
 		_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
+
+		// Reset button
+		GUILayout.Space (10);
+		if(GUILayout.Button ( "Reset")) {
+			StopAnim(_agent);
+			ResetPersonality();
+			CalculateAbsolutePersonality();
+			UpdateLaban();
+			UpdateEmoteParams(_agent);
+		}
       
-		//style.fontSize = 18;
-		//GUILayout.Label("");
 		GUILayout.Space (30);
 		style.fontSize = 18;
 		GUILayout.Label ("Absolute Personality", style);
@@ -490,36 +515,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 	}
    
-
-    string ComputeEffortCombinationStr(int driveInd) {
-        string str = "";
-        if (_effortList[driveInd,0] == -1)
-            str += "Indirect";
-        else if (_effortList[driveInd,0] == 1)
-            str += "Direct";
-
-        str += " ";
-        if (_effortList[driveInd,1] == -1)
-            str += "Light";
-        else if (_effortList[driveInd,1] == 1)
-            str += "Strong";
-
-        str += " ";
-        if (_effortList[driveInd,2] == -1)
-            str += "Sustained";
-        else if (_effortList[driveInd,2] == 1)
-            str += "Sudden";
-
-
-        str += " ";
-        if (_effortList[driveInd,3] == -1)
-            str += "Free";
-        else if (_effortList[driveInd,3] == 1)
-            str += "Bound";
-
-        return str;
-
-    }
 
 
     void StopAnim(GameObject agent){
@@ -550,6 +545,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 		Debug.Log ("PlayAnim");
 
+		//GameObject agentControl = GameObject.Find("AgentControlPrefab");
+
         if (agent.GetComponent<ArmAnimator>().ArmC == null || agent.GetComponent<TorsoAnimator>().TorsoC == null) {
 			Debug.Log ("Controller not assigned");
 			return;
@@ -558,40 +555,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 
         AnimationInfo animInfo = agent.GetComponent<AnimationInfo>();
         animInfo.IsContinuous = _toggleContinuous;
-       // agent.animation.Stop(); //in order to restart animation
         StopAnim(agent); //stop first
-        
-        switch(ind) {
-            case 0:
-                InitAgent(agent, "Pointing_to_Spot_Netural_02_Updated");                                                
-                break;
-            case 1:
-                InitAgent(agent, "Picking_Up_Pillow_Netural_01");
-                      
-                break;
-            case 2:
-                InitAgent(agent, "Lifting_Netural_01");                
-                break;
-            case 3:
-                InitAgent(agent, "Knocking_Neutral_1");          
-                break;
-            case 4:
-                 InitAgent(agent, "Punching_Netural_02");               
-                break;
-            case 5:
-                InitAgent(agent, "Pushing_Netural_02");                
-                break;
-            case 6:
-                 InitAgent(agent, "Throwing_Netural_02");               
-                break;
-            case 7:
-                 InitAgent(agent, "Walking_Netural_02");               
-                break;
-            case 8:
-                 InitAgent(agent, "Waving_Netural_02");                 
-                break;                    
-        }
 
+		InitAgent (agent, _animNames [ind]);
+		agent.animation[animInfo.AnimName].speed = animInfo.DefaultAnimSpeed;
+	
         if(animInfo.IsContinuous)
             agent.animation[animInfo.AnimName].wrapMode = WrapMode.Loop;            
         
@@ -605,8 +573,88 @@ public class LMAPlayerGUI : MonoBehaviour {
         return _animDisplayNameStr[ind];        
     }
 
+	void UpdateEmoteParams(GameObject agent) {
 
-    
+		if(agent == null){		
+			Debug.Log("AgentPrefab not found");
+			return;
+		}
+
+		//Update arm Shape params
+		//Left arm
+		agent.GetComponent<ArmAnimator>().Hor = _horArm;
+		agent.GetComponent<ArmAnimator>().Ver = _verArm;
+		agent.GetComponent<ArmAnimator>().Sag = _sagArm;		
+		agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(0); //Update keypoints
+		//RightArm 
+		//Only horizontal motion is the opposite for each arm
+		agent.GetComponent<ArmAnimator>().Hor = -_horArm;
+		agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(1); //Update keypoints
+		
+		
+		//Update arm Effort params
+		//Space
+		if(_space > 0){
+			agent.GetComponent<ArmAnimator>().Dir = _space;
+			agent.GetComponent<ArmAnimator>().Ind = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().Ind = -_space;
+			agent.GetComponent<ArmAnimator>().Dir = 0f;
+		}
+		//Weight
+		if(_weight > 0){
+			agent.GetComponent<ArmAnimator>().Str = _weight;
+			agent.GetComponent<ArmAnimator>().Lgt = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().Lgt = -_weight;
+			agent.GetComponent<ArmAnimator>().Str = 0f;
+		}
+		//Time				
+		if(_time > 0){
+			agent.GetComponent<ArmAnimator>().Sud = _time;
+			agent.GetComponent<ArmAnimator>().Sus = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().Sus = -_time;
+			agent.GetComponent<ArmAnimator>().Sud = 0f;
+		}
+		
+		//Flow
+		if(_flow > 0){
+			agent.GetComponent<ArmAnimator>().Bnd = _flow;
+			agent.GetComponent<ArmAnimator>().Fre = 0f;
+		}
+		else{
+			agent.GetComponent<ArmAnimator>().Fre = -_flow	;
+			agent.GetComponent<ArmAnimator>().Bnd = 0;
+		}
+		
+		
+		//Update effort parameters
+		agent.GetComponent<ArmAnimator>().Effort2LowLevel();
+		
+			
+		//Update torso shape parameters
+		//TODO : UPDATE
+		agent.GetComponent<TorsoAnimator>().EncSpr[0] = agent.GetComponent<TorsoAnimator>().EncSpr[1] = _horTorso;
+		agent.GetComponent<TorsoAnimator>().SinRis[0] = agent.GetComponent<TorsoAnimator>().SinRis[1] = _verTorso;
+		agent.GetComponent<TorsoAnimator>().RetAdv[0] = agent.GetComponent<TorsoAnimator>().RetAdv[1] = _sagTorso;
+
+		//Update shape parameters
+		for (int j = 0; j < _shapeParams.Length; j++)
+			for (int i = 0; i < _shapeParams[j].Length; i++)
+				agent.GetComponent<TorsoAnimator>().ShapeParams[j][i] = _shapeParams[j][i];
+
+		
+		agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
+		
+	}
+
+	
+	
+	/*
 	void UpdateEmoteParams(GameObject agent, int driveInd) {
 		if(agent == null){		
 			Debug.Log("AgentPrefab not found");
@@ -667,14 +715,13 @@ public class LMAPlayerGUI : MonoBehaviour {
             
         agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
         
-
-        
     }
-	
+	*/
 
     
     //Read everything into the memory
     // remember to use StartCoroutine when calling this function!
+	/*
     IEnumerator GetValuesDrives(int driveInd) {
         string resultURL = "https://fling.seas.upenn.edu/~fundad/cgi-bin/RCTAMAN/getDriveData.php";
 
@@ -737,6 +784,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
         }
     }
+    */
 
     // remember to use StartCoroutine when calling this function!
     IEnumerator GetValuesShapes( int shapeInd) {
@@ -821,6 +869,7 @@ public class LMAPlayerGUI : MonoBehaviour {
         sr.Close();
     }
 
+	/*
     void ReadValuesDrives(int driveInd) {
         string fileName = "drivesSusan.txt";
         StreamReader sr = new StreamReader(fileName);
@@ -869,6 +918,7 @@ public class LMAPlayerGUI : MonoBehaviour {
         sr.Close();
         
     }
+    */
 
    
  }		
