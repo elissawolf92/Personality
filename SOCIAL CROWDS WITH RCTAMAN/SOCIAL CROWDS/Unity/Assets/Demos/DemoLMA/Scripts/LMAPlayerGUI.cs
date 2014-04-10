@@ -9,6 +9,8 @@ using System.IO;
 
 public class LMAPlayerGUI : MonoBehaviour {
 
+	private static Vector2 _scrollPosition;
+
 	// Animation selector
 	GUIContent[] animComboBoxList;
 	private ComboBox animComboBoxControl; // = new ComboBox();
@@ -19,6 +21,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private ComboBox cultureComboBoxControl;
 
 	// Ocean personality parameters, range from -50 to 50
+	private static float minVal = -50.0f;
+	private static float maxVal = 50.0f;
 	// Relative
 	private float[] _oceanRel = new float[5] {0,0,0,0,0};
 	// Need a temp one to detect changes to the sliders
@@ -34,10 +38,16 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private int _cultureInd = 0;
 	// Mean OCEAN values for different cultures          
 	// Row is culture, col is personality factor            O    C    E    A   N
-	private static int[,] _cultureMeans= new int[2, 5] {  { 30, -10,  10, -20, 0}, 
+	private static float[,] _cultureMeans= new float[2, 5] {  { 30, -10,  10, -20, 0}, 
 		          									      {-30,  20, -10,  30, 0}};
-	private static int[,] _cultureRanges = new int[2, 5] {{ 40,  50,  50,  20, 40},
+	private static float[,] _cultureMeansTemp = new float[2, 5] {  { 30, -10,  10, -20, 0}, 
+		{-30,  20, -10,  30, 0}};
+
+
+	private static float[,] _cultureRanges = new float[2, 5] {{ 40,  50,  50,  20, 40},
 														  { 20,  50,  30,  40, 50}};
+	private static float[,] _cultureRangesTemp = new float[2, 5] {{ 40,  50,  50,  20, 40},
+		{ 20,  50,  30,  40, 50}};
 
 	// LMA Parameters
 	private static float _space = 0f, _weight = 0f, _time = 0f, _flow = 0f;  //[-1 1]
@@ -127,7 +137,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     public string ShapeInfo = "";
     public string Info = "waiting...";
-    private static Vector2 _scrollPosition;
 	
     private float _scrollWidth = 0;
 
@@ -296,7 +305,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			UpdateLaban();
 		}
 
-		// Check if any of the sliders have changed
+		// Check if any of the relative personality sliders have changed
 		for (int i = 0; i < 5; i++) {
 			if (_oceanRelTemp[i] != _oceanRel[i]) {
 				// Update to the new value
@@ -304,6 +313,26 @@ public class LMAPlayerGUI : MonoBehaviour {
 				// Recalculate absolute personality
 				CalculateAbsolutePersonality();
 				UpdateLaban();
+			}
+		}
+
+		// Check if any of the culture mean sliders have changed
+		for (int i = 0; i < _cultureNames.Length; i++) {
+			for (int j = 0; j < 5; j++){
+				if (_cultureMeans[i,j] != _cultureMeansTemp[i,j]) {
+					// Update to the new value
+					_cultureMeans[i,j] = _cultureMeansTemp[i,j];
+					// Recalculate absolute personality
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+				}
+				if (_cultureRanges[i,j] != _cultureRangesTemp[i,j]){
+					// Update to the new value
+					_cultureRanges[i,j] = _cultureRangesTemp[i,j];
+					// Recalculate absolute personality
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+				}
 			}
 		}
 
@@ -402,31 +431,13 @@ public class LMAPlayerGUI : MonoBehaviour {
         
         GUIStyle style = new GUIStyle();
         GUI.skin = ButtonSkin;
-    
-		// Left side
-		// Includes dropdowns for animation and culture, play button
-
-		// Animation selector
-        GUILayout.BeginArea (new Rect (30,25,250,300));
-        style.fontSize = 18;
-        style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
-
-		GUILayout.Label ("Animation: ", style);
-		animComboBoxControl.Show ();
-		GUILayout.EndArea ();
-
-		// Culture selector
-		GUILayout.BeginArea (new Rect (275, 25, 250, 300));
-		GUILayout.Label ("Culture: ", style);
-		cultureComboBoxControl.Show ();
-
-		GUILayout.EndArea ();
+		style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
 
 		// Play button
 		GUILayout.BeginArea (new Rect(Screen.width/2 - 50,500,100,100));
 		GUI.color = Color.white;
 		//GUILayout.Space (50);
-
+		
 		if(GUILayout.Button ( "Play")) {
 			_agent.GetComponent<TorsoController>().Reset();
 			
@@ -434,84 +445,162 @@ public class LMAPlayerGUI : MonoBehaviour {
 			//UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
 			UpdateEmoteParams(_agent);
 		}
-		
 		GUILayout.EndArea();
 
-		// Displaying emote parameters
-		GUILayout.BeginArea (new Rect (30, 250, 200, 500));
+		// Left side
+		// Includes dropdowns for animation and culture, play button
+
+		// Culture selector
 		style.fontSize = 18;
-		GUILayout.Label ("Effort", style);
-		style.fontSize = 14;
-		//GUILayout.Label ("Space: " + (Mathf.Round(_space * 1000)/1000).ToString (), style);
-		GUILayout.Label ("Space: " + _space.ToString (), style);
-		GUILayout.Label ("Weight: " + _weight.ToString (), style);
-		GUILayout.Label ("Time: " + _time.ToString (), style);
-		GUILayout.Label ("Flow: " + _flow.ToString (), style);
-		style.fontSize = 18;
-		GUILayout.Space (10);
-		GUILayout.Label ("Arm shape",style);
-		style.fontSize = 14;
-		GUILayout.Label ("Vertical: " + _verArm.ToString (), style);
-		GUILayout.Label ("Horizontal: " + _horArm.ToString (), style);
-		GUILayout.Label ("Sagittal: " + _sagArm.ToString (), style);
-		style.fontSize = 18;
-		GUILayout.Space (10);
-		GUILayout.Label ("Torso shape",style);
-		style.fontSize = 14;
-		GUILayout.Label ("Vertical: " + _verTorso.ToString (), style);
-		GUILayout.Label ("Horizontal: " + _horTorso.ToString (), style);
-		GUILayout.Label ("Sagittal: " + _sagTorso.ToString (), style);
+		GUILayout.BeginArea (new Rect (30, 25, 250, 150));
+			GUILayout.Label ("Culture: ", style);
+			cultureComboBoxControl.Show ();
 		GUILayout.EndArea ();
 
-		// Right side
+		// Dividing line
+		GUI.DrawTexture(new Rect(300 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
+
+
+		// Adjust the means and ranges for the selected culture
+		GUILayout.BeginArea (new Rect (30, 150, 250, 500));
+			style.fontSize = 18;
+			//GUILayout.Label("Means for culture: " + _cultureNames[_cultureInd],style);
+			GUILayout.Label("Cultural Means",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Openness: " + _cultureMeans [_cultureInd, 0].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 0], minVal, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _cultureMeans [_cultureInd, 1].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 1], minVal, maxVal);
+			GUILayout.Label ("Extroversion: " + _cultureMeans [_cultureInd, 2].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 2], minVal, maxVal);
+			GUILayout.Label ("Agreeableness: " + _cultureMeans [_cultureInd, 3].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 3], minVal, maxVal);
+			GUILayout.Label ("Neuroticism: " + _cultureMeans [_cultureInd, 4].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 4], minVal, maxVal);
+
+			GUILayout.Space (50);
+
+			style.fontSize = 18;
+			GUILayout.Label("Cultural Ranges",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Openness: " + _cultureRanges [_cultureInd, 0].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 0], 0f, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _cultureRanges [_cultureInd, 1].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 1], 0f, maxVal);
+			GUILayout.Label ("Extroversion: " + _cultureRanges [_cultureInd, 2].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 2], 0f, maxVal);
+			GUILayout.Label ("Agreeableness: " + _cultureRanges [_cultureInd, 3].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 3], 0f, maxVal);
+			GUILayout.Label ("Neuroticism: " + _cultureRanges [_cultureInd, 4].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 4], 0f, maxVal);
+
+		GUILayout.EndArea ();
+
+
+		// Displaying emote parameters
+		GUILayout.BeginArea (new Rect (320, 30, 200, 500));
+			style.fontSize = 18;
+			GUILayout.Label ("Laban Motion", style);
+			style.fontSize = 16;
+			GUILayout.Space (10);
+			GUILayout.Label ("Effort", style);
+			style.fontSize = 14;
+			//GUILayout.Label ("Space: " + (Mathf.Round(_space * 1000)/1000).ToString (), style);
+			GUILayout.Label ("Space: " + _space.ToString (), style);
+			GUILayout.Label ("Weight: " + _weight.ToString (), style);
+			GUILayout.Label ("Time: " + _time.ToString (), style);
+			GUILayout.Label ("Flow: " + _flow.ToString (), style);
+
+			style.fontSize = 16;
+			GUILayout.Space (10);
+			GUILayout.Label ("Arm shape",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Vertical: " + _verArm.ToString (), style);
+			GUILayout.Label ("Horizontal: " + _horArm.ToString (), style);
+			GUILayout.Label ("Sagittal: " + _sagArm.ToString (), style);
+
+			style.fontSize = 16;
+			GUILayout.Space (10);
+			GUILayout.Label ("Torso shape",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Vertical: " + _verTorso.ToString (), style);
+			GUILayout.Label ("Horizontal: " + _horTorso.ToString (), style);
+			GUILayout.Label ("Sagittal: " + _sagTorso.ToString (), style);
+		GUILayout.EndArea ();
+
+
+
+		// Far Right side
 		// Includes relative and absolute personality
 
 		//GUILayout.BeginArea (new Rect (450,30,250,250));
-		GUILayout.BeginArea (new Rect (Screen.width - 300,30,250,600));
-		style.fontSize = 18;
-		GUILayout.Label ("Relative Personality", style);		
 
-		float minVal = -50.0f;
-		float maxVal = 50.0f;
+		GUI.DrawTexture(new Rect(Screen.width -310 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
 
-		style.fontSize = 14;
-		GUILayout.Label ("Openness",style);
-		_oceanRelTemp[0] = GUILayout.HorizontalSlider (_oceanRel[0], minVal, maxVal);
-		GUILayout.Label("Conscientiousness", style);
-		_oceanRelTemp[1] = GUILayout.HorizontalSlider (_oceanRel[1], minVal, maxVal);
-		GUILayout.Label ("Extroversion", style);
-		_oceanRelTemp[2] = GUILayout.HorizontalSlider (_oceanRel[2], minVal, maxVal);
-		GUILayout.Label ("Agreeableness", style);
-		_oceanRelTemp[3] = GUILayout.HorizontalSlider (_oceanRel[3], minVal, maxVal);
-		GUILayout.Label ("Neuroticism", style);
-		_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
+		GUILayout.BeginArea (new Rect (Screen.width - 290,30,290,800));
 
-		// Reset button
-		GUILayout.Space (10);
-		if(GUILayout.Button ( "Reset")) {
-			StopAnim(_agent);
-			ResetPersonality();
-			CalculateAbsolutePersonality();
-			UpdateLaban();
-			UpdateEmoteParams(_agent);
-		}
-      
-		GUILayout.Space (30);
-		style.fontSize = 18;
-		GUILayout.Label ("Absolute Personality", style);
-		style.fontSize = 14;
-		GUILayout.Label ("Openness",style);
-		GUILayout.Label (_oceanAbs[0].ToString(),style);
-		GUILayout.Label("Conscientiousness", style);
-		GUILayout.Label (_oceanAbs[1].ToString(),style);
-		GUILayout.Label ("Extroversion", style);
-		GUILayout.Label (_oceanAbs[2].ToString(),style);
-		GUILayout.Label ("Agreeableness", style);
-		GUILayout.Label (_oceanAbs[3].ToString(),style);
-		GUILayout.Label ("Neuroticism", style);
-		GUILayout.Label (_oceanAbs[4].ToString(),style);
+			//_scrollPosition = GUILayout.BeginScrollView(_scrollPosition,  GUILayout.Width(220f), GUILayout.Height(Screen.height*0.98f));
+			_scrollPosition = GUILayout.BeginScrollView (_scrollPosition, GUILayout.Width(285f), GUILayout.Height(Screen.height*0.98f-30));
 
-		GUILayout.EndArea();
+				// Animation selector
+				//GUILayout.BeginArea (new Rect (Screen.width - 300 ,25,250,300));
+				style.fontSize = 18;
+				style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
+				
+				GUILayout.Label ("Animation: ", style);
+				animComboBoxControl.Show ();
+				//GUILayout.EndArea ();
+
+				GUILayout.Space (150);
+
+				//GUILayout.BeginArea (new Rect (Screen.width - 300, 200, 250, 600));
+				style.fontSize = 18;
+				GUILayout.Label ("Relative Personality", style);		
+
+				style.fontSize = 14;
+				GUILayout.Label ("Openness: " + _oceanRel[0],style);
+				_oceanRelTemp[0] = GUILayout.HorizontalSlider (_oceanRel[0], minVal, maxVal);
+				GUILayout.Label("Conscientiousness: " + _oceanRel[1], style);
+				_oceanRelTemp[1] = GUILayout.HorizontalSlider (_oceanRel[1], minVal, maxVal);
+				GUILayout.Label ("Extroversion: " + _oceanRel[2], style);
+				_oceanRelTemp[2] = GUILayout.HorizontalSlider (_oceanRel[2], minVal, maxVal);
+				GUILayout.Label ("Agreeableness: " + _oceanRel[3], style);
+				_oceanRelTemp[3] = GUILayout.HorizontalSlider (_oceanRel[3], minVal, maxVal);
+				GUILayout.Label ("Neuroticism: " + _oceanRel[4], style);
+				_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
+
+				// Reset button
+				GUILayout.Space (10);
+				if(GUILayout.Button ( "Reset")) {
+					StopAnim(_agent);
+					ResetPersonality();
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+					UpdateEmoteParams(_agent);
+				}
+		      
+				GUILayout.Space (30);
+				style.fontSize = 18;
+				GUILayout.Label ("Absolute Personality", style);
+				style.fontSize = 14;
+				GUILayout.Label ("Openness",style);
+				GUILayout.Label (_oceanAbs[0].ToString(),style);
+				GUILayout.Label("Conscientiousness", style);
+				GUILayout.Label (_oceanAbs[1].ToString(),style);
+				GUILayout.Label ("Extroversion", style);
+				GUILayout.Label (_oceanAbs[2].ToString(),style);
+				GUILayout.Label ("Agreeableness", style);
+				GUILayout.Label (_oceanAbs[3].ToString(),style);
+				GUILayout.Label ("Neuroticism", style);
+				GUILayout.Label (_oceanAbs[4].ToString(),style);
+
+				GUILayout.Space (50);
+
+				//GUILayout.EndArea();
+
+			GUILayout.EndScrollView ();
+
+		GUILayout.EndArea ();
 
 	}
    
