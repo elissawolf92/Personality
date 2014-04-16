@@ -58,47 +58,56 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private float _shapeMin = -1.0f;
 	private float _shapeMax = 1.0f;
 
+	// Personality -> Effort coefficients
+	// TODO: Read these in from a file
+	private float[,] pe_coeffs = new float[5,4] 
+		{{ .230284f, .086698f, -.01184f, .254413f }, // O
+		{ -.29321f, .382264f, .005813f, -.14883f }, // C
+		{ .03929f, .45567f, -.48084f, .230689f }, // E
+		{ -.18096f, -.01417f, .194684f, -.17622f }, // A
+		{ -.25626f, .061196f, .306826f, -.18985f }}; // N
+	// Row = OCEAN factor (row 0 = O, row 1 = C, etc)
+	// Col = Effort factor (col 0 = space, 1 = weight, 2 = time, 3 = flow) 
 
-	// IDK WHAT THIS IS
-	/*
-	private float[] _speed = new float[32];
-    private float[] _v0 = new float[32];
-    private float[] _v1 = new float[32];
-    private float[] _ti = new float[32];
-    private float[] _texp = new float[32];
-    private float[] _tval = new float[32];
-    private float[] _continuity = new float[32];
-    private float[] _bias = new float[32];
-    private float[] _t0 = new float[32];
-    private float[] _t1 = new float[32];
+
+	// Low level motion parameters
+	private float _speed = 0f;
+	private float _v0 = 0f;
+	private float _v1 = 0f;
+	private float _ti = 0f;
+	private float _texp = 0f;
+	private float _tval = 0f;
+	private float _continuity = 0f;
+	private float _bias = 0f;
+	private float _t0 = 0f;
+	private float _t1 = 0f;
 
     //Flourishes
-    private float[] _trMag = new float[32]; //torso rotation
-    private float[] _tfMag = new float[32];
+	private float _trMag = 0f;
+	private float _tfMag = 0f;
 
-    private float[] _hrMag = new float[32]; //head rotation
-    private float[] _hfMag = new float[32];
-    private float[] _squashMag = new float[32];
-    private float[] _wbMag = new float[32];
-    private float[] _wxMag = new float[32];
-    private float[] _wtMag = new float[32];
-    private float[] _wfMag = new float[32];
-    private float[] _etMag = new float[32];
-    private float[] _dMag = new float[32];
-    private float[] _efMag = new float[32];
+	private float _hrMag = 0f;
+	private float _hfMag = 0f;
+	private float _squashMag = 0f;
+	private float _wbMag = 0f;
+	private float _wxMag = 0f;
+	private float _wtMag = 0f;
+	private float _wfMag = 0f;
+	private float _etMag = 0f;
+	private float _dMag = 0f;
+	private float _efMag = 0f;
 
     //Shape for drives
-    private float[] _encSpr0 = new float[32];
-    private float[] _sinRis0 = new float[32];
-    private float[] _retAdv0 = new float[32];
+	private float _encSpr0 = 0f;
+	private float _sinRis0 = 0f;
+	private float _retAdv0 = 0f;
 
-    private float[] _encSpr1 = new float[32];
-    private float[] _sinRis1 = new float[32];
-    private float[] _retAdv1 = new float[32];
+	private float _encSpr1 = 0f;
+	private float _sinRis1 = 0f;
+	private float _retAdv1 = 0f;
 
     //Arm shape for drives
-    private static Vector3[][] _arm = new Vector3[32][];
-    */
+    private static Vector3[] _arm = new Vector3[2];
 
     static bool _toggleContinuous = false;
     public Texture TexBorder = new Texture();
@@ -118,22 +127,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 		"Throwing_Netural_02",
 		"Walking_Netural_02", 
 		"Waving_Netural_02"};
-
-	/*
-	int _driveInd = 0;
-	static int _qInd = 0; //question index
-	private int[,] _effortList =  {{-1, -1, -1, 0}, {-1, -1, 1, 0}, {-1, 1, -1, 0}, {-1, 1, 1, 0}, {1, -1, -1, 0}, {1, -1, 1, 0}, {1, 1, -1, 0}, {1, 1, 1, 0}, 
-			{-1, -1, 0, -1}, {-1, -1, 0, 1},{-1, 1,0,  -1}, {-1, 1, 0, 1}, {1, -1, 0, -1},{1, -1, 0,  1}, {1, 1, 0, -1}, {1, 1, 0, 1},
-            {-1,  0, -1, -1}, {-1, 0, -1,  1}, {-1, 0, 1,  -1}, {-1, 0, 1, 1}, {1, 0, -1, -1}, {1, 0, -1,  1}, {1, 0, 1, -1}, {1,  0, 1, 1},
-            { 0, -1, -1, -1}, {0, -1, -1,  1}, {0, -1, 1,  -1}, {0, -1, 1, 1}, {0, 1, -1, -1}, {0, 1, -1,  1}, {0, 1, 1, -1}, {0, 1, 1, 1}};
-
-
-    Dictionary<int, int> _effortCombination = new Dictionary<int , int>();
-    */
-
-    private string[] _effortNames = { "Space", "Weight", "Time", "Flow" };
-
-	Vector3 _pos;
+	
 
     public string ShapeInfo = "";
     public string Info = "waiting...";
@@ -142,8 +136,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     //read shape values once in the beginning. no need to reread everytime
     float[][] _shapeParams = new float[18][];
-
-	// NEW: Only one agent
+	
     GameObject _agent;
 
 
@@ -151,33 +144,32 @@ public class LMAPlayerGUI : MonoBehaviour {
     void Start(){
 
 		// Setting up the combo boxes
+
+		// Styling for both combo boxes
+		listStyle.normal.textColor = Color.white; 
+		listStyle.onHover.background =
+			listStyle.hover.background = new Texture2D(2, 2);
+		listStyle.padding.left =
+			listStyle.padding.right =
+				listStyle.padding.top =
+					listStyle.padding.bottom = 4;
+
+		// Combo box for selecting animation
 		animComboBoxList = new GUIContent[_animDisplayNameStr.Length];
 		for (int i= 0; i < _animDisplayNameStr.Length; i++) {
 			animComboBoxList[i] = new GUIContent(_animDisplayNameStr[i]);
-				}
-
-		listStyle.normal.textColor = Color.white; 
-		listStyle.onHover.background =
-		listStyle.hover.background = new Texture2D(2, 2);
-		listStyle.padding.left =
-		listStyle.padding.right =
-		listStyle.padding.top =
-		listStyle.padding.bottom = 4;
+		}
 
 		
 		animComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), animComboBoxList[0], animComboBoxList, "button", "box", listStyle);
 
+		// Combo box for selecting culture
 		cultureComboBoxList = new GUIContent[_cultureNames.Length];
 		for (int i= 0; i < _cultureNames.Length; i++) {
 			cultureComboBoxList[i] = new GUIContent(_cultureNames[i]);
 		}
 		cultureComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), cultureComboBoxList[0], 
 		                                      cultureComboBoxList, "button", "box", listStyle);
-		/*
-		for (int i = 0; i < 32; i++) {
-            _arm[i] = new Vector3[2];
-        }
-        */
         
 		// Load the agent
 		_agent = GameObject.Find ("AgentPrefab");
@@ -187,15 +179,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 			Debug.Log("Agent prefab not found");
 			return;
 		}
-        
-		/*
-        _qInd = 0;
-        //compute effortCombination hashes
-        for (int i = 0; i < 32; i++) {
-            int val = _effortList[i, 3] + _effortList[i, 2] * 3 + _effortList[i, 1] * 9 + _effortList[i, 0] * 27;
-            _effortCombination.Add(val, i);
-        }
-        */
 
 
         UpdateCameraBoundaries();
@@ -203,43 +186,17 @@ public class LMAPlayerGUI : MonoBehaviour {
         for (int i = 0; i < 18; i++)
             _shapeParams[i] = new float[6];
 
-        //Read all drive and shape parameters
-
-//#if !WEBMODE
-        //for (int i = 0; i < 32; i++)
-        //    ReadValuesDrives(i);
-
+        //Read all shape parameters
         for (int i = 5; i >= 0; i--) { 
             ReadValuesShapes( i);
         }
 
-
-//#elif WEBMODE
-		/*
-        for (int i = 0; i < 32; i++)
-            this.StartCoroutine(GetValuesDrives(i));
-
-        for (int i = 5; i >= 0; i--)
-            this.StartCoroutine(GetValuesShapes(i));
-            */
-
-//#endif
-
-        //Read all shape parameters
-
-
         Reset();
-
-		// Get agent's position
-		_pos = _agent.transform.position;
-
-
     }
 
 
     public void Reset() {
 		InitAgent (_agent, "Pointing_to_Spot_Netural_02_Updated");
-        //UpdateParameters();
 		CalculateAbsolutePersonality ();
 		UpdateLaban ();
 		UpdateEmoteParams (_agent);
@@ -285,7 +242,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_agent.GetComponent<TorsoController>().Reset();
 			
 			PlayAnim(_agent, _animInd);
-			//UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
 			UpdateEmoteParams(_agent);
 		}
 
@@ -346,9 +302,6 @@ public class LMAPlayerGUI : MonoBehaviour {
         StopAnim(_agent);
         PlayAnim(_agent, _animInd); //start the next animation
         StopAnim(_agent);
-
-        //changes the names of the drives
-       //UpdateParameters();
 		UpdateEmoteParams (_agent);
 
     }
@@ -442,9 +395,9 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_agent.GetComponent<TorsoController>().Reset();
 			
 			PlayAnim(_agent, _animInd);
-			//UpdateParameters(); //we need to update after play because playanim resets torso parameters for speed etc. when animinfo is reset
 			UpdateEmoteParams(_agent);
 		}
+
 		GUILayout.EndArea();
 
 		// Left side
@@ -656,11 +609,7 @@ public class LMAPlayerGUI : MonoBehaviour {
             agent.animation[animInfo.AnimName].wrapMode = WrapMode.ClampForever;                            
 
     }
-     
-    string GetAnimName(int ind) {
-        
-        return _animDisplayNameStr[ind];        
-    }
+
 
 	void UpdateEmoteParams(GameObject agent) {
 
@@ -806,124 +755,9 @@ public class LMAPlayerGUI : MonoBehaviour {
         
     }
 	*/
-
-    
-    //Read everything into the memory
-    // remember to use StartCoroutine when calling this function!
-	/*
-    IEnumerator GetValuesDrives(int driveInd) {
-        string resultURL = "https://fling.seas.upenn.edu/~fundad/cgi-bin/RCTAMAN/getDriveData.php";
-
-        // Create a form object for sending high score data to the server
-        var form = new WWWForm();
-        form.AddField("userId", "susand948");
-        form.AddField("driveInd", driveInd.ToString());
-
-        // Create a download object
-        var download = new WWW(resultURL, form);
-
-        // Wait until the download is done
-        yield return download;
-
-        if (download.error != null) {
-            Info = download.error;
-            Debug.Log("Error: " + download.error);
-        }
-        else {
-			Debug.Log("Getting drive values");
-            Info = download.text;
-            String[] vals = Info.Split('\t');
-            //Assign drive values 
-            //should be exactly in this order
-            int i = 0;
-            _speed[driveInd] = float.Parse(vals[i++]);
-            _v0[driveInd] = float.Parse(vals[i++]);
-            _v1[driveInd] = float.Parse(vals[i++]);
-            _ti[driveInd] = float.Parse(vals[i++]);
-            _texp[driveInd] = float.Parse(vals[i++]);
-            _tval[driveInd] = float.Parse(vals[i++]);
-            _continuity[driveInd] = float.Parse(vals[i++]);
-            _bias[driveInd] = float.Parse(vals[i++]);
-            _t0[driveInd] = float.Parse(vals[i++]);
-            _t1[driveInd] = float.Parse(vals[i++]);
-            _trMag[driveInd] = float.Parse(vals[i++]);
-            _tfMag[driveInd] = float.Parse(vals[i++]);
-            _hrMag[driveInd] = float.Parse(vals[i++]);
-            _hfMag[driveInd] = float.Parse(vals[i++]);
-            _squashMag[driveInd] = float.Parse(vals[i++]);
-            _wbMag[driveInd] = float.Parse(vals[i++]);
-            _wxMag[driveInd] = float.Parse(vals[i++]);
-            _wtMag[driveInd] = float.Parse(vals[i++]);
-            _wfMag[driveInd] = float.Parse(vals[i++]);
-            _etMag[driveInd] = float.Parse(vals[i++]);
-            _efMag[driveInd] = float.Parse(vals[i++]);
-            _dMag[driveInd] = float.Parse(vals[i++]);
-            _encSpr0[driveInd] = float.Parse(vals[i++]);
-            _sinRis0[driveInd] = float.Parse(vals[i++]);
-            _retAdv0[driveInd] = float.Parse(vals[i++]);
-            _encSpr1[driveInd] = float.Parse(vals[i++]);
-            _sinRis1[driveInd] = float.Parse(vals[i++]);
-            _retAdv1[driveInd] = float.Parse(vals[i++]);
-            _arm[driveInd][0].x = float.Parse(vals[i++]);
-            _arm[driveInd][0].y = float.Parse(vals[i++]);
-            _arm[driveInd][0].z = float.Parse(vals[i++]);
-            _arm[driveInd][1].x = float.Parse(vals[i++]);
-            _arm[driveInd][1].y = float.Parse(vals[i++]);
-            _arm[driveInd][1].z = float.Parse(vals[i++]);
-
-        }
-    }
-    */
-
-    // remember to use StartCoroutine when calling this function!
-    IEnumerator GetValuesShapes( int shapeInd) {
-        string resultURL = "https://fling.seas.upenn.edu/~fundad/cgi-bin/RCTAMAN/getShapeData.php";
-
-        // Create a form object for sending high score data to the server
-        var form = new WWWForm();
-        form.AddField("userId", "susand948");
-        form.AddField("shapeInd", shapeInd.ToString());
-        // Create a download object
-
-
-        var download = new WWW(resultURL, form);
-
-        // Wait until the download is done
-        yield return download;
-
-       
-        if (download.error != null) {
-            ShapeInfo = download.error;
-//            print("Error: " + download.error);
-        }
-        else {
-            ShapeInfo = download.text;
-            String[] vals = ShapeInfo.Split('\t');
-
-            int i = 0;
-            _shapeParams[(int)BPart.HeadX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.NeckX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.SpineY][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.Spine1X][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ShouldersX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ShouldersY][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ShouldersZ][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ClaviclesX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ClaviclesY][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ClaviclesZ][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.PelvisLX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.PelvisRX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.PelvisY][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.PelvisZ][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.KneesX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.HipsX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.ToesX][shapeInd] = float.Parse(vals[i++]);
-            _shapeParams[(int)BPart.SpineLength][shapeInd] = float.Parse(vals[i++]);
-
-
-        }
-    }
 	
+
+
     void ReadValuesShapes( int shapeInd) {
         string fileName = "shapesSusan.txt";
         StreamReader sr = new StreamReader(fileName);
@@ -958,57 +792,6 @@ public class LMAPlayerGUI : MonoBehaviour {
         sr.Close();
     }
 
-	/*
-    void ReadValuesDrives(int driveInd) {
-        string fileName = "drivesSusan.txt";
-        StreamReader sr = new StreamReader(fileName);
 
-        
-        string[] content = File.ReadAllLines(fileName);
-
-        String[] tokens = content[driveInd + 1].Split('\t');
-
-        int i = 2;
-        _speed[driveInd] = float.Parse(tokens[i++]);
-        _v0[driveInd] = float.Parse(tokens[i++]);
-        _v1[driveInd] = float.Parse(tokens[i++]);
-        _ti[driveInd] = float.Parse(tokens[i++]);
-        _texp[driveInd] = float.Parse(tokens[i++]);
-        _tval[driveInd] = float.Parse(tokens[i++]);
-        _t0[driveInd] = float.Parse(tokens[i++]);
-        _t1[driveInd] = float.Parse(tokens[i++]);
-        _hrMag[driveInd] = float.Parse(tokens[i++]);
-        _hfMag[driveInd] = float.Parse(tokens[i++]);
-        _squashMag[driveInd] = float.Parse(tokens[i++]);
-        _wbMag[driveInd] = float.Parse(tokens[i++]);
-        _wxMag[driveInd] = float.Parse(tokens[i++]);
-        _wtMag[driveInd] = float.Parse(tokens[i++]);
-        _wfMag[driveInd] = float.Parse(tokens[i++]);
-        _etMag[driveInd] = float.Parse(tokens[i++]);
-        _efMag[driveInd] = float.Parse(tokens[i++]);
-        _dMag[driveInd] = float.Parse(tokens[i++]);
-        _trMag[driveInd] = float.Parse(tokens[i++]);
-        _tfMag[driveInd] = float.Parse(tokens[i++]);
-        _encSpr0[driveInd] = float.Parse(tokens[i++]);
-        _sinRis0[driveInd] = float.Parse(tokens[i++]);
-        _retAdv0[driveInd] = float.Parse(tokens[i++]);
-        _encSpr1[driveInd] = float.Parse(tokens[i++]);
-        _sinRis1[driveInd] = float.Parse(tokens[i++]);
-        _retAdv1[driveInd] = float.Parse(tokens[i++]);
-        _continuity[driveInd] = float.Parse(tokens[i++]);
-        _bias[driveInd] = float.Parse(tokens[i++]);
-        _arm[driveInd][0].x = float.Parse(tokens[i++]);
-        _arm[driveInd][0].y = float.Parse(tokens[i++]);
-        _arm[driveInd][0].z = float.Parse(tokens[i++]);
-        _arm[driveInd][1].x = float.Parse(tokens[i++]);
-        _arm[driveInd][1].y = float.Parse(tokens[i++]);
-        _arm[driveInd][1].z = float.Parse(tokens[i++]);
-       
-        sr.Close();
-        
-    }
-    */
-
-   
  }		
 
