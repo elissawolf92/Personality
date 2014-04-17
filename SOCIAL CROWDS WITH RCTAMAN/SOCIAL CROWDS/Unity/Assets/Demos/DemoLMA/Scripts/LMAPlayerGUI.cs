@@ -60,12 +60,13 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 	// Personality -> Effort coefficients
 	// TODO: Read these in from a file
-	private float[,] _pe_coeffs = new float[5,4] 
+	private float[,] _pe_coeffs = new float[5, 4]; 
+	/*
 		{{ .230284f, .086698f, -.01184f, .254413f }, // O
 		{ -.29321f, .382264f, .005813f, -.14883f }, // C
 		{ .03929f, .45567f, -.48084f, .230689f }, // E
 		{ -.18096f, -.01417f, .194684f, -.17622f }, // A
-		{ -.25626f, .061196f, .306826f, -.18985f }}; // N
+		{ -.25626f, .061196f, .306826f, -.18985f }}; // N */
 	// Row = OCEAN factor (row 0 = O, row 1 = C, etc)
 	// Col = Effort factor (col 0 = space, 1 = weight, 2 = time, 3 = flow) 
 
@@ -191,6 +192,7 @@ public class LMAPlayerGUI : MonoBehaviour {
             ReadValuesShapes( i);
         }
 
+		ReadPersonalityEffortCoeffs ();
         Reset();
     }
 
@@ -773,7 +775,24 @@ public class LMAPlayerGUI : MonoBehaviour {
         
     }
 	*/
-	
+
+	void ReadPersonalityEffortCoeffs() {
+		string fileName = "personalityToEffort.txt";
+		StreamReader sr = new StreamReader (fileName);
+		string[] content = File.ReadAllLines (fileName);
+
+		for (int oceanInd = 1; oceanInd<content.Length; oceanInd++) {
+			// Start at 1 because the first line of the file is text labels
+			string line = content[oceanInd];
+			// Each line contains parameters for an OCEAN factor
+			String[] tokens = line.Split('\t');
+			for (int effortInd = 1; effortInd < tokens.Length; effortInd++){
+				// Again, start at 1 because first token is a string label
+				_pe_coeffs[oceanInd-1, effortInd-1] = float.Parse(tokens[effortInd]);
+				Debug.Log(tokens[effortInd]);
+			}
+		}
+	}
 
 
     void ReadValuesShapes( int shapeInd) {
@@ -781,6 +800,7 @@ public class LMAPlayerGUI : MonoBehaviour {
         StreamReader sr = new StreamReader(fileName);
 
         string[] content = File.ReadAllLines(fileName);
+		//Debug.Log (content [0]);
 
         String[] tokens = content[shapeInd + 1].Split('\t');
         
