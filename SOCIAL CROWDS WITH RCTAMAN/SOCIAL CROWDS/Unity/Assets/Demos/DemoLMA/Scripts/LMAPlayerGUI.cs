@@ -60,7 +60,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 	// Personality -> Effort coefficients
 	// TODO: Read these in from a file
-	private float[,] pe_coeffs = new float[5,4] 
+	private float[,] _pe_coeffs = new float[5,4] 
 		{{ .230284f, .086698f, -.01184f, .254413f }, // O
 		{ -.29321f, .382264f, .005813f, -.14883f }, // C
 		{ .03929f, .45567f, -.48084f, .230689f }, // E
@@ -306,6 +306,24 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     }
 
+
+	void UpdateLaban() {
+		// Calculate effort from absolute personality
+		_space = _weight = _time = _flow = 0f;
+		for (int i = 0; i < 5; i++) {
+			// For each of the 5 personality factors
+			// (_pe_coeffs) Row = OCEAN factor (row 0 = O, row 1 = C, etc)
+			//              Col = Effort factor (col 0 = space, 1 = weight, 2 = time, 3 = flow)
+			_space += ( _oceanAbs[i]/50.0f * _pe_coeffs[i, 0]);
+			_weight += (_oceanAbs[i]/50.0f * _pe_coeffs[i, 1]);
+			_time += (_oceanAbs[i]/50.0f * _pe_coeffs[i, 2]);
+			_flow += (_oceanAbs[i]/50.0f * _pe_coeffs[i, 3]);
+
+		}
+	}
+
+
+	/*
     void UpdateLaban() {
 		// Calculate Laban parameters from the absolute OCEAN values
 		// Weight each equally - each will be the average of 5 values
@@ -379,7 +397,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 
 	}
-
+*/
 	void OnGUI () {
         
         GUIStyle style = new GUIStyle();
