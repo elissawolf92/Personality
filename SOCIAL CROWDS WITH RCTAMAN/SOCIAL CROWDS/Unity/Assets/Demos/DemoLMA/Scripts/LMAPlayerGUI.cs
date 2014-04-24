@@ -59,7 +59,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private float _shapeMax = 1.0f;
 
 	// Personality -> Effort coefficients
-	// TODO: Read these in from a file
 	private float[,] _pe_coeffs = new float[5, 4]; 
 	/*
 		{{ .230284f, .086698f, -.01184f, .254413f }, // O
@@ -69,6 +68,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 		{ -.25626f, .061196f, .306826f, -.18985f }}; // N */
 	// Row = OCEAN factor (row 0 = O, row 1 = C, etc)
 	// Col = Effort factor (col 0 = space, 1 = weight, 2 = time, 3 = flow) 
+
+	// Effort -> Motion coefficients
+	private float[,] _em_coeffs = new float[33, 5];
+	// Rows are motion parameters
+	// Cols are effort components
 
 
 	// Low level motion parameters
@@ -193,7 +197,19 @@ public class LMAPlayerGUI : MonoBehaviour {
         }
 
 		ReadPersonalityEffortCoeffs ();
+		ReadEffortMotionCoeffs ();
         Reset();
+
+
+		// Testing
+		/*
+		Debug.Log ("Testing motion parameter calculating");
+		Debug.Log ("Space: " + _space.ToString ());
+		Debug.Log ("Weight: " + _weight.ToString ());
+		Debug.Log ("Time: " + _time.ToString ());
+		Debug.Log ("Flow: " + _flow.ToString ());
+		Debug.Log ("Calculated speed: " + CalculateMotionParameter (0).ToString ());
+	*/
     }
 
 
@@ -484,6 +500,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Time: " + _time.ToString (), style);
 			GUILayout.Label ("Flow: " + _flow.ToString (), style);
 
+		/*
 			style.fontSize = 16;
 			GUILayout.Space (10);
 			GUILayout.Label ("Arm shape",style);
@@ -499,6 +516,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Vertical: " + _verTorso.ToString (), style);
 			GUILayout.Label ("Horizontal: " + _horTorso.ToString (), style);
 			GUILayout.Label ("Sagittal: " + _sagTorso.ToString (), style);
+			*/
 		GUILayout.EndArea ();
 
 
@@ -630,7 +648,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     }
 
-
+/*
 	void UpdateEmoteParams(GameObject agent) {
 
 		if(agent == null){		
@@ -709,11 +727,82 @@ public class LMAPlayerGUI : MonoBehaviour {
 		agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
 		
 	}
+	*/
+
+	float CalculateMotionParameter(int motionInd){
+		float val = _em_coeffs [motionInd, 0]; // Intercept
+		val += _em_coeffs [motionInd, 1] * _space;
+		val += _em_coeffs [motionInd, 2] * _weight;
+		val += _em_coeffs [motionInd, 3] * _time;
+		val += _em_coeffs [motionInd, 4] * _flow;
+
+		return val;
+	}
+
+	void UpdateEmoteParams(GameObject agent) {
+			if (agent == null) {		
+					Debug.Log ("AgentPrefab not found");
+					return;
+			}
+			agent.GetComponent<ArmAnimator> ().SetSpeed (CalculateMotionParameter (0));
+	
+			agent.GetComponent<ArmAnimator> ().V0 = CalculateMotionParameter (1);
+			agent.GetComponent<ArmAnimator> ().V1 = CalculateMotionParameter (2);
+			agent.GetComponent<ArmAnimator> ().T0 = CalculateMotionParameter (3);
+			agent.GetComponent<ArmAnimator> ().T1 = CalculateMotionParameter (4);
+			agent.GetComponent<ArmAnimator> ().Ti = CalculateMotionParameter (5);
+			agent.GetComponent<ArmAnimator> ().Texp = CalculateMotionParameter (6);
+			agent.GetComponent<ArmAnimator> ().Tval = CalculateMotionParameter (7);
+			agent.GetComponent<ArmAnimator> ().Continuity = CalculateMotionParameter (8);
+			//agent.GetComponent<ArmAnimator>().Bias = _bias[driveInd];
+			//agent.GetComponent<AnimationInfo>().InitInterpolators(_tval[driveInd], _continuity[driveInd], _bias[driveInd]);
+			agent.GetComponent<ArmAnimator> ().TrMag = CalculateMotionParameter (9);
+			agent.GetComponent<ArmAnimator> ().TfMag = CalculateMotionParameter (10);
+			agent.GetComponent<ArmAnimator> ().HrMag = CalculateMotionParameter (11);
+			agent.GetComponent<ArmAnimator> ().HfMag = CalculateMotionParameter (12);
+			agent.GetComponent<ArmAnimator> ().SquashMag = CalculateMotionParameter (13);
+			agent.GetComponent<ArmAnimator> ().WbMag = CalculateMotionParameter (14);
+			agent.GetComponent<ArmAnimator> ().WxMag = CalculateMotionParameter (15);
+			agent.GetComponent<ArmAnimator> ().WtMag = CalculateMotionParameter (16);
+			agent.GetComponent<ArmAnimator> ().WfMag = CalculateMotionParameter (17);
+			agent.GetComponent<ArmAnimator> ().EtMag = CalculateMotionParameter (18);
+			agent.GetComponent<ArmAnimator> ().EfMag = CalculateMotionParameter (19);
+			agent.GetComponent<ArmAnimator> ().DMag = CalculateMotionParameter (20);
+	
+			agent.GetComponent<TorsoAnimator> ().EncSpr [0] = CalculateMotionParameter (21);
+			agent.GetComponent<TorsoAnimator> ().SinRis [0] = CalculateMotionParameter (22);
+			agent.GetComponent<TorsoAnimator> ().RetAdv [0] = CalculateMotionParameter (23);
+	
+			agent.GetComponent<TorsoAnimator> ().EncSpr [1] = CalculateMotionParameter (24);
+			agent.GetComponent<TorsoAnimator> ().SinRis [1] = CalculateMotionParameter (25);
+			agent.GetComponent<TorsoAnimator> ().RetAdv [1] = CalculateMotionParameter (26);
+
+			// Left arm
+			agent.GetComponent<ArmAnimator> ().Hor = CalculateMotionParameter (27);
+			agent.GetComponent<ArmAnimator> ().Ver = CalculateMotionParameter (28);
+			agent.GetComponent<ArmAnimator> ().Sag = CalculateMotionParameter (29);
+			agent.GetComponent<ArmAnimator> ().UpdateKeypointsByShape (0); //Update keypoints
+	
+	
+			//RightArm 
+			//Only horizontal motion is the opposite for each arm
+			agent.GetComponent<ArmAnimator> ().Hor = CalculateMotionParameter (30);
+			agent.GetComponent<ArmAnimator> ().Ver = CalculateMotionParameter (31);
+			agent.GetComponent<ArmAnimator> ().Sag = CalculateMotionParameter (32);
+			agent.GetComponent<ArmAnimator> ().UpdateKeypointsByShape (1); //Update keypoints
+	
+	
+			//Update shape parameters
+			for (int j = 0; j < _shapeParams.Length; j++)
+					for (int i = 0; i < _shapeParams[j].Length; i++)
+							agent.GetComponent<TorsoAnimator> ().ShapeParams [j] [i] = _shapeParams [j] [i];
+	
+			agent.GetComponent<TorsoAnimator> ().UpdateAnglesLinearComb ();
+	}
 
 	
-	
 	/*
-	void UpdateEmoteParams(GameObject agent, int driveInd) {
+	void UpdateEmoteParams(GameObject agent) {
 		if(agent == null){		
 			Debug.Log("AgentPrefab not found");
 			return;
@@ -774,7 +863,7 @@ public class LMAPlayerGUI : MonoBehaviour {
         agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
         
     }
-	*/
+*/
 
 	void ReadPersonalityEffortCoeffs() {
 		string fileName = "personalityToEffort.txt";
@@ -789,9 +878,30 @@ public class LMAPlayerGUI : MonoBehaviour {
 			for (int effortInd = 1; effortInd < tokens.Length; effortInd++){
 				// Again, start at 1 because first token is a string label
 				_pe_coeffs[oceanInd-1, effortInd-1] = float.Parse(tokens[effortInd]);
-				Debug.Log(tokens[effortInd]);
+				//Debug.Log(tokens[effortInd]);
 			}
 		}
+		sr.Close ();
+	}
+
+	void ReadEffortMotionCoeffs(){
+		string fileName = "effortToMotion.txt";
+		StreamReader sr = new StreamReader (fileName);
+		string[] content = File.ReadAllLines (fileName);
+
+		for (int motionInd = 1; motionInd < content.Length; motionInd++) {
+			// First line of the file is labels
+			string line = content[motionInd];
+			Debug.Log(line);
+			// Each line contains coefficients for a motion parameter
+			String[] tokens = line.Split('\t');
+			for (int effortInd = 1; effortInd<tokens.Length; effortInd++){
+				Debug.Log(tokens[effortInd].ToString());
+				_em_coeffs[motionInd-1, effortInd-1] = float.Parse(tokens[effortInd]);
+			}
+		}
+
+		sr.Close ();
 	}
 
 
