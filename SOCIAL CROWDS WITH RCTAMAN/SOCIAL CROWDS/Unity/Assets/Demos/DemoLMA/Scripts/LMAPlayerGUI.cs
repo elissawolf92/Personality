@@ -43,6 +43,17 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 	// Genders
 	private static string[] _genderNames = {"Male", "Female"};
+	private static float[,] _genderMeans = new float[2,5] {{22.0f, 16.4f, 17.4f, 23f, 3.6f}, // Male
+		{22.2f, 17.0f, 18.4f, 27.8f, 8.8f}}; // Female
+
+	private static float[,] _genderMeansTemp = new float[2,5] {{22.0f, 16.4f, 17.4f, 23f, 3.6f}, // Male
+		{22.2f, 17.0f, 18.4f, 27.8f, 8.8f}}; // Female
+
+	private static float[,] _genderRanges = new float[2,5] {{30.6f, 32.4f, 33.0f, 30.0f, 39.0f}, // Male
+		{31.2f, 34.8f, 35.4f, 30.0f, 40.2f}}; // Female
+
+	private static float[,] _genderRangesTemp = new float[2,5] {{30.6f, 32.4f, 33.0f, 30.0f, 39.0f}, // Male
+		{31.2f, 34.8f, 35.4f, 30.0f, 40.2f}}; // Female
 
 	// Cultures
 	private static string[] _cultureNames = {"US", "Lebanon", "Japan"};
@@ -533,6 +544,37 @@ public class LMAPlayerGUI : MonoBehaviour {
 			style.fontSize = 18;
 			GUILayout.Label ("Gender: ", style);
 			genderComboBoxControl.Show ();
+
+			/*
+			GUILayout.Label("Gender Means",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Openness: " + _cultureMeans [_cultureInd, 0].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 0], minVal, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _cultureMeans [_cultureInd, 1].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 1], minVal, maxVal);
+			GUILayout.Label ("Extroversion: " + _cultureMeans [_cultureInd, 2].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 2], minVal, maxVal);
+			GUILayout.Label ("Agreeableness: " + _cultureMeans [_cultureInd, 3].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 3], minVal, maxVal);
+			GUILayout.Label ("Neuroticism: " + _cultureMeans [_cultureInd, 4].ToString (), style);
+			_cultureMeansTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 4], minVal, maxVal);
+			
+			GUILayout.Space (20);
+			
+			style.fontSize = 18;
+			GUILayout.Label("Gender Ranges",style);
+			style.fontSize = 14;
+			GUILayout.Label ("Openness: " + _cultureRanges [_cultureInd, 0].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 0], 0f, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _cultureRanges [_cultureInd, 1].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 1], 0f, maxVal);
+			GUILayout.Label ("Extroversion: " + _cultureRanges [_cultureInd, 2].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 2], 0f, maxVal);
+			GUILayout.Label ("Agreeableness: " + _cultureRanges [_cultureInd, 3].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 3], 0f, maxVal);
+			GUILayout.Label ("Neuroticism: " + _cultureRanges [_cultureInd, 4].ToString (), style);
+			_cultureRangesTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 4], 0f, maxVal);
+			*/
 
 			GUILayout.Space (300);
 
