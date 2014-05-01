@@ -9,7 +9,8 @@ using System.IO;
 
 public class LMAPlayerGUI : MonoBehaviour {
 
-	private static Vector2 _scrollPosition;
+	private static Vector2 _scrollPositionRight;
+	private static Vector2 _scrollPositionLeft;
 
 	// Animation selector
 	GUIContent[] animComboBoxList;
@@ -19,6 +20,14 @@ public class LMAPlayerGUI : MonoBehaviour {
 	// Culture selector
 	GUIContent[] cultureComboBoxList;
 	private ComboBox cultureComboBoxControl;
+
+	// Gender selector
+	GUIContent[] genderComboBoxList;
+	private ComboBox genderComboBoxControl;
+
+	// Mode selector
+	GUIContent[] modeComboBoxList;
+	private ComboBox modeComboBoxControl;
 
 	// Ocean personality parameters, range from -50 to 50
 	private static float minVal = -50.0f;
@@ -32,22 +41,29 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private float[] _oceanAbs = new float[5] {0,0,0,0,0};
 	private float _absRange = 50;
 
+	// Genders
+	private static string[] _genderNames = {"Male", "Female"};
 
 	// Cultures
-	private static string[] _cultureNames = {"American", "Arab"};
+	private static string[] _cultureNames = {"US", "Lebanon", "Japan"};
 	private int _cultureInd = 0;
 	// Mean OCEAN values for different cultures          
 	// Row is culture, col is personality factor            O    C    E    A   N
-	private static float[,] _cultureMeans= new float[2, 5] {  { 30, -10,  10, -20, 0}, 
-		          									      {-30,  20, -10,  30, 0}};
-	private static float[,] _cultureMeansTemp = new float[2, 5] {  { 30, -10,  10, -20, 0}, 
-		{-30,  20, -10,  30, 0}};
+	private static float[,] _cultureMeans= new float[3, 5] {  { 0f, 0f, 0f, 0f, 0f}, // US
+		{-0.6f,  -5.44f, -1.68f,  -3.90f, 3.35f}, // Lebanon
+		{-8.47f, -12.17f, -3.27f, -7.79f, 7.87f}}; // Japan
 
+	private static float[,] _cultureMeansTemp= new float[3, 5] {  { 0f, 0f,  0f, 0f, 0f}, // US
+		{-0.6f,  -5.44f, -1.68f,  -3.90f, 3.35f}, // Lebanon
+		{-8.47f, -12.17f, -3.27f, -7.79f, 7.87f}}; // Japan
 
-	private static float[,] _cultureRanges = new float[2, 5] {{ 40,  50,  50,  20, 40},
-														  { 20,  50,  30,  40, 50}};
-	private static float[,] _cultureRangesTemp = new float[2, 5] {{ 40,  50,  50,  20, 40},
-		{ 20,  50,  30,  40, 50}};
+	private static float[,] _cultureRanges = new float[3, 5] {{ 30f,  30f,  30f,  30f, 30f}, // US
+		{ 27.33f,  31.2f,  25.74f,  24.42f, 27.42f}, // Lebanon
+		{ 31.38f, 27.9f, 24.18f, 26.43f, 22.14f}}; // Japan
+	
+	private static float[,] _cultureRangesTemp = new float[3, 5] {{ 30f,  30f,  30f,  30f, 30f}, // US
+		{ 27.33f,  31.2f,  25.74f,  24.42f, 27.42f}, // Lebanon
+		{ 31.38f, 27.9f, 24.18f, 26.43f, 22.14f}}; // Japan
 
 	// LMA Parameters
 	private static float _space = 0f, _weight = 0f, _time = 0f, _flow = 0f;  //[-1 1]
@@ -120,8 +136,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking"};
-	//, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
+	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking" //};
+	, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
 	private int _animInd = 0;
 	private static string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
 		"Picking_Up_Pillow_Netural_01",
@@ -164,8 +180,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 		for (int i= 0; i < _animDisplayNameStr.Length; i++) {
 			animComboBoxList[i] = new GUIContent(_animDisplayNameStr[i]);
 		}
-
-		
 		animComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), animComboBoxList[0], animComboBoxList, "button", "box", listStyle);
 
 		// Combo box for selecting culture
@@ -175,6 +189,15 @@ public class LMAPlayerGUI : MonoBehaviour {
 		}
 		cultureComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), cultureComboBoxList[0], 
 		                                      cultureComboBoxList, "button", "box", listStyle);
+
+		// Combo box for selecting gender
+		genderComboBoxList = new GUIContent[_genderNames.Length];
+		for (int i= 0; i < _genderNames.Length; i++) {
+			genderComboBoxList[i] = new GUIContent(_genderNames[i]);
+		}
+		genderComboBoxControl = new ComboBox(new Rect(0, 600, 200, 20), genderComboBoxList[0], 
+		                                      genderComboBoxList, "button", "box", listStyle);
+
         
 		// Load the agent
 		_agent = GameObject.Find ("AgentPrefab");
@@ -254,14 +277,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     void Update(){
         UpdateCameraBoundaries();
-
-		if(Input.GetKeyDown("p")) {
-			Debug.Log("P pressed");
-			_agent.GetComponent<TorsoController>().Reset();
-			
-			PlayAnim(_agent, _animInd);
-			UpdateEmoteParams(_agent);
-		}
 
 		// Check if the animation has changed
 		if (_animInd != animComboBoxControl.SelectedItemIndex) {
@@ -423,35 +438,62 @@ public class LMAPlayerGUI : MonoBehaviour {
 		style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
 
 		// Play button
-		GUILayout.BeginArea (new Rect(Screen.width/2 - 50,500,100,100));
+		GUILayout.BeginArea (new Rect(700,500,100,100));
 		GUI.color = Color.white;
 		//GUILayout.Space (50);
 		
-		if(GUILayout.Button ( "Play")) {
-			_agent.GetComponent<TorsoController>().Reset();
-			
-			PlayAnim(_agent, _animInd);
-			UpdateEmoteParams(_agent);
-		}
+			if(GUILayout.Button ( "Play")) {
+				_agent.GetComponent<TorsoController>().Reset();
+				
+				PlayAnim(_agent, _animInd);
+				UpdateEmoteParams(_agent);
+			}
+
+			GUILayout.Space (10);
+			if(GUILayout.Button ( "Reset")) {
+				StopAnim(_agent);
+				ResetPersonality();
+				CalculateAbsolutePersonality();
+				UpdateLaban();
+				UpdateEmoteParams(_agent);
+			}
 
 		GUILayout.EndArea();
+
+		GUILayout.BeginArea (new Rect (400, 500, 200, 200));
+			style.fontSize = 18;
+			GUILayout.Label ("Laban Motion - Effort", style);
+			//style.fontSize = 16;
+			GUILayout.Space (10);
+			//GUILayout.Label ("Effort", style);
+			style.fontSize = 14;
+			//GUILayout.Label ("Space: " + (Mathf.Round(_space * 1000)/1000).ToString (), style);
+			GUILayout.Label ("Space: " + _space.ToString (), style);
+			GUILayout.Label ("Weight: " + _weight.ToString (), style);
+			GUILayout.Label ("Time: " + _time.ToString (), style);
+			GUILayout.Label ("Flow: " + _flow.ToString (), style);
+		GUILayout.EndArea ();
 
 		// Left side
 		// Includes dropdowns for animation and culture, play button
 
-		// Culture selector
-		style.fontSize = 18;
-		GUILayout.BeginArea (new Rect (30, 25, 250, 150));
-			GUILayout.Label ("Culture: ", style);
-			cultureComboBoxControl.Show ();
-		GUILayout.EndArea ();
+		GUILayout.BeginArea (new Rect (30, 25, 310, 1000));
 
-		// Dividing line
-		GUI.DrawTexture(new Rect(300 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
+		_scrollPositionLeft = GUILayout.BeginScrollView (_scrollPositionLeft, GUILayout.Width(300f), GUILayout.Height(Screen.height*0.98f-30));
 
+			// Culture selector
+			style.fontSize = 18;
+			//GUILayout.BeginArea (new Rect (30, 25, 250, 150));
+				GUILayout.Label ("Culture: ", style);
+				cultureComboBoxControl.Show ();
+			//GUILayout.EndArea ();
 
-		// Adjust the means and ranges for the selected culture
-		GUILayout.BeginArea (new Rect (30, 150, 250, 500));
+			// Dividing line
+			GUI.DrawTexture(new Rect(300 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
+
+			GUILayout.Space (110);
+			// Adjust the means and ranges for the selected culture
+			//GUILayout.BeginArea (new Rect (30, 150, 250, 500));
 			style.fontSize = 18;
 			//GUILayout.Label("Means for culture: " + _cultureNames[_cultureInd],style);
 			GUILayout.Label("Cultural Means",style);
@@ -467,7 +509,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Neuroticism: " + _cultureMeans [_cultureInd, 4].ToString (), style);
 			_cultureMeansTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 4], minVal, maxVal);
 
-			GUILayout.Space (50);
+			GUILayout.Space (20);
 
 			style.fontSize = 18;
 			GUILayout.Label("Cultural Ranges",style);
@@ -483,42 +525,22 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Neuroticism: " + _cultureRanges [_cultureInd, 4].ToString (), style);
 			_cultureRangesTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 4], 0f, maxVal);
 
-		GUILayout.EndArea ();
+			//GUILayout.EndArea ();
 
-
-		// Displaying emote parameters
-		GUILayout.BeginArea (new Rect (320, 30, 200, 500));
+			GUILayout.Space (20);
+			// Gender stuff
+			//GUILayout.BeginArea (new Rect (30, 800, 250, 500));
 			style.fontSize = 18;
-			GUILayout.Label ("Laban Motion", style);
-			style.fontSize = 16;
-			GUILayout.Space (10);
-			GUILayout.Label ("Effort", style);
-			style.fontSize = 14;
-			//GUILayout.Label ("Space: " + (Mathf.Round(_space * 1000)/1000).ToString (), style);
-			GUILayout.Label ("Space: " + _space.ToString (), style);
-			GUILayout.Label ("Weight: " + _weight.ToString (), style);
-			GUILayout.Label ("Time: " + _time.ToString (), style);
-			GUILayout.Label ("Flow: " + _flow.ToString (), style);
+			GUILayout.Label ("Gender: ", style);
+			genderComboBoxControl.Show ();
 
-		/*
-			style.fontSize = 16;
-			GUILayout.Space (10);
-			GUILayout.Label ("Arm shape",style);
-			style.fontSize = 14;
-			GUILayout.Label ("Vertical: " + _verArm.ToString (), style);
-			GUILayout.Label ("Horizontal: " + _horArm.ToString (), style);
-			GUILayout.Label ("Sagittal: " + _sagArm.ToString (), style);
+			GUILayout.Space (300);
 
-			style.fontSize = 16;
-			GUILayout.Space (10);
-			GUILayout.Label ("Torso shape",style);
-			style.fontSize = 14;
-			GUILayout.Label ("Vertical: " + _verTorso.ToString (), style);
-			GUILayout.Label ("Horizontal: " + _horTorso.ToString (), style);
-			GUILayout.Label ("Sagittal: " + _sagTorso.ToString (), style);
-			*/
+			//GUILayout.EndArea ();
+
+		GUILayout.EndScrollView ();
+
 		GUILayout.EndArea ();
-
 
 
 		// Far Right side
@@ -528,10 +550,10 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 		GUI.DrawTexture(new Rect(Screen.width -310 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
 
-		GUILayout.BeginArea (new Rect (Screen.width - 290,30,290,800));
+		GUILayout.BeginArea (new Rect (Screen.width - 290,30,280,800));
 
 			//_scrollPosition = GUILayout.BeginScrollView(_scrollPosition,  GUILayout.Width(220f), GUILayout.Height(Screen.height*0.98f));
-			_scrollPosition = GUILayout.BeginScrollView (_scrollPosition, GUILayout.Width(285f), GUILayout.Height(Screen.height*0.98f-30));
+			//_scrollPositionRight = GUILayout.BeginScrollView (_scrollPositionRight, GUILayout.Width(285f), GUILayout.Height(Screen.height*0.98f-30));
 
 				// Animation selector
 				//GUILayout.BeginArea (new Rect (Screen.width - 300 ,25,250,300));
@@ -561,16 +583,9 @@ public class LMAPlayerGUI : MonoBehaviour {
 				_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
 
 				// Reset button
-				GUILayout.Space (10);
-				if(GUILayout.Button ( "Reset")) {
-					StopAnim(_agent);
-					ResetPersonality();
-					CalculateAbsolutePersonality();
-					UpdateLaban();
-					UpdateEmoteParams(_agent);
-				}
+				GUILayout.Space (20);
 		      
-				GUILayout.Space (30);
+				//GUILayout.Space (30);
 				style.fontSize = 18;
 				GUILayout.Label ("Absolute Personality", style);
 				style.fontSize = 14;
@@ -589,7 +604,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 				//GUILayout.EndArea();
 
-			GUILayout.EndScrollView ();
+			//GUILayout.EndScrollView ();
 
 		GUILayout.EndArea ();
 
@@ -623,7 +638,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     void PlayAnim(GameObject agent, int ind) {
 
-		Debug.Log ("PlayAnim");
+		//Debug.Log ("PlayAnim");
 
 		//GameObject agentControl = GameObject.Find("AgentControlPrefab");
 
@@ -892,11 +907,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 		for (int motionInd = 1; motionInd < content.Length; motionInd++) {
 			// First line of the file is labels
 			string line = content[motionInd];
-			Debug.Log(line);
+			//Debug.Log(line);
 			// Each line contains coefficients for a motion parameter
 			String[] tokens = line.Split('\t');
 			for (int effortInd = 1; effortInd<tokens.Length; effortInd++){
-				Debug.Log(tokens[effortInd].ToString());
+				//Debug.Log(tokens[effortInd].ToString());
 				_em_coeffs[motionInd-1, effortInd-1] = float.Parse(tokens[effortInd]);
 			}
 		}
