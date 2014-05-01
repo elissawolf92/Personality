@@ -41,7 +41,12 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private float[] _oceanAbs = new float[5] {0,0,0,0,0};
 	private float _absRange = 50;
 
+	// Modes
+	private int _modeInd = 0;
+	private static string[] _modeNames = {"Culture", "Gender", "Both"};
+
 	// Genders
+	private int _genderInd = 0;
 	private static string[] _genderNames = {"Male", "Female"};
 	private static float[,] _genderMeans = new float[2,5] {{22.0f, 16.4f, 17.4f, 23f, 3.6f}, // Male
 		{22.2f, 17.0f, 18.4f, 27.8f, 8.8f}}; // Female
@@ -87,12 +92,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 	// Personality -> Effort coefficients
 	private float[,] _pe_coeffs = new float[5, 4]; 
-	/*
-		{{ .230284f, .086698f, -.01184f, .254413f }, // O
-		{ -.29321f, .382264f, .005813f, -.14883f }, // C
-		{ .03929f, .45567f, -.48084f, .230689f }, // E
-		{ -.18096f, -.01417f, .194684f, -.17622f }, // A
-		{ -.25626f, .061196f, .306826f, -.18985f }}; // N */
 	// Row = OCEAN factor (row 0 = O, row 1 = C, etc)
 	// Col = Effort factor (col 0 = space, 1 = weight, 2 = time, 3 = flow) 
 
@@ -147,8 +146,8 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking" //};
-	, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
+	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking" };
+	//, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
 	private int _animInd = 0;
 	private static string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
 		"Picking_Up_Pillow_Netural_01",
@@ -209,6 +208,13 @@ public class LMAPlayerGUI : MonoBehaviour {
 		genderComboBoxControl = new ComboBox(new Rect(0, 600, 200, 20), genderComboBoxList[0], 
 		                                      genderComboBoxList, "button", "box", listStyle);
 
+		// Combo box for selecting mode
+		modeComboBoxList = new GUIContent[_modeNames.Length];
+		for (int i= 0; i < _modeNames.Length; i++) {
+			modeComboBoxList[i] = new GUIContent(_modeNames[i]);
+		}
+		modeComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), modeComboBoxList[0], 
+		                                     modeComboBoxList, "button", "box", listStyle);
         
 		// Load the agent
 		_agent = GameObject.Find ("AgentPrefab");
@@ -276,8 +282,24 @@ public class LMAPlayerGUI : MonoBehaviour {
 		//  For o,c,e,a,n
 		for (int i = 0; i < 5; i++) {
 			// Get mean and range for current culture
-			float mean = _cultureMeans[_cultureInd, i];
-			float range = _cultureRanges[_cultureInd, i];
+			//float mean = _cultureMeans[_cultureInd, i];
+			//float range = _cultureRanges[_cultureInd, i];
+			float mean = 0.0f;
+			float range = 0.0f;
+
+			if (_modeInd == 0) { // Culture
+				mean = _cultureMeans[_cultureInd, i];
+				range = _cultureRanges[_cultureInd, i];
+			}
+			else if (_modeInd == 1) { // Gender
+				mean = _genderMeans[_genderInd, i];
+				range = _genderRanges[_genderInd, i];
+			}
+			else { // Combined
+				mean = (_genderMeans[_genderInd, i] + _cultureMeans[_cultureInd, i])/2.0f;
+				range = (_genderRanges[_genderInd, i] + _cultureRanges[_cultureInd, i])/2.0f;
+			}
+
 			// Calculate what to add to the mean - the relative diff normalized for this range
 			float diff = _oceanRel[i] * (range/_absRange);
 			// Absolute value is this diff added to the cultural mean
@@ -305,6 +327,22 @@ public class LMAPlayerGUI : MonoBehaviour {
 			UpdateLaban();
 		}
 
+		// Check if the selected gender has changed
+		if (_genderInd != genderComboBoxControl.SelectedItemIndex) {
+			_genderInd = genderComboBoxControl.SelectedItemIndex;
+			// Recalculate absolute personality
+			CalculateAbsolutePersonality();
+			UpdateLaban();
+		}
+
+		// Check if selected mode has changed
+		if (_modeInd != modeComboBoxControl.SelectedItemIndex) {
+			_modeInd = modeComboBoxControl.SelectedItemIndex;
+			// Recalculate absolute personality
+			CalculateAbsolutePersonality();
+			UpdateLaban();
+		}
+
 		// Check if any of the relative personality sliders have changed
 		for (int i = 0; i < 5; i++) {
 			if (_oceanRelTemp[i] != _oceanRel[i]) {
@@ -316,7 +354,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			}
 		}
 
-		// Check if any of the culture mean sliders have changed
+		// Check if any of the culture mean or range sliders have changed
 		for (int i = 0; i < _cultureNames.Length; i++) {
 			for (int j = 0; j < 5; j++){
 				if (_cultureMeans[i,j] != _cultureMeansTemp[i,j]) {
@@ -329,6 +367,26 @@ public class LMAPlayerGUI : MonoBehaviour {
 				if (_cultureRanges[i,j] != _cultureRangesTemp[i,j]){
 					// Update to the new value
 					_cultureRanges[i,j] = _cultureRangesTemp[i,j];
+					// Recalculate absolute personality
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+				}
+			}
+		}
+
+		// Check if any of the gender mean or range sliders have changed
+		for (int i = 0; i < _genderNames.Length; i++) {
+			for (int j = 0; j < 5; j++){
+				if (_genderMeans[i,j] != _genderMeansTemp[i,j]) {
+					// Update to the new value
+					_genderMeans[i,j] = _genderMeansTemp[i,j];
+					// Recalculate absolute personality
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+				}
+				if (_genderRanges[i,j] != _genderRangesTemp[i,j]){
+					// Update to the new value
+					_genderRanges[i,j] = _genderRangesTemp[i,j];
 					// Recalculate absolute personality
 					CalculateAbsolutePersonality();
 					UpdateLaban();
@@ -366,82 +424,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 		}
 	}
 
-
-	/*
-    void UpdateLaban() {
-		// Calculate Laban parameters from the absolute OCEAN values
-		// Weight each equally - each will be the average of 5 values
-		float[] spaceVals = new float[5];   // Indirect <-> Direct [-1 1]
-		float[] weightVals = new float[5];  // Light <-> Strong
-		float[] timeVals = new float[5];    // Sustained <-> Sudden
-		float[] flowVals = new float[5];    // Free <-> Bound
-
-		// Openness
-		// High O -> Indirect, Light, Sustained, Free
-		spaceVals [0] = _oceanAbs [0] / 50 * -1;
-		weightVals [0] = _oceanAbs [0] / 50 * -1;
-		timeVals[0] = _oceanAbs [0] / 50 * -1;
-		flowVals[0] = _oceanAbs [0] / 50 * -1;
-
-		// Conscientiousness
-		// High C -> Direct, Strong, Sudden, Bound
-		spaceVals [1] = _oceanAbs [1] / 50 * 1;
-		weightVals [1] = _oceanAbs [1] / 50 * 1;
-		timeVals[1] = _oceanAbs [1] / 50 * 1;
-		flowVals[1] = _oceanAbs [1] / 50 * 1;
-
-		// Extroversion
-		// High E -> Indirect, Light, Sustained, Free
-		spaceVals [2] = _oceanAbs [2] / 50 * -1;
-		weightVals [2] = _oceanAbs [2] / 50 * -1;
-		timeVals[2] = _oceanAbs [2] / 50 * -1;
-		flowVals[2] = _oceanAbs [2] / 50 * -1;
-
-		// Agreeableness
-		// High A -> Indirect, Light, Sustained, Free
-		spaceVals [3] = _oceanAbs [3] / 50 * -1;
-		weightVals [3] = _oceanAbs [3] / 50 * -1;
-		timeVals[3] = _oceanAbs [3] / 50 * -1;
-		flowVals[3] = _oceanAbs [3] / 50 * -1;
-
-		// Neuroticism
-		// High N -> Direct, Strong, Sudden, Free
-		spaceVals [4] = _oceanAbs [4] / 50 * 1;
-		weightVals [4] = _oceanAbs [4] / 50 * 1;
-		timeVals[4] = _oceanAbs [4] / 50 * 1;
-		flowVals[4] = _oceanAbs [4] / 50 * -1;
-
-		// Calculate averages
-		_space = 0.0f;  _weight = 0.0f;  _time = 0.0f; _flow = 0.0f;
-		for (int i = 0; i < 5; i++) {
-			_space += spaceVals[i];
-			_weight += weightVals[i];
-			_time += timeVals[i];
-			_flow += flowVals[i];
-				}
-		_space = _space / 5.0f;
-		_weight = _weight / 5.0f;
-		_time = _time / 5.0f;
-		_flow = _flow / 5.0f;
-
-		// Calculate horizontal shape
-		// Associated negatively (?) with space
-		_horArm = -_space;
-		_horTorso = -_space;
-
-		// Calculate vertical shape
-		// Associated negatively (?) with weight
-		_verArm = -_weight;
-		_verTorso = -_weight;
-
-		// Calculate sagittal shape
-		// Associated negatively (?) with time
-		_sagArm = -_time;
-		_sagTorso = -_time;
-
-
-	}
-*/
 	void OnGUI () {
         
         GUIStyle style = new GUIStyle();
@@ -449,7 +431,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 		style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
 
 		// Play button
-		GUILayout.BeginArea (new Rect(700,500,100,100));
+		GUILayout.BeginArea (new Rect(600,500,100,100));
 		GUI.color = Color.white;
 		//GUILayout.Space (50);
 		
@@ -468,10 +450,16 @@ public class LMAPlayerGUI : MonoBehaviour {
 				UpdateLaban();
 				UpdateEmoteParams(_agent);
 			}
+		GUILayout.EndArea ();
+
+		GUILayout.BeginArea (new Rect (750, 500, 200, 300));
+			style.fontSize = 18;
+			GUILayout.Label ("Mode:", style);
+			modeComboBoxControl.Show ();
 
 		GUILayout.EndArea();
 
-		GUILayout.BeginArea (new Rect (400, 500, 200, 200));
+		GUILayout.BeginArea (new Rect (360, 500, 200, 200));
 			style.fontSize = 18;
 			GUILayout.Label ("Laban Motion - Effort", style);
 			//style.fontSize = 16;
@@ -495,7 +483,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			// Culture selector
 			style.fontSize = 18;
 			//GUILayout.BeginArea (new Rect (30, 25, 250, 150));
-				GUILayout.Label ("Culture: ", style);
+				GUILayout.Label ("Country: ", style);
 				cultureComboBoxControl.Show ();
 			//GUILayout.EndArea ();
 
@@ -544,39 +532,36 @@ public class LMAPlayerGUI : MonoBehaviour {
 			style.fontSize = 18;
 			GUILayout.Label ("Gender: ", style);
 			genderComboBoxControl.Show ();
-
-			/*
+			
+			GUILayout.Space (80);
 			GUILayout.Label("Gender Means",style);
 			style.fontSize = 14;
-			GUILayout.Label ("Openness: " + _cultureMeans [_cultureInd, 0].ToString (), style);
-			_cultureMeansTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 0], minVal, maxVal);
-			GUILayout.Label ("Conscientiousness: " + _cultureMeans [_cultureInd, 1].ToString (), style);
-			_cultureMeansTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 1], minVal, maxVal);
-			GUILayout.Label ("Extroversion: " + _cultureMeans [_cultureInd, 2].ToString (), style);
-			_cultureMeansTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 2], minVal, maxVal);
-			GUILayout.Label ("Agreeableness: " + _cultureMeans [_cultureInd, 3].ToString (), style);
-			_cultureMeansTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 3], minVal, maxVal);
-			GUILayout.Label ("Neuroticism: " + _cultureMeans [_cultureInd, 4].ToString (), style);
-			_cultureMeansTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 4], minVal, maxVal);
+			GUILayout.Label ("Openness: " + _genderMeans [_genderInd, 0].ToString (), style);
+			_genderMeansTemp [_genderInd, 0] = GUILayout.HorizontalSlider (_genderMeans [_genderInd, 0], minVal, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _genderMeans [_genderInd, 1].ToString (), style);
+			_genderMeansTemp [_genderInd, 1] = GUILayout.HorizontalSlider (_genderMeans [_genderInd, 1], minVal, maxVal);
+			GUILayout.Label ("Extroversion: " + _genderMeans [_genderInd, 2].ToString (), style);
+			_genderMeansTemp [_genderInd, 2] = GUILayout.HorizontalSlider (_genderMeans [_genderInd, 2], minVal, maxVal);
+			GUILayout.Label ("Agreeableness: " + _genderMeans [_genderInd, 3].ToString (), style);
+			_genderMeansTemp [_genderInd, 3] = GUILayout.HorizontalSlider (_genderMeans [_genderInd, 3], minVal, maxVal);
+			GUILayout.Label ("Neuroticism: " + _genderMeans [_genderInd, 4].ToString (), style);
+			_genderMeansTemp [_genderInd, 4] = GUILayout.HorizontalSlider (_genderMeans [_genderInd, 4], minVal, maxVal);
 			
 			GUILayout.Space (20);
 			
 			style.fontSize = 18;
 			GUILayout.Label("Gender Ranges",style);
 			style.fontSize = 14;
-			GUILayout.Label ("Openness: " + _cultureRanges [_cultureInd, 0].ToString (), style);
-			_cultureRangesTemp [_cultureInd, 0] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 0], 0f, maxVal);
-			GUILayout.Label ("Conscientiousness: " + _cultureRanges [_cultureInd, 1].ToString (), style);
-			_cultureRangesTemp [_cultureInd, 1] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 1], 0f, maxVal);
-			GUILayout.Label ("Extroversion: " + _cultureRanges [_cultureInd, 2].ToString (), style);
-			_cultureRangesTemp [_cultureInd, 2] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 2], 0f, maxVal);
-			GUILayout.Label ("Agreeableness: " + _cultureRanges [_cultureInd, 3].ToString (), style);
-			_cultureRangesTemp [_cultureInd, 3] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 3], 0f, maxVal);
-			GUILayout.Label ("Neuroticism: " + _cultureRanges [_cultureInd, 4].ToString (), style);
-			_cultureRangesTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 4], 0f, maxVal);
-			*/
-
-			GUILayout.Space (300);
+			GUILayout.Label ("Openness: " + _genderRanges [_genderInd, 0].ToString (), style);
+			_genderRangesTemp [_genderInd, 0] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 0], 0f, maxVal);
+			GUILayout.Label ("Conscientiousness: " + _genderRanges [_genderInd, 1].ToString (), style);
+			_genderRangesTemp [_genderInd, 1] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 1], 0f, maxVal);
+			GUILayout.Label ("Extroversion: " + _genderRanges [_genderInd, 2].ToString (), style);
+			_genderRangesTemp [_genderInd, 2] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 2], 0f, maxVal);
+			GUILayout.Label ("Agreeableness: " + _genderRanges [_genderInd, 3].ToString (), style);
+			_genderRangesTemp [_genderInd, 3] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 3], 0f, maxVal);
+			GUILayout.Label ("Neuroticism: " + _genderRanges [_genderInd, 4].ToString (), style);
+			_genderRangesTemp [_genderInd, 4] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 4], 0f, maxVal);
 
 			//GUILayout.EndArea ();
 
@@ -631,15 +616,15 @@ public class LMAPlayerGUI : MonoBehaviour {
 				style.fontSize = 18;
 				GUILayout.Label ("Absolute Personality", style);
 				style.fontSize = 14;
-				GUILayout.Label ("Openness",style);
+				GUILayout.Label ("Openness:",style);
 				GUILayout.Label (_oceanAbs[0].ToString(),style);
-				GUILayout.Label("Conscientiousness", style);
+				GUILayout.Label("Conscientiousness:", style);
 				GUILayout.Label (_oceanAbs[1].ToString(),style);
-				GUILayout.Label ("Extroversion", style);
+				GUILayout.Label ("Extroversion:", style);
 				GUILayout.Label (_oceanAbs[2].ToString(),style);
-				GUILayout.Label ("Agreeableness", style);
+				GUILayout.Label ("Agreeableness:", style);
 				GUILayout.Label (_oceanAbs[3].ToString(),style);
-				GUILayout.Label ("Neuroticism", style);
+				GUILayout.Label ("Neuroticism:", style);
 				GUILayout.Label (_oceanAbs[4].ToString(),style);
 
 				GUILayout.Space (50);
@@ -704,87 +689,7 @@ public class LMAPlayerGUI : MonoBehaviour {
             agent.animation[animInfo.AnimName].wrapMode = WrapMode.ClampForever;                            
 
     }
-
-/*
-	void UpdateEmoteParams(GameObject agent) {
-
-		if(agent == null){		
-			Debug.Log("AgentPrefab not found");
-			return;
-		}
-
-		//Update arm Shape params
-		//Left arm
-		agent.GetComponent<ArmAnimator>().Hor = _horArm;
-		agent.GetComponent<ArmAnimator>().Ver = _verArm;
-		agent.GetComponent<ArmAnimator>().Sag = _sagArm;		
-		agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(0); //Update keypoints
-		//RightArm 
-		//Only horizontal motion is the opposite for each arm
-		agent.GetComponent<ArmAnimator>().Hor = -_horArm;
-		agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(1); //Update keypoints
-		
-		
-		//Update arm Effort params
-		//Space
-		if(_space > 0){
-			agent.GetComponent<ArmAnimator>().Dir = _space;
-			agent.GetComponent<ArmAnimator>().Ind = 0f;
-		}
-		else{
-			agent.GetComponent<ArmAnimator>().Ind = -_space;
-			agent.GetComponent<ArmAnimator>().Dir = 0f;
-		}
-		//Weight
-		if(_weight > 0){
-			agent.GetComponent<ArmAnimator>().Str = _weight;
-			agent.GetComponent<ArmAnimator>().Lgt = 0f;
-		}
-		else{
-			agent.GetComponent<ArmAnimator>().Lgt = -_weight;
-			agent.GetComponent<ArmAnimator>().Str = 0f;
-		}
-		//Time				
-		if(_time > 0){
-			agent.GetComponent<ArmAnimator>().Sud = _time;
-			agent.GetComponent<ArmAnimator>().Sus = 0f;
-		}
-		else{
-			agent.GetComponent<ArmAnimator>().Sus = -_time;
-			agent.GetComponent<ArmAnimator>().Sud = 0f;
-		}
-		
-		//Flow
-		if(_flow > 0){
-			agent.GetComponent<ArmAnimator>().Bnd = _flow;
-			agent.GetComponent<ArmAnimator>().Fre = 0f;
-		}
-		else{
-			agent.GetComponent<ArmAnimator>().Fre = -_flow	;
-			agent.GetComponent<ArmAnimator>().Bnd = 0;
-		}
-		
-		
-		//Update effort parameters
-		agent.GetComponent<ArmAnimator>().Effort2LowLevel();
-		
-			
-		//Update torso shape parameters
-		//TODO : UPDATE
-		agent.GetComponent<TorsoAnimator>().EncSpr[0] = agent.GetComponent<TorsoAnimator>().EncSpr[1] = _horTorso;
-		agent.GetComponent<TorsoAnimator>().SinRis[0] = agent.GetComponent<TorsoAnimator>().SinRis[1] = _verTorso;
-		agent.GetComponent<TorsoAnimator>().RetAdv[0] = agent.GetComponent<TorsoAnimator>().RetAdv[1] = _sagTorso;
-
-		//Update shape parameters
-		for (int j = 0; j < _shapeParams.Length; j++)
-			for (int i = 0; i < _shapeParams[j].Length; i++)
-				agent.GetComponent<TorsoAnimator>().ShapeParams[j][i] = _shapeParams[j][i];
-
-		
-		agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
-		
-	}
-	*/
+	
 
 	float CalculateMotionParameter(int motionInd){
 		float val = _em_coeffs [motionInd, 0]; // Intercept
