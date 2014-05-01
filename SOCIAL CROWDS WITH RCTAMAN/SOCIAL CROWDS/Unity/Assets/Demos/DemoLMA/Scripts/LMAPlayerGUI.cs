@@ -9,6 +9,9 @@ using System.IO;
 
 public class LMAPlayerGUI : MonoBehaviour {
 
+	private Color darkGray = new Color(0.2f, 0.2f, 0.2f);
+	private Color headerColor = new Color(25f/255,25f/255,112f/255);
+
 	private static Vector2 _scrollPositionRight;
 	private static Vector2 _scrollPositionLeft;
 
@@ -54,10 +57,16 @@ public class LMAPlayerGUI : MonoBehaviour {
 	private static float[,] _genderMeansTemp = new float[2,5] {{22.0f, 16.4f, 17.4f, 23f, 3.6f}, // Male
 		{22.2f, 17.0f, 18.4f, 27.8f, 8.8f}}; // Female
 
+	private static float[,] _genderMeansOriginal = new float[2,5] {{22.0f, 16.4f, 17.4f, 23f, 3.6f}, // Male
+		{22.2f, 17.0f, 18.4f, 27.8f, 8.8f}}; // Female
+
 	private static float[,] _genderRanges = new float[2,5] {{30.6f, 32.4f, 33.0f, 30.0f, 39.0f}, // Male
 		{31.2f, 34.8f, 35.4f, 30.0f, 40.2f}}; // Female
 
 	private static float[,] _genderRangesTemp = new float[2,5] {{30.6f, 32.4f, 33.0f, 30.0f, 39.0f}, // Male
+		{31.2f, 34.8f, 35.4f, 30.0f, 40.2f}}; // Female
+
+	private static float[,] _genderRangesOriginal = new float[2,5] {{30.6f, 32.4f, 33.0f, 30.0f, 39.0f}, // Male
 		{31.2f, 34.8f, 35.4f, 30.0f, 40.2f}}; // Female
 
 	// Cultures
@@ -73,11 +82,19 @@ public class LMAPlayerGUI : MonoBehaviour {
 		{-0.6f,  -5.44f, -1.68f,  -3.90f, 3.35f}, // Lebanon
 		{-8.47f, -12.17f, -3.27f, -7.79f, 7.87f}}; // Japan
 
+	private static float[,] _cultureMeansOriginal= new float[3, 5] {  { 0f, 0f,  0f, 0f, 0f}, // US
+		{-0.6f,  -5.44f, -1.68f,  -3.90f, 3.35f}, // Lebanon
+		{-8.47f, -12.17f, -3.27f, -7.79f, 7.87f}}; // Japan
+
 	private static float[,] _cultureRanges = new float[3, 5] {{ 30f,  30f,  30f,  30f, 30f}, // US
 		{ 27.33f,  31.2f,  25.74f,  24.42f, 27.42f}, // Lebanon
 		{ 31.38f, 27.9f, 24.18f, 26.43f, 22.14f}}; // Japan
 	
 	private static float[,] _cultureRangesTemp = new float[3, 5] {{ 30f,  30f,  30f,  30f, 30f}, // US
+		{ 27.33f,  31.2f,  25.74f,  24.42f, 27.42f}, // Lebanon
+		{ 31.38f, 27.9f, 24.18f, 26.43f, 22.14f}}; // Japan
+
+	private static float[,] _cultureRangesOriginal = new float[3, 5] {{ 30f,  30f,  30f,  30f, 30f}, // US
 		{ 27.33f,  31.2f,  25.74f,  24.42f, 27.42f}, // Lebanon
 		{ 31.38f, 27.9f, 24.18f, 26.43f, 22.14f}}; // Japan
 
@@ -146,12 +163,11 @@ public class LMAPlayerGUI : MonoBehaviour {
 
     
    // private string[] _animNameStr = { "Knocking", "Pointing", "Lifting", "Picking up pillow", "Punching", "Pushing", "Throwing", "Walking", "Waving" };
-	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Lifting", "Knocking" };
-	//, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
+	private static string[] _animDisplayNameStr = { "Pointing", "Picking up a pillow", "Knocking" //};
+	, "Punching", "Pushing", "Throwing", "Walking", "Waving"};
 	private int _animInd = 0;
 	private static string[] _animNames = {"Pointing_to_Spot_Netural_02_Updated", 
 		"Picking_Up_Pillow_Netural_01",
-		"Lifting_Netural_01",
 		"Knocking_Neutral_1",
 		"Punching_Netural_02",
 		"Pushing_Netural_02",
@@ -197,7 +213,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 		for (int i= 0; i < _cultureNames.Length; i++) {
 			cultureComboBoxList[i] = new GUIContent(_cultureNames[i]);
 		}
-		cultureComboBoxControl = new ComboBox(new Rect(0, 30, 200, 20), cultureComboBoxList[0], 
+		cultureComboBoxControl = new ComboBox(new Rect(0, 40, 200, 20), cultureComboBoxList[0], 
 		                                      cultureComboBoxList, "button", "box", listStyle);
 
 		// Combo box for selecting gender
@@ -205,7 +221,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 		for (int i= 0; i < _genderNames.Length; i++) {
 			genderComboBoxList[i] = new GUIContent(_genderNames[i]);
 		}
-		genderComboBoxControl = new ComboBox(new Rect(0, 600, 200, 20), genderComboBoxList[0], 
+		genderComboBoxControl = new ComboBox(new Rect(0, 675, 200, 20), genderComboBoxList[0], 
 		                                      genderComboBoxList, "button", "box", listStyle);
 
 		// Combo box for selecting mode
@@ -266,6 +282,24 @@ public class LMAPlayerGUI : MonoBehaviour {
 		for (int i = 0; i < 5; i++){
 			_oceanRel[i] = 0.0f;
 			_oceanRelTemp[i] = 0.0f;
+		}
+	}
+
+	void ResetGender() {
+		for (int p = 0; p < 5; p++) {
+			for (int g = 0; g < _genderNames.Length; g++){
+				_genderMeans[g, p] = _genderMeansTemp[g,p] = _genderMeansOriginal[g,p];
+				_genderRanges[g,p] = _genderRangesTemp[g,p] = _genderRangesOriginal[g,p];
+			}
+		}
+	}
+
+	void ResetCulture(){
+		for (int p = 0; p < 5; p++) {
+			for (int c = 0; c < _cultureNames.Length; c++) {
+				_cultureMeans[c,p] = _cultureMeansTemp[c,p] = _cultureMeansOriginal[c,p];
+				_cultureRanges[c,p] = _cultureRangesTemp[c,p] = _cultureRangesOriginal[c, p];
+			}
 		}
 	}
 
@@ -425,10 +459,15 @@ public class LMAPlayerGUI : MonoBehaviour {
 	}
 
 	void OnGUI () {
+
+		GUIStyle headerStyle = new GUIStyle ();
+		headerStyle.normal.textColor = headerColor;
+		headerStyle.alignment = TextAnchor.UpperCenter;
+		headerStyle.fontSize = 22;
         
         GUIStyle style = new GUIStyle();
         GUI.skin = ButtonSkin;
-		style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
+		style.normal.textColor = darkGray;
 
 		// Play button
 		GUILayout.BeginArea (new Rect(600,500,100,100));
@@ -442,14 +481,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 				UpdateEmoteParams(_agent);
 			}
 
-			GUILayout.Space (10);
-			if(GUILayout.Button ( "Reset")) {
-				StopAnim(_agent);
-				ResetPersonality();
-				CalculateAbsolutePersonality();
-				UpdateLaban();
-				UpdateEmoteParams(_agent);
-			}
 		GUILayout.EndArea ();
 
 		GUILayout.BeginArea (new Rect (750, 500, 200, 300));
@@ -476,21 +507,21 @@ public class LMAPlayerGUI : MonoBehaviour {
 		// Left side
 		// Includes dropdowns for animation and culture, play button
 
-		GUILayout.BeginArea (new Rect (30, 25, 310, 1000));
+		GUILayout.BeginArea (new Rect (20, 25, 310, 1000));
 
 		_scrollPositionLeft = GUILayout.BeginScrollView (_scrollPositionLeft, GUILayout.Width(300f), GUILayout.Height(Screen.height*0.98f-30));
 
 			// Culture selector
-			style.fontSize = 18;
 			//GUILayout.BeginArea (new Rect (30, 25, 250, 150));
-				GUILayout.Label ("Country: ", style);
-				cultureComboBoxControl.Show ();
+			GUILayout.Label ("CULTURE ", headerStyle);
+			cultureComboBoxControl.Show ();
 			//GUILayout.EndArea ();
 
+			style.normal.textColor = darkGray;
 			// Dividing line
-			GUI.DrawTexture(new Rect(300 , 0, 4, Screen.height), TexBorder, ScaleMode.ScaleToFit, true, 2f/Screen.height);
+			//GUI.DrawTexture(new Rect(10 , 50, 200, 20), TexBorder, ScaleMode.ScaleToFit, true, );
 
-			GUILayout.Space (110);
+			GUILayout.Space (120);
 			// Adjust the means and ranges for the selected culture
 			//GUILayout.BeginArea (new Rect (30, 150, 250, 500));
 			style.fontSize = 18;
@@ -509,6 +540,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 			_cultureMeansTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureMeans [_cultureInd, 4], minVal, maxVal);
 
 			GUILayout.Space (20);
+			style.normal.textColor = darkGray;
 
 			style.fontSize = 18;
 			GUILayout.Label("Cultural Ranges",style);
@@ -524,16 +556,25 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Neuroticism: " + _cultureRanges [_cultureInd, 4].ToString (), style);
 			_cultureRangesTemp [_cultureInd, 4] = GUILayout.HorizontalSlider (_cultureRanges [_cultureInd, 4], 0f, maxVal);
 
-			//GUILayout.EndArea ();
+			GUILayout.Space (10);
+			if(GUILayout.Button ( "Reset Culture")) {
+				StopAnim(_agent);
+				ResetCulture();
+				CalculateAbsolutePersonality();
+				UpdateLaban();
+				UpdateEmoteParams(_agent);
+			}
 
-			GUILayout.Space (20);
+			GUI.DrawTexture(new Rect(0, 620, 300, 4), TexBorder, ScaleMode.ScaleToFit, true, 300f/2f);
+		 
+			GUILayout.Space (35);
 			// Gender stuff
 			//GUILayout.BeginArea (new Rect (30, 800, 250, 500));
 			style.fontSize = 18;
-			GUILayout.Label ("Gender: ", style);
+			GUILayout.Label ("GENDER", headerStyle);
 			genderComboBoxControl.Show ();
 			
-			GUILayout.Space (80);
+			GUILayout.Space (90);
 			GUILayout.Label("Gender Means",style);
 			style.fontSize = 14;
 			GUILayout.Label ("Openness: " + _genderMeans [_genderInd, 0].ToString (), style);
@@ -563,8 +604,15 @@ public class LMAPlayerGUI : MonoBehaviour {
 			GUILayout.Label ("Neuroticism: " + _genderRanges [_genderInd, 4].ToString (), style);
 			_genderRangesTemp [_genderInd, 4] = GUILayout.HorizontalSlider (_genderRanges [_genderInd, 4], 0f, maxVal);
 
-			//GUILayout.EndArea ();
-
+			GUILayout.Space (10);
+			if(GUILayout.Button ( "Reset Gender")) {
+				StopAnim(_agent);
+				ResetGender();
+				CalculateAbsolutePersonality();
+				UpdateLaban();
+				UpdateEmoteParams(_agent);
+			}
+		GUILayout.Space (10);
 		GUILayout.EndScrollView ();
 
 		GUILayout.EndArea ();
@@ -580,21 +628,23 @@ public class LMAPlayerGUI : MonoBehaviour {
 		GUILayout.BeginArea (new Rect (Screen.width - 290,30,280,800));
 
 			//_scrollPosition = GUILayout.BeginScrollView(_scrollPosition,  GUILayout.Width(220f), GUILayout.Height(Screen.height*0.98f));
-			//_scrollPositionRight = GUILayout.BeginScrollView (_scrollPositionRight, GUILayout.Width(285f), GUILayout.Height(Screen.height*0.98f-30));
+			_scrollPositionRight = GUILayout.BeginScrollView (_scrollPositionRight, GUILayout.Width(285f), GUILayout.Height(Screen.height*0.98f-30));
 
 				// Animation selector
 				//GUILayout.BeginArea (new Rect (Screen.width - 300 ,25,250,300));
 				style.fontSize = 18;
-				style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
+				style.normal.textColor = darkGray;
 				
-				GUILayout.Label ("Animation: ", style);
+				GUILayout.Label ("ANIMATION", headerStyle);
 				animComboBoxControl.Show ();
 				//GUILayout.EndArea ();
 
-				GUILayout.Space (150);
+				GUILayout.Space (250);
 
+				GUILayout.Label ("PERSONALITY", headerStyle);
 				//GUILayout.BeginArea (new Rect (Screen.width - 300, 200, 250, 600));
 				style.fontSize = 18;
+				GUILayout.Space (10);
 				GUILayout.Label ("Relative Personality", style);		
 
 				style.fontSize = 14;
@@ -610,9 +660,16 @@ public class LMAPlayerGUI : MonoBehaviour {
 				_oceanRelTemp[4] = GUILayout.HorizontalSlider (_oceanRel[4], minVal, maxVal);
 
 				// Reset button
+				GUILayout.Space (10);
+				if(GUILayout.Button ( "Reset")) {
+					StopAnim(_agent);
+					ResetPersonality();
+					CalculateAbsolutePersonality();
+					UpdateLaban();
+					UpdateEmoteParams(_agent);
+				}
 				GUILayout.Space (20);
 		      
-				//GUILayout.Space (30);
 				style.fontSize = 18;
 				GUILayout.Label ("Absolute Personality", style);
 				style.fontSize = 14;
@@ -631,7 +688,7 @@ public class LMAPlayerGUI : MonoBehaviour {
 
 				//GUILayout.EndArea();
 
-			//GUILayout.EndScrollView ();
+			GUILayout.EndScrollView ();
 
 		GUILayout.EndArea ();
 
@@ -762,70 +819,6 @@ public class LMAPlayerGUI : MonoBehaviour {
 			agent.GetComponent<TorsoAnimator> ().UpdateAnglesLinearComb ();
 	}
 
-	
-	/*
-	void UpdateEmoteParams(GameObject agent) {
-		if(agent == null){		
-			Debug.Log("AgentPrefab not found");
-			return;
-		}
-        agent.GetComponent<ArmAnimator>().SetSpeed(_speed[driveInd]);
-            
-        agent.GetComponent<ArmAnimator>().V0 = _v0[driveInd];
-        agent.GetComponent<ArmAnimator>().V1 = _v1[driveInd];
-        agent.GetComponent<ArmAnimator>().Ti = _ti[driveInd];
-        agent.GetComponent<ArmAnimator>().Texp = _texp[driveInd];
-        agent.GetComponent<ArmAnimator>().Tval = _tval[driveInd];
-        agent.GetComponent<ArmAnimator>().Continuity = _continuity[driveInd];
-        agent.GetComponent<ArmAnimator>().Bias = _bias[driveInd];
-        agent.GetComponent<AnimationInfo>().InitInterpolators(_tval[driveInd], _continuity[driveInd], _bias[driveInd]);
-
-        agent.GetComponent<ArmAnimator>().T0 = _t0[driveInd];
-        agent.GetComponent<ArmAnimator>().T1 = _t1[driveInd];
-        agent.GetComponent<ArmAnimator>().TrMag = _trMag[driveInd];
-        agent.GetComponent<ArmAnimator>().TfMag = _tfMag[driveInd];
-        agent.GetComponent<ArmAnimator>().HrMag = _hrMag[driveInd];
-        agent.GetComponent<ArmAnimator>().HfMag = _hfMag[driveInd];
-        agent.GetComponent<ArmAnimator>().SquashMag = _squashMag[driveInd];
-        agent.GetComponent<ArmAnimator>().WbMag = _wbMag[driveInd];
-        agent.GetComponent<ArmAnimator>().WxMag = _wxMag[driveInd];
-        agent.GetComponent<ArmAnimator>().WtMag = _wtMag[driveInd];
-        agent.GetComponent<ArmAnimator>().WfMag = _wfMag[driveInd];
-        agent.GetComponent<ArmAnimator>().EtMag = _etMag[driveInd];
-        agent.GetComponent<ArmAnimator>().DMag = _dMag[driveInd];
-        agent.GetComponent<ArmAnimator>().EfMag = _efMag[driveInd];
-
-        agent.GetComponent<TorsoAnimator>().EncSpr[0] = _encSpr0[driveInd];
-        agent.GetComponent<TorsoAnimator>().SinRis[0] = _sinRis0[driveInd];
-        agent.GetComponent<TorsoAnimator>().RetAdv[0] = _retAdv0[driveInd];
-
-        agent.GetComponent<TorsoAnimator>().EncSpr[1] = _encSpr1[driveInd];
-        agent.GetComponent<TorsoAnimator>().SinRis[1] = _sinRis1[driveInd];
-        agent.GetComponent<TorsoAnimator>().RetAdv[1] = _retAdv1[driveInd];
-
-        agent.GetComponent<ArmAnimator>().Hor = _arm[driveInd][0].x;
-        agent.GetComponent<ArmAnimator>().Ver = _arm[driveInd][0].y;
-        agent.GetComponent<ArmAnimator>().Sag = _arm[driveInd][0].z;
-        agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(0); //Update keypoints
-      
-   
-        //RightArm 
-        //Only horizontal motion is the opposite for each arm
-        agent.GetComponent<ArmAnimator>().Hor = -_arm[driveInd][1].x;
-        agent.GetComponent<ArmAnimator>().Ver = _arm[driveInd][1].y;
-        agent.GetComponent<ArmAnimator>().Sag = _arm[driveInd][1].z;
-        agent.GetComponent<ArmAnimator>().UpdateKeypointsByShape(1); //Update keypoints
-
-
-        //Update shape parameters
-        for (int j = 0; j < _shapeParams.Length; j++)
-            for (int i = 0; i < _shapeParams[j].Length; i++)
-                agent.GetComponent<TorsoAnimator>().ShapeParams[j][i] = _shapeParams[j][i];
-            
-        agent.GetComponent<TorsoAnimator>().UpdateAnglesLinearComb();
-        
-    }
-*/
 
 	void ReadPersonalityEffortCoeffs() {
 		string fileName = "personalityToEffort.txt";
