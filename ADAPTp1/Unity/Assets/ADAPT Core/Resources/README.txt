@@ -1,1 +1,0 @@
-The Recast Navmesh manager uses the NavmeshDebugShader for displaying the generated Navmesh in the editor. This file isn't necessary for Unity navigation.
